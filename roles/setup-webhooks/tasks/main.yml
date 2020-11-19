@@ -1,0 +1,11 @@
+# IPO Summary:
+#
+# INPUT: webhook, ansible-tower-cli: pkg state=present
+# PROCESSING: install webhooks
+# OUTPUT: notify: restart webhook
+
+- import_tasks: "{{ role_path }}/tasks/setup-webhooks.yml"
+  tags: setup-webhooks
+
+
+

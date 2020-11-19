@@ -1,0 +1,105 @@
+
+
+- name: Allow all access to TCP port 80 with UFW
+  ufw:
+    rule: allow
+    port: 80
+    proto: tcp
+
+- name: Allow all access to TCP port 443 with UFW
+  ufw:
+    rule: allow
+    port: 443
+    proto: tcp
+
+- name: Allow all access to TCP port 22 with UFW
+  ufw:
+    rule: allow
+    port: 80
+    proto: tcp
+
+- name: Default allow outgoing traffic with UFW
+  ufw:
+    policy: allow
+    direction: out
+
+- name: Default deny incoming traffic with UFW
+  ufw:
+    policy: deny
+    direction: in
+
+- name: Allow everything and enable UFW
+  ufw:
+    state: enabled
+
+- name: Update repositories cache
+  apt:
+    update_cache: yes
+
+- name: Update all packages to their latest version
+  apt:
+    name: "*"
+    state: latest
+
+- name: Install necessary packages
+  apt:
+    pkg:
+    - apt-transport-https
+    - ca-certificates
+    - curl
+    - gnupg2
+    - software-properties-common
+
+- name: Add an Apt signing key, will not download if present
+  apt_key:
+    id: 9DC858229FC7DD38854AE2D88D81803C0EBFCD88
+    url: https://ftp-master.debian.org/keys/archive-key-6.0.asc
+    state: present
+
+- name: Add Docker repository into sources list
+  apt_repository:
+    repo: deb [arch=amd64] https://download.docker.com/linux/debian buster stable
+    state: present
+
+- name: Update repositories cache
+  apt:
+    update_cache: yes
+
+- name: Install Docker packages
+  apt:
+    pkg:
+    - docker-ce
+    - docker-compose
+
+- name: Add backports repository into sources list
+  apt_repository:
+    repo: deb http://deb.debian.org/debian buster-backports main
+    state: present
+
+- name: Update repositories cache
+  apt:
+    update_cache: yes
+
+- name: Install Ansible packages
+  apt:
+    default_release: buster-backports
+    pkg:
+    - ansible
+
+- name: Install Node.js pre-requisite packages
+  apt:
+    pkg:
+    - nodejs 
+    - npm 
+    - git
+    - python3-pip 
+    - pwgen 
+    - python3-docker
+    - certbot
+
+- name: Install Docker Compose python package on version 1.21.0
+  pip:
+    name: docker-compose==1.21.0
+
+
+

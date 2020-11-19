@@ -1,0 +1,38 @@
+
+- name: Install Nginx and Certbot for AWX reverse proxy
+  apt:
+    pkg:
+    - prometheus
+
+- name: Save new get-target-hosts.sh script, template
+  template:
+    src: '{{ role_path }}/get-target-hosts.sh.j2'
+    dest: '/root/bin/get-target-hosts.sh'
+
+- name: Generate server list
+  command: /root/bin/get-target-hosts.sh
+  register: serverlist
+
+# uses {{ serverlist.stdout_lines }} as a list
+- name: Install template prometheus config file
+  template:
+    src: "{{ role_path }}/prometheus.yml.j2"
+    dest: "/etc/prometheus/prometheus.yml"
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Install copied prometheus config files
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: "{{ item.owner }}"
+    group: "{{ item.owner }}"
+    mode: '0644'
+  with_items:
+    - { owner: root, src: "{{ role_path }}/synapse-v2.rules", dest: "/etc/prometheus/synapse-v2.rules" }
+
+- name: Ensure service prometheus is started
+  service:
+    name: prometheus
+    state: started

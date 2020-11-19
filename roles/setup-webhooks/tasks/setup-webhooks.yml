@@ -1,0 +1,43 @@
+
+
+- name: Update repositories and all packages on target machine
+  apt:
+    name: "*"
+    update_cache: yes
+
+- name: Install necessary utils on target machine
+  apt:
+    pkg:
+     - etckeeper
+     - ansible-tower-cli
+     - webhook
+
+- name: webhook systemd unit
+  copy:
+    src: "{{ role_path }}/webhook.service"
+    dest: /etc/systemd/system/webhook.service
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: webhook.conf
+  copy:
+    src: "{{ role_path }}/webhook.conf"
+    dest: /etc/webhook.conf
+    owner: root
+    group: root
+    mode: '0644'
+  notify: restart webhook
+
+- name: Install webhook-run.py executable
+  copy:
+    src: "{{ role_path }}/webhook-run.py"
+    dest: "/usr/local/bin/webhook-run.py"
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Restart service webhook, in all cases
+  service:
+    name: webhook
+    state: restarted

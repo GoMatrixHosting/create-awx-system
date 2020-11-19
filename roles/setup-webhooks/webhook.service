@@ -1,0 +1,10 @@
+# TODO: Expand sandbox or convert to just running an outgoing webhook? Currently running as webhook user
+#
+# DynamicUser=true sandbox ->
+# Oct 06 06:17:00 AWX-15 webhook[6524]: [webhook] 2020/10/06 06:17:00 [414bdf] command output: /usr/local/bin/webhook-run.sh: 3: /usr/local/bin/webhook-run.sh: cannot create /var/log/webhook.log: Read-only file system
+
+[Service]
+ExecStart=
+ExecStart=/usr/bin/webhook -verbose -ip 127.0.0.1 -port 8000 -nopanic -hooks /etc/webhook.conf
+User=webhook
+Group=webhook

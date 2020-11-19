@@ -1,0 +1,47 @@
+
+
+- name: Install Nginx and Certbot for AWX reverse proxy
+  apt:
+    pkg:
+    - nginx
+    - certbot
+
+- name: Save new 'graphana' nginx config file, template
+  template:
+    src: './roles/setup-awx/templates/graphana.j2'
+    dest: '/etc/nginx/sites-available/graphana'
+
+- name: Create a symbolic link to enable the config
+  file:
+    src: /etc/nginx/sites-available/graphana
+    dest: /etc/nginx/sites-enabled/graphana
+    owner: root
+    group: root
+    state: link
+
+- name: Generate Diffie-Hellman parameters with the default size (4096 bits)
+  openssl_dhparam:
+    path: '/etc/letsencrypt/live/{{ graphana_url }}/dhparams.pem'
+
+- name: Stop service nginx, if started
+  service:
+    name: nginx
+    state: stopped
+  args: 
+    creates: '/etc/letsencrypt/live/{{ graphana_url }}/fullchain.pem'
+
+- name: Execute the command in remote shell; stdout goes to the specified file on the remote
+  shell: certbot certonly  --noninteractive --standalone --agree-tos -m {{ certbot_email }} http -d {{ monitor_url }}
+  args: 
+    creates: '/etc/letsencrypt/live/{{ graphana_url }}/fullchain.pem'
+
+- name: Creates a crontab entry to renew certbot"
+  cron:
+    name: "Renew letsencrypt certificate"
+    special_time: weekly
+    job: "/bin/sh certbot renew --post-hook "systemctl reload nginx"
+
+- name: Ensure service nginx is started
+  service:
+    name: nginx
+    state: started

@@ -1,0 +1,10 @@
+
+- import_tasks: "{{ role_path }}/tasks/setup-prometheus.yml"
+  tags: setup-monitor
+
+- import_tasks: "{{ role_path }}/tasks/setup-nginx-graphana.yml"
+  tags: setup-monitor
+
+- import_tasks: "{{ role_path }}/tasks/setup-graphana.yml"
+  tags: setup-monitor
+

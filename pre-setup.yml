@@ -1,0 +1,11 @@
+---
+- name: "Setup the GoMatrixHosting AWX system."
+  hosts: "{{ target if target is defined else 'all' }}"
+  become: true
+
+  roles:
+    - presetup-awx
+    - setup-webhook
+    - setup-monitor
+
+
