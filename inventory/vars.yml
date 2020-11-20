@@ -1,4 +1,5 @@
 
+target: panel.example.org
 awx_url: panel.example.org
 graphana_url: monitor.example.org
 certbot_email: myemail@protonmail.com
