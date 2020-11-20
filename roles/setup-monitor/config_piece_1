@@ -31,16 +31,3 @@ scrape_configs:
     #scheme: 'https'
     static_configs:
     - targets:
-{% for server in serverlist.stdout_lines %}
-      - '{{ server }}:9100'
-{% endfor %}
-
-  - job_name: 'synapse'
-    metrics_path: '/_synapse/metrics'
-    # when endpoint uses https:
-    #scheme: 'https'
-    static_configs:
-    - targets:
-{% for server in serverlist.stdout_lines %}
-      - '{{ server }}:9000'
-{% endfor %}

@@ -1,3 +1,9 @@
 
-awx_url: panel.topgunmatrix.com
+awx_url: panel.example.org
+graphana_url: monitor.example.org
 certbot_email: myemail@protonmail.com
+
+secret_key: << strong-password >>
+pg_password: << strong-password >>
+admin_password: << strong-password >>
+

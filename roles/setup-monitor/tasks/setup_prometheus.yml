@@ -4,25 +4,39 @@
     pkg:
     - prometheus
 
+- name: Touch the prometheus.yml config file to ensure it exists.
+  file:
+    path: /etc/prometheus/prometheus.yml
+    owner: root
+    group: root
+    state: touch
+    mode: '0644'
+
 - name: Save new get-target-hosts.sh script, template
   template:
-    src: '{{ role_path }}/get-target-hosts.sh.j2'
-    dest: '/root/bin/get-target-hosts.sh'
+    src: '{{ role_path }}/generate_config.sh.j2'
+    dest: '/root/bin/generate_config.sh'
+    owner: root
+    group: root
+    mode: '0744'
 
-- name: Generate server list
-  command: /root/bin/get-target-hosts.sh
-  register: serverlist
-
-# uses {{ serverlist.stdout_lines }} as a list
-- name: Install template prometheus config file
-  template:
-    src: "{{ role_path }}/prometheus.yml.j2"
-    dest: "/etc/prometheus/prometheus.yml"
+- name: Install config_piece_1 file for generating Prometheus config
+  copy:
+    src: "{{ role_path }}/config_piece_1"
+    dest: "/root/bin/config_piece_1"
     owner: root
     group: root
     mode: '0644'
 
-- name: Install copied prometheus config files
+- name: Install config_piece_2 file for generating Prometheus config
+  copy:
+    src: "{{ role_path }}/config_piece_2"
+    dest: "/root/bin/config_piece_2"
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Install synapse-v2.rules file for Prometheus
   copy:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
@@ -32,7 +46,15 @@
   with_items:
     - { owner: root, src: "{{ role_path }}/synapse-v2.rules", dest: "/etc/prometheus/synapse-v2.rules" }
 
+- name: Creates a crontab entry to generate Prometheus config every 5 minutes
+  cron:
+    name: "Regenerate Prometheus config"
+    minute: "*/2"
+    user: root
+    job: "/bin/sh /root/bin/generate_config.sh"
+
 - name: Ensure service prometheus is started
   service:
     name: prometheus
     state: started
+

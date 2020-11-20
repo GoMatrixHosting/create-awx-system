@@ -38,6 +38,7 @@
   cron:
     name: "Renew letsencrypt certificate"
     special_time: weekly
+    user: root
     job: "/bin/sh certbot renew --post-hook "systemctl reload nginx"
 
 - name: Ensure service nginx is started

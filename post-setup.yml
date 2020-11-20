@@ -1,0 +1,9 @@
+---
+- name: "Post-setup the GoMatrixHosting AWX system. Configures the existing AWX system."
+  hosts: "{{ target if target is defined else 'all' }}"
+  become: true
+
+  roles:
+    - configure-awx
+
+

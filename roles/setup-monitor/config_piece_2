@@ -1,0 +1,7 @@
+
+  - job_name: 'synapse'
+    metrics_path: '/_synapse/metrics'
+    # when endpoint uses https:
+    #scheme: 'https'
+    static_configs:
+    - targets:

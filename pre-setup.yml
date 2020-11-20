@@ -1,5 +1,5 @@
 ---
-- name: "Setup the GoMatrixHosting AWX system."
+- name: "Pre-setup for the GoMatrixHosting AWX system. Also creates a webhook system for MemberPress and a monitoring system based on Graphana."
   hosts: "{{ target if target is defined else 'all' }}"
   become: true
 
