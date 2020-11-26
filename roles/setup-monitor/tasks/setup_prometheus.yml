@@ -3,16 +3,26 @@
   apt:
     pkg:
     - prometheus
+    - prometheus-node-exporter
+    - jq
 
 - name: Touch the prometheus.yml config file to ensure it exists.
   file:
     path: /etc/prometheus/prometheus.yml
     owner: root
     group: root
-    state: touch
     mode: '0644'
+    state: touch
 
-- name: Save new get-target-hosts.sh script, template
+- name: Ensure /root/bin exists
+  file:
+    path: /root/bin
+    owner: root
+    group: root
+    mode: '0744'
+    state: directory
+
+- name: Save new generate_config.sh script, template
   template:
     src: '{{ role_path }}/generate_config.sh.j2'
     dest: '/root/bin/generate_config.sh'

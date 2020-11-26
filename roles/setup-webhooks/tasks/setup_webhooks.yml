@@ -27,7 +27,6 @@
     owner: root
     group: root
     mode: '0644'
-  notify: restart webhook
 
 - name: Install webhook-run.py executable
   copy:

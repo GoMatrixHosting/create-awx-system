@@ -1,0 +1,222 @@
+
+- name: Remove 'Demo Job Template' job template
+  tower_job_template:
+    name: "Demo Job Template"
+    job_type: run
+    project: "Demo Project"
+    playbook: hello_world.yml
+    state: absent
+    tower_host: "{{ awx_url }}"
+    tower_username: "admin"
+    tower_password: "{{ admin_password }}"
+    validate_certs: yes
+  ignore_errors: yes
+
+- name: Remove 'Demo Project' project from 'Default' organisation
+  tower_project:
+    name: "Demo Project"
+    organization: "Default"
+    state: absent
+    tower_host: "{{ awx_url }}"
+    tower_username: "admin"
+    tower_password: "{{ admin_password }}"
+    validate_certs: yes
+  ignore_errors: yes
+
+- name: Remove 'Demo Inventory'
+  tower_inventory:
+    name: "Demo Inventory"
+    organization: "Default"
+    state: absent
+    tower_host: "{{ awx_url }}"
+    tower_username: "admin"
+    tower_password: "{{ admin_password }}"
+    validate_certs: yes
+  ignore_errors: yes
+
+- name: Remove 'Default' organisation
+  tower_organization:
+    name: "Default"
+    state: absent
+    tower_host: "{{ awx_url }}"
+    tower_username: "admin"
+    tower_password: "{{ admin_password }}"
+    validate_certs: yes
+  ignore_errors: yes
+
+- name: Create main organisation
+  tower_organization:
+    name: "{{ org_name }}"
+    description: "The main organisation that is used to manage other organisations."
+    state: present
+    tower_host: "{{ awx_url }}"
+    tower_username: "admin"
+    tower_password: "{{ admin_password }}"
+    validate_certs: yes
+
+- name: Add admin to main organisation
+  tower_role:
+    user: "admin"
+    organization: "{{ org_name }}"
+    role: member
+    tower_host: "{{ awx_url }}"
+    tower_username: "admin"
+    tower_password: "{{ admin_password }}"
+    validate_certs: yes
+
+- name: Add tower inventory
+  tower_inventory:
+    name: "{{ org_name }} Inventory"
+    description: "{{ org_name }} inventory"
+    organization: "{{ org_name }}"
+    state: present
+    tower_host: "{{ awx_url }}"
+    tower_username: "admin"
+    tower_password: "{{ admin_password }}"
+    validate_certs: yes
+
+- name: Allow user account to administrate/use this inventory
+  tower_role:
+    user: "admin"
+    inventory: "{{ org_name }} Inventory"
+    role: use
+    state: present
+    tower_host: "{{ awx_url }}"
+    tower_username: "admin"
+    tower_password: "{{ admin_password }}"
+    validate_certs: yes
+
+- name: Add dummyvalue.com host to admin organisations inventory
+  tower_host:
+    name: "dummyvalue.com"
+    description: "A placeholder host, because ansible needs a host to work on. :)"
+    inventory: "{{ org_name }} Inventory"
+    state: present
+    tower_host: "{{ awx_url }}"
+    tower_username: "admin"
+    tower_password: "{{ admin_password }}"
+    validate_certs: yes
+
+- name: Add 'Ansible Create Subscription Membership' project to users organisation
+  tower_project:
+    name: "Ansible Create Subscription Membership"
+    description: "Has 2 modes, where either the script is run after a memberpress subscription is created, a 'plan_title' is specified, this causes a digitalocean droplet and space to be created. Or a 'byo account' is created and the user connects their own server at provision stage."
+    organization: "{{ org_name }}"
+    scm_type: git
+    scm_url: "https://gitlab.com/GoMatrixHosting/ansible-create-subscription-membership.git"
+    scm_delete_on_update: yes
+    scm_update_on_launch: yes
+    state: present
+    tower_host: "{{ awx_url }}"
+    tower_username: "admin"
+    tower_password: "{{ admin_password }}"
+    validate_certs: yes
+
+- name: Add 'Ansible Delete Subscription Membership' project to users organisation
+  tower_project:
+    name: "Ansible Delete Subscription Membership"
+    description: "Deletes a single subscription, and/or an entire membership/organisation from the AWX setup."
+    organization: "{{ org_name }}"
+    scm_type: git
+    scm_url: "https://gitlab.com/GoMatrixHosting/ansible-delete-subscription-membership.git"
+    scm_delete_on_update: yes
+    scm_update_on_launch: yes
+    state: present
+    tower_host: "{{ awx_url }}"
+    tower_username: "admin"
+    tower_password: "{{ admin_password }}"
+    validate_certs: yes
+
+- name: Copy extra variables file to AWX host for use in below template task
+  copy:
+    src: "{{ role_path }}/extra-vars/create-byo.yml"
+    dest: "/var/tmp/create-byo.yml"
+
+- name: Create '00 - Ansible Create BYO Subscription' job template
+  tower_job_template:
+    name: "00 - Ansible Create BYO Subscription"
+    description: "Creates AWX Account for user, append random string to 'byo', creates initial organisation.yml and server_vars.yml file. Also creates a '[subscription_id] Provision Server' playbook in users account, where they will instead be prompted to connect their own server."
+    job_type: run
+    inventory: "{{ org_name }} Inventory"
+    project: "Ansible Create Subscription Membership"
+    playbook: setup.yml
+    extra_vars_path: '/var/tmp/create-byo.yml'
+    state: present
+    verbosity: 1
+    tower_host: "{{ awx_url }}"
+    tower_username: "admin"
+    tower_password: "{{ admin_password }}"
+    validate_certs: yes
+
+- name: Copy extra variables file to AWX host for use in below template task
+  copy:
+    src: "{{ role_path }}/extra-vars/create-mp.yml"
+    dest: "/var/tmp/create-mp.yml"
+
+- name: Create '00 - Ansible Create MP Subscription' job template
+  tower_job_template:
+    name: "00 - Ansible Create MP Subscription"
+    description: "Creates AWX Account for user, creates initial organisation.yml and server_vars.yml file. Creates a DigitalOcean droplet and space. Also creates initial '[subscription_id] Provision Server' playbook in users account."
+    job_type: run
+    inventory: "{{ org_name }} Inventory"
+    project: "Ansible Create Subscription Membership"
+    playbook: setup.yml
+    extra_vars_path: '/var/tmp/create-mp.yml'
+    state: present
+    verbosity: 1
+    tower_host: "{{ awx_url }}"
+    tower_username: "admin"
+    tower_password: "{{ admin_password }}"
+    validate_certs: yes
+
+- name: Copy extra variables file to AWX host for use in below template task
+  copy:
+    src: "{{ role_path }}/extra-vars/delete-member.yml"
+    dest: "/var/tmp/delete-member.yml"
+
+- name: Create '00 - Ansible Delete Membership' job template
+  tower_job_template:
+    name: "00 - Ansible Delete Membership"
+    description: "Playbook to remove clients AWX Organisation and local files on the AWX server."
+    job_type: run
+    inventory: "{{ org_name }} Inventory"
+    project: "Ansible Delete Subscription Membership"
+    playbook: setup.yml
+    extra_vars_path: '/var/tmp/delete-member.yml'
+    state: present
+    verbosity: 1
+    job_tags: delete-membership
+    tower_host: "{{ awx_url }}"
+    tower_username: "admin"
+    tower_password: "{{ admin_password }}"
+    validate_certs: yes
+
+- name: Copy extra variables file to AWX host for use in below template task
+  copy:
+    src: "{{ role_path }}/extra-vars/delete-subscription.yml"
+    dest: "/var/tmp/delete-subscription.yml"
+
+- name: Create '00 - Ansible Delete Subscription' job template
+  tower_job_template:
+    name: "00 - Ansible Delete Subscription"
+    description: "Removes job templates, digitalocean resources, and files/folders associated with a subscription. Later add queue to delay deletion of digitalocean resources for 2-7 days."
+    job_type: run
+    inventory: "{{ org_name }} Inventory"
+    project: "Ansible Delete Subscription Membership"
+    playbook: setup.yml
+    extra_vars_path: '/var/tmp/delete-subscription.yml'
+    state: present
+    verbosity: 1
+    job_tags: delete-subscription
+    tower_host: "{{ awx_url }}"
+    tower_username: "admin"
+    tower_password: "{{ admin_password }}"
+    validate_certs: yes
+
+- name: Install awx.awx collection in AWX docker
+  command: docker exec awx_task /bin/bash -l -c "ansible-galaxy collection install awx.awx"
+
+- name: Install community.digitalocean collection in AWX docker
+  command: docker exec awx_task /bin/bash -l -c "ansible-galaxy collection install community.digitalocean"
+
+

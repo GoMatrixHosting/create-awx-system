@@ -31,7 +31,7 @@ This playbook sets up your server using the following Docker images:
 
 This Ansible playbook can be improved in the following ways:
 
-- Someone should fork it!
+- Someone should fork it! :)
 
 
 ## Support

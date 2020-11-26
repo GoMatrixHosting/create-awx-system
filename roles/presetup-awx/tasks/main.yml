@@ -2,8 +2,13 @@
 
 # Configure server for AWX installation
 - import_tasks: "{{ role_path }}/tasks/initial_server_setup.yml"
+  tags: setup
 
 # Setup NGINX reverse proxy for AWX
 - import_tasks: "{{ role_path }}/tasks/setup_nginx_awx.yml"
+  tags: setup
 
+# Setup hosting files for AWX
+- import_tasks: "{{ role_path }}/tasks/setup_hosting_files.yml"
+  tags: setup
 

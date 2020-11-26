@@ -1,6 +1,13 @@
 # GoMatrixHosting AWX Setup - Installation Instructions
 
 
+# Create a server
+
+Create a Debian 10 server and setup SSH access to root user.
+
+'$ sudo apt install python3-apt-dbg python3-apt python-apt-doc python-apt-common'
+
+
 # Setup DNS entry for it:
 
 Map 2 A records for panel.example.org and monitor.example.org to the servers IP.
@@ -10,15 +17,42 @@ Map 2 A records for panel.example.org and monitor.example.org to the servers IP.
 
 Installation is broken up into 3 stages:
 
-1) Pre-setup, setup before the awx playbook is run, installs Docker and sets up TLS proxy for AWX, optionally website hooks and graphana are also setup.
+1) Pre-setup, setup before the awx playbook is run, installs Docker and sets up TLS proxy for AWX, optionally website hooks and grafana are also setup.
 
-Record these variables:
-- awx_url (eg: panel.example.org)
-- graphana_url (eg: monitor.example.org)
+`$ git clone https://gitlab.com/GoMatrixHosting/create-awx-system.git`
+
+Install prerequisite packages for ansible on the controller:
+
+`$ ansible-galaxy collection install community.grafana`
+
+Edit host into: ./inventory/hosts
+
+Create folder for host at: ./inventory/host_vars/panel.example.org/
+
+Record these variables to ./inventory/host_vars/panel.example.org/vars.yml:
+- org_name (The name of your organisation, eg: GoMatrixHosting)
+- awx_url (The URL for AWX, eg: panel.example.org)
+- grafana_url (The URL for Grafana, eg: monitor.example.org)
 - certbot_email (eg: myemail@protonmail.com)
 - admin_password (For the AWX admin user, eg: NAMQvAHm6rFG6d2oxx2a)
+- private_ssh_key (Location of private key AWX will use.)
+- private_ssh_key_password (The password to this private key.)
+- public_ssh_key (Location of public key AWX will use.)
+If you will be using this setup commercially, also define:
+- do_api_token (Your DigitalOcean API token/)
+- do_spaces_access_key (Your DigitalOcean Spaces Access Key.)
+- do_spaces_secret_key (Your DigitalOcean Spaces Secret Key.)
+- do_image_master (eg: debian-10-x64)
 
-`$ ansible-playbook -i ./inventory/hosts -t "setup-monitor,setup-webhooks" pre_setup.yml`
+Run the script:
+
+`$ ansible-playbook -v -i ./inventory/hosts -t "setup,setup-monitor,setup-webhooks" pre-setup.yml`
+
+Setup grafana:
+
+Login > '+' > 'Import' > add 'https://grafana.com/grafana/dashboards/1860'
+
+Also import this template: https://raw.githubusercontent.com/matrix-org/synapse/master/contrib/grafana/synapse.json
 
 
 2) Run the AWX deployment script.
@@ -37,37 +71,20 @@ host_port=8080
 #host_port_ssl=443
 ```
 
+Next comment out the first line and edit the awx_url into ./installer/inventory
+```
+#localhost ansible_connection=local ansible_python_interpreter="/usr/bin/env python3"
+panel.example.org
+```
+
 Next, run the playbook to install the Ansible AWX with the following command:
 
 `$ ansible-playbook -i ./awx/installer/inventory install.yml`
 
 
-3) Post-setup, configures existing AWX system.
+3) Post-setup, configures existing AWX system and adds community packages.
 
-~ Not yet made, basically these steps:
+Run the script:
 
-Edit default org to ‘ChatOasis’.
+`$ ansible-playbook -v -i ./inventory/hosts post-setup.yml`
 
-Add ‘admin’ user to ‘ChatOasis’ org.
-
-Add ‘ChatOasis Ansible Create Organisation and Server’ project to this org.
-
-Add ‘ChatOasis Ansible Delete Organisation and Servers’ project to this org.
-
-Add ‘ChatOasis testing SSH’ credential to this org. ‘Machine’ type with actual SSH key.
-
-Add ‘ChatOasis Servers’ inventory. Add ‘dummyvalue.com’ to it.
-
-Add ‘00 - Create Organisation and Server’ job template. Use above objects. Add extra variables:
-
-matrix_domain: perthchat.news
-do_droplet_region: nyc1
-plan_size: small
-client_organisation: Perthchat News
-client_email: perthchat@protonmail.com
-client_password: dummypassword9846
-
-Add ‘01 - Delete Organisation and Servers’ job template. Use above objects. Add extra variables:
-
-matrix_domain: testtags.org
-client_organisation: Test-Tags

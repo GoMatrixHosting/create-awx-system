@@ -1,22 +1,22 @@
 
 server {
    listen 80;
-   server_name {{ graphana_url }};
+   server_name {{ grafana_url }};
    add_header Strict-Transport-Security max-age=2592000;
    rewrite ^ https://$server_name$request_uri? permanent;
 }
 
 server {
     listen 443 ssl http2;
-    server_name {{ graphana_url }};
+    server_name {{ grafana_url }};
 
     access_log /var/log/nginx/awx.access.log;
     error_log /var/log/nginx/awx.error.log;
 
     ssl on;
-    ssl_certificate /etc/letsencrypt/live/{{ graphana_url }}/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/{{ graphana_url }}/privkey.pem;
-    ssl_dhparam /etc/letsencrypt/live/{{ graphana_url }}/dhparam.pem;
+    ssl_certificate /etc/letsencrypt/live/{{ grafana_url }}/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/{{ grafana_url }}/privkey.pem;
+    ssl_dhparam /etc/ssl/grafana_dhparam.pem;
     ssl_session_timeout 5m;
     ssl_ciphers EECDH+CHACHA20:EECDH+AES128:RSA+AES128:EECDH+AES256:RSA+AES256:EECDH+3DES:RSA+3DES:!MD5;
     ssl_protocols TLSv1.2 TLSv1.3;

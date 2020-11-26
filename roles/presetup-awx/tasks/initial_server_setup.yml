@@ -1,24 +1,7 @@
 
-- name: Copy Debian Testing (Bullseye) sources.list over to host
-  copy:
-    src: '{{ role_path }}/templates/sources.list'
-    dest: /etc/apt/sources.list
-    owner: root
-    group: root
-    mode: '0644'
-
 - name: Update repositories cache
   apt:
     update_cache: yes
-
-- name: List distro release
-  shell: echo $(lsb_release -cs)
-  register: distro_release
-
-- name: Perform a 'apt-get dist-upgrade' if OS is still Debian Buster
-  apt:
-    upgrade: dist
-  when: distro_release.stdout == 'buster'
 
 - name: Update all packages to their latest version
   apt:
@@ -34,49 +17,70 @@
     - curl
     - gnupg2
     - software-properties-common
-    - ansible
+    - python-pip
+
+- name: Create swapfile with the right permissions
+  command: 'fallocate -l 4G /swapfile && chmod 600 /swapfile'
+  register: swapfile_new
+  with_first_found:
+    - files:
+        - /swapfile
+      skip: true
+
+- name: Enable swapfile
+  command: mkswap /swapfile && swapon /swapfile
+  when: swapfile_new.delta is defined
+
+- name: Make swapfile permanent in /etc/fstab
+  mount: name=none
+    src=/swapfile
+    fstype=swap
+    opts=sw
+    passno=0
+    dump=0
+    state=present
 
 - name: Allow all access to TCP port 80 with UFW
   ufw:
     rule: allow
-    port: 80
+    port: '80'
     proto: tcp
 
 - name: Allow all access to TCP port 443 with UFW
   ufw:
     rule: allow
-    port: 443
+    port: '443'
     proto: tcp
 
 - name: Allow all access to TCP port 22 with UFW
   ufw:
     rule: allow
-    port: 22
+    port: '22'
     proto: tcp
 
 - name: Default allow outgoing traffic with UFW
   ufw:
     policy: allow
-    direction: out
+    direction: outgoing
 
 - name: Default deny incoming traffic with UFW
   ufw:
     policy: deny
-    direction: in
+    direction: incoming
 
 - name: Enable UFW
   ufw:
     state: enabled
 
-- name: Add an Apt signing key, will not download if present
+- name: Add the Apt signing key for Docker, will not download if present
   apt_key:
     id: 9DC858229FC7DD38854AE2D88D81803C0EBFCD88
-    url: https://ftp-master.debian.org/keys/archive-key-6.0.asc
+    url: https://download.docker.com/linux/debian/gpg
     state: present
 
 - name: Add Docker repository into sources list
   apt_repository:
-    repo: 'deb [arch=amd64] https://download.docker.com/linux/debian testing stable'
+    repo: 'deb [arch=amd64] https://download.docker.com/linux/debian buster stable'
     state: present
 
 - name: Update repositories cache
@@ -99,9 +103,18 @@
     - pwgen 
     - python3-docker
 
+- name: Install Requests python package on version 2.14.2
+  pip:
+    name: requests==2.14.2
+
+- name: Setup update-alternatives 1
+  command: update-alternatives --install /usr/bin/python python /usr/bin/python2.7 1
+
+- name: Setup update-alternatives 2
+  command: update-alternatives --install /usr/bin/python python /usr/bin/python3 2
+
 - name: Install Docker Compose python package on version 1.21.0
   pip:
     name: docker-compose==1.21.0
-
 
 

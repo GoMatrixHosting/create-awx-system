@@ -2,13 +2,17 @@
 
 CONFIG=/etc/prometheus/prometheus.yml
 
+before_sum=$(sha256sum $CONFIG)
+
+echo $before_sum
+
 # clear file
 
 truncate -s 0 $CONFIG
 
 # append first block
 
-cat ./config_piece_1 >> $CONFIG
+cat /root/bin/config_piece_1 >> $CONFIG
 
 # append host list
 
@@ -22,7 +26,7 @@ curl --silent --user admin:{{ admin_password }} https://{{ awx_url }}/api/v2/hos
 
 # append second block
 
-cat ./config_piece_2 >> $CONFIG
+cat /root/bin/config_piece_2 >> $CONFIG
 
 # append host list
 
@@ -33,4 +37,16 @@ curl --silent --user admin:{{ admin_password }} https://{{ awx_url }}/api/v2/hos
         tr -d '"\\' |
         egrep -v "dummyvalue|example\.com" |
         while read line; do echo "      - '$line:9000'"; done >> $CONFIG
+
+after_sum=$(sha256sum $CONFIG)
+
+echo $after_sum
+
+if [ "$before_sum" != "$after_sum" ]; then
+    echo "Checksums are not equal"
+    systemctl restart prometheus
+else
+    echo "Checksums are equal"
+fi
+
 

@@ -4,7 +4,7 @@
 # PROCESSING: install webhooks
 # OUTPUT: notify: restart webhook
 
-- import_tasks: "{{ role_path }}/tasks/setup-webhooks.yml"
+- import_tasks: "{{ role_path }}/tasks/setup_webhooks.yml"
   tags: setup-webhooks
 
 

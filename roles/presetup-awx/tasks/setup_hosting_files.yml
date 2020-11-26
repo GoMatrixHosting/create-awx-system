@@ -1,0 +1,29 @@
+
+- name: Ensure /projects/hosting/ directory exists for the AWX setup
+  file:
+    path: '/var/lib/awx/projects/hosting/'
+    owner: root
+    group: root
+    mode: '0744'
+    state: directory
+
+- name: Save new 'hosting_vars.yml' config file, template
+  template:
+    src: './roles/presetup-awx/templates/hosting_vars.yml.j2'
+    dest: '/var/lib/awx/projects/hosting/hosting_vars.yml'
+
+- name: Copy private SSH key to hosting directory for the AWX setup
+  copy:
+    src: '{{ private_ssh_key }}'
+    dest: /var/lib/awx/projects/hosting/private.key
+    owner: root
+    group: root
+    mode: '0600'
+
+- name: Copy public SSH key to hosting directory for the AWX setup
+  copy:
+    src: '{{ public_ssh_key }}'
+    dest: /var/lib/awx/projects/hosting/public.key
+    owner: root
+    group: root
+    mode: '0600'

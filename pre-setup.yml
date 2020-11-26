@@ -1,11 +1,11 @@
 ---
 - name: "Pre-setup for the GoMatrixHosting AWX system. Also creates a webhook system for MemberPress and a monitoring system based on Graphana."
-  hosts: "{{ target if target is defined else 'all' }}"
+  hosts: "{{ 'awx_servers' }}"
   become: true
 
   roles:
     - presetup-awx
-    - setup-webhook
+    - setup-webhooks
     - setup-monitor
 
 

@@ -1,42 +1,43 @@
 
+
 - name: Install Nginx and Certbot for AWX reverse proxy
   apt:
     pkg:
     - nginx
     - certbot
 
-- name: Save new 'awx' nginx config file, template
+- name: Save new 'grafana' nginx config file, template
   template:
-    src: './roles/presetup-awx/templates/awx.j2'
-    dest: '/etc/nginx/sites-available/awx'
+    src: './roles/setup-monitor/grafana.j2'
+    dest: '/etc/nginx/sites-available/grafana'
 
 - name: Create a symbolic link to enable the config
   file:
-    src: /etc/nginx/sites-available/awx
-    dest: /etc/nginx/sites-enabled/awx
+    src: /etc/nginx/sites-available/grafana
+    dest: /etc/nginx/sites-enabled/grafana
     owner: root
     group: root
     state: link
 
 - name: Generate Diffie-Hellman parameters with the default size (4096 bits)
   openssl_dhparam:
-    path: '/etc/ssl/awx_dhparam.pem'
+    path: '/etc/ssl/grafana_dhparam.pem'
     size: 2048
 
 - name: Check that the cert for awx already exists
   stat:
-    path: '/etc/letsencrypt/live/{{ awx_url }}/fullchain.pem'
-  register: stat_result
+    path: '/etc/letsencrypt/live/{{ grafana_url }}/fullchain.pem'
+  register: stat_2_result
 
 - name: Stop service nginx, if started
   service:
     name: nginx
     state: stopped
-  when: not stat_result.stat.exists
+  when: not stat_2_result.stat.exists
 
-- name: Generate letsencrypt certificate for AWX if not found
-  command: certbot certonly  --noninteractive --standalone --agree-tos -m {{ certbot_email }} -d {{ awx_url }}
-  when: not stat_result.stat.exists
+- name: Generate letsencrypt certificate for Grafana if not found
+  command: certbot certonly  --noninteractive --standalone --agree-tos -m {{ certbot_email }} -d {{ grafana_url }}
+  when: not stat_2_result.stat.exists
 
 - name: Creates a crontab entry to renew certbot"
   cron:
@@ -54,6 +55,4 @@
   service:
     name: nginx
     state: started
-
-
 

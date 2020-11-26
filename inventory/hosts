@@ -1,0 +1,3 @@
+
+[awx_servers]
+panel.example.org ansible_host=panel.example.org ansible_ssh_user=root
