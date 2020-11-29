@@ -19,9 +19,6 @@ def shellcmd(command):
 
 #########################################
 # Hard Coded AWX/Tower Credentials          #
-awx_host = ""
-awx_username = ""
-awx_password = ""
 create_subscription_job_template = "00 - Ansible Create MP Subscription"
 delete_subscription_job_template = "00 - Ansible Delete Subscription"
 #########################################
@@ -65,6 +62,8 @@ if event_type == "recurring-transaction-completed":
   extravars = '--extra-vars=' + json.JSONEncoder().encode(extra_vars)
   awx_job_launch_command = awx_job_launch_command + [ extravars ]
   shellcmd(awx_job_launch_command)
+
+# need to add 'delete-subscription' tag to this:
 
 elif event_type == "subscription-expired":
   subscription_id = str(data['data']['subscr_id'])

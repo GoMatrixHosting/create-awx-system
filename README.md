@@ -12,7 +12,7 @@ Ideally this system can manage the updates, configuration, backups and monitorin
 
 ## Installation
 
-To configure and install this AWX setup on your own server, follow the [README in the docs/ directory](docs/README.md).
+To configure and install this AWX setup on your own server, follow the [Installation.md in the docs/ directory](docs/Installation.md).
 
 
 ## Docker images used by this playbook

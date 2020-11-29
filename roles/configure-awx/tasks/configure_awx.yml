@@ -141,6 +141,7 @@
     project: "Ansible Create Subscription Membership"
     playbook: setup.yml
     extra_vars_path: '/var/tmp/create-byo.yml'
+    ask_extra_vars: yes
     state: present
     verbosity: 1
     tower_host: "{{ awx_url }}"
@@ -162,6 +163,7 @@
     project: "Ansible Create Subscription Membership"
     playbook: setup.yml
     extra_vars_path: '/var/tmp/create-mp.yml'
+    ask_extra_vars: yes
     state: present
     verbosity: 1
     tower_host: "{{ awx_url }}"
@@ -183,6 +185,7 @@
     project: "Ansible Delete Subscription Membership"
     playbook: setup.yml
     extra_vars_path: '/var/tmp/delete-member.yml'
+    ask_extra_vars: yes
     state: present
     verbosity: 1
     job_tags: delete-membership
@@ -205,6 +208,7 @@
     project: "Ansible Delete Subscription Membership"
     playbook: setup.yml
     extra_vars_path: '/var/tmp/delete-subscription.yml'
+    ask_extra_vars: yes
     state: present
     verbosity: 1
     job_tags: delete-subscription

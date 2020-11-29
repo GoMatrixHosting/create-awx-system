@@ -12,6 +12,18 @@
      - ansible-tower-cli
      - webhook
 
+- name: Ensure group "webhook" exists
+  group:
+    name: webhook
+    state: present
+
+- name: Add the disabled user account 'webhook' with a specific uid and a primary group of 'webhook'
+  user:
+    name: webhook
+    comment: Webhook user account for webhooks service.
+    password: '!'
+    group: webhook
+
 - name: webhook systemd unit
   copy:
     src: "{{ role_path }}/webhook.service"
@@ -20,7 +32,7 @@
     group: root
     mode: '0644'
 
-- name: webhook.conf
+- name: Install webhook.conf
   copy:
     src: "{{ role_path }}/webhook.conf"
     dest: /etc/webhook.conf
@@ -40,3 +52,19 @@
   service:
     name: webhook
     state: restarted
+
+- name: Configure awx-cli host
+  command: |
+    sudo -H -u webhook bash -c 'awx-cli config host {{ awx_url }}'
+
+- name: Configure awx-cli username
+  command: |
+    sudo -H -u webhook bash -c 'awx-cli config username admin'
+
+- name: Configure awx-cli host
+  command: |
+    sudo -H -u webhook bash -c 'awx-cli config password {{ admin_password }}'
+
+
+
+

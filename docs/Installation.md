@@ -15,7 +15,7 @@ Map 2 A records for panel.example.org and monitor.example.org to the servers IP.
 
 # Installation
 
-Installation is broken up into 3 stages:
+Installation is broken up into 4 stages:
 
 1) Pre-setup, setup before the awx playbook is run, installs Docker and sets up TLS proxy for AWX, optionally website hooks and grafana are also setup.
 
@@ -47,12 +47,6 @@ If you will be using this setup commercially, also define:
 Run the script:
 
 `$ ansible-playbook -v -i ./inventory/hosts -t "setup,setup-monitor,setup-webhooks" pre-setup.yml`
-
-Setup grafana:
-
-Login > '+' > 'Import' > add 'https://grafana.com/grafana/dashboards/1860'
-
-Also import this template: https://raw.githubusercontent.com/matrix-org/synapse/master/contrib/grafana/synapse.json
 
 
 2) Run the AWX deployment script.
@@ -88,3 +82,7 @@ Run the script:
 
 `$ ansible-playbook -v -i ./inventory/hosts post-setup.yml`
 
+
+4) Setup grafana.
+
+The Grafana needs extra configuration to work, follow the [Grafana.md in the docs/ directory](docs/Grafana.md).

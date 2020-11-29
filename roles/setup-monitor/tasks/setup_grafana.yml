@@ -52,8 +52,10 @@
 - name: create prometheus datasource
   community.grafana.grafana_datasource:
     name: local_prometheus
+    # In the web interface direct access is named 'Server'.
+    access: proxy
     ds_type: prometheus
-    ds_url: '127.0.0.1:9090'
+    ds_url: 'http://127.0.0.1:9090'
     access: direct
     tls_skip_verify: true
     url: "https://{{ grafana_url }}"
