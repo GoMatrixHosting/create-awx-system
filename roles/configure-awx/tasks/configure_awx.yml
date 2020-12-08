@@ -223,7 +223,5 @@
 - name: Install community.digitalocean collection in AWX docker
   command: docker exec awx_task /bin/bash -l -c "ansible-galaxy collection install community.digitalocean"
 
-- name: Install m3nu.ansible_role_borgbackup collection in AWX docker
-  command: docker exec awx_task /bin/bash -l -c "ansible-galaxy install m3nu.ansible_role_borgbackup"
 
 
