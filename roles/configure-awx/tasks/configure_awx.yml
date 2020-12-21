@@ -34,6 +34,13 @@
     validate_certs: yes
   ignore_errors: yes
 
+- name: Remove 'Demo Credential' credential
+  tower_credential:
+    name: "Demo Credential"
+    organization: "Default"
+    kind: ssh
+    state: absent
+
 - name: Remove 'Default' organisation
   tower_organization:
     name: "Default"
@@ -43,12 +50,6 @@
     tower_password: "{{ admin_password }}"
     validate_certs: yes
   ignore_errors: yes
-
-- name: Remove 'Demo Credential' credential
-  tower_credential:
-    name: 'Demo Credential'
-    kind: ssh
-    state: absent
 
 - name: Create main organisation
   tower_organization:
