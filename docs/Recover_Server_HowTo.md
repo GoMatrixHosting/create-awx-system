@@ -66,8 +66,8 @@ HERE
 9A - Admin Upload) Copy backup into /chroot/backup/ with SCP:
 
 ~/Documents/export$ scp ./* root@matrix.fishbole.xyz:/chroot/backup/
-matrix.tar.gz                                                          100% 8288KB 703.3KB/s   00:11    
-postgres_2020-12-20.sql.gz                                             100%   35KB  89.8KB/s   00:00  
+matrix.tar.gz                                                          100% 8288KB 703.3KB/s   00:11
+postgres_2020-12-20.sql.gz                                             100%   35KB  89.8KB/s   00:00
 
 
 9B - User Upload) As admin user, run 'Configure Website + Access Backup' without the 'start' tag.
@@ -76,7 +76,7 @@ Then SFTP in and import the backup data you previously exported.
 
 sftp> put -r /home/chatoasis/Documents/export/* ./backup/
 Uploading /home/chatoasis/Documents/export/matrix.tar.gz to /./backup/matrix.tar.gz
-/home/chatoasis/Documents/export/matrix.tar.gz                         100% 8288KB 779.4KB/s   00:10    
+/home/chatoasis/Documents/export/matrix.tar.gz                         100% 8288KB 779.4KB/s   00:10
 Uploading /home/chatoasis/Documents/export/postgres_2020-12-20.sql.gz to /./backup/postgres_2020-12-20.sql.gz
 /home/chatoasis/Documents/export/postgres_2020-12-20.sql.gz            100%   35KB 153.0KB/s   00:00
 
@@ -85,11 +85,11 @@ Uploading /home/chatoasis/Documents/export/postgres_2020-12-20.sql.gz to /./back
 
 Run the '00 - Restore and Import Postgresql Dump' job template, 
 with 'import-postgres' and 'import-awx' tags, 
-with specific clients project, inventory etc,
-include all the extra variables found in /matrix/awx/extra_vars.yml and the {{ server_path_postgres_dump }} minus the '.gz' at the end, for example:
+with specific clients project, inventory and ssh credential,
+include all the extra variables found in /matrix/awx/extra_vars.yml and the {{ server_path_postgres_dump }}, for example:
 
 ---
-server_path_postgres_dump: /chroot/backup/postgres_2020-12-20.sql
+server_path_postgres_dump: /chroot/backup/postgres_2020-12-20.sql.gz
 subscription_id: I-CREUS74S6969
 member_id: 31
 target: "matrix.fishbole.xyz"
