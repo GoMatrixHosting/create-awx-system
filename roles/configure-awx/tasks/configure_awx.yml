@@ -47,7 +47,7 @@
 - name: Remove 'Demo Credential' credential
   tower_credential:
     name: 'Demo Credential'
-    credential_type: Machine
+    kind: ssh
     state: absent
 
 - name: Create main organisation
