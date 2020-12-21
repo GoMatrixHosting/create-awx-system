@@ -40,6 +40,7 @@
     organization: "Default"
     kind: ssh
     state: absent
+  ignore_errors: yes
 
 - name: Remove 'Default' organisation
   tower_organization:
