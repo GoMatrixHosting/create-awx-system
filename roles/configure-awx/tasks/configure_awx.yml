@@ -94,10 +94,10 @@
     tower_password: "{{ admin_password }}"
     validate_certs: yes
 
-- name: Add dummyvalue.com host to admin organisations inventory
+- name: Add localhost to admin organisations inventory
   tower_host:
-    name: "dummyvalue.com"
-    description: "A placeholder host, because ansible needs a host to work on. :)"
+    name: "localhost"
+    description: "The AWX server itself."
     inventory: "{{ org_name }} Inventory"
     state: present
     tower_host: "{{ awx_url }}"
