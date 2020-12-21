@@ -44,6 +44,12 @@
     validate_certs: yes
   ignore_errors: yes
 
+- name: Remove 'Demo Credential' credential
+  tower_credential:
+    name: 'Demo Credential'
+    credential_type: Machine
+    state: absent
+
 - name: Create main organisation
   tower_organization:
     name: "{{ org_name }}"
@@ -202,7 +208,7 @@
 - name: Create '00 - Ansible Delete Subscription' job template
   tower_job_template:
     name: "00 - Ansible Delete Subscription"
-    description: "Removes job templates, digitalocean resources, and files/folders associated with a subscription. Later add queue to delay deletion of digitalocean resources for 2-7 days."
+    description: "Removes job templates, digitalocean resources, and files/folders associated with a subscription."
     job_type: run
     inventory: "{{ org_name }} Inventory"
     project: "Ansible Delete Subscription Membership"
@@ -212,6 +218,29 @@
     state: present
     verbosity: 1
     job_tags: delete-subscription
+    tower_host: "{{ awx_url }}"
+    tower_username: "admin"
+    tower_password: "{{ admin_password }}"
+    validate_certs: yes
+
+- name: Copy extra variables file to AWX host for use in below template task
+  copy:
+    src: "{{ role_path }}/extra-vars/restore-and-import-postgresql-dump.yml"
+    dest: "/var/tmp/restore-and-import-postgresql-dump.yml"
+
+- name: Create '00 - Restore and Import Postgresql Dump' job template
+  tower_job_template:
+    name: "00 - Restore and Import Postgresql Dump"
+    description: "Restores a servers configs, media repo and postgresql database from /chroot/backup/."
+    job_type: run
+    inventory: "{{ org_name }} Inventory"
+    project: "Ansible Delete Subscription Membership"
+    playbook: setup.yml
+    extra_vars_path: '/var/tmp/restore-and-import-postgresql-dump.yml'
+    ask_extra_vars: yes
+    state: present
+    verbosity: 1
+    job_tags: import-postgres, import-awx
     tower_host: "{{ awx_url }}"
     tower_username: "admin"
     tower_password: "{{ admin_password }}"
