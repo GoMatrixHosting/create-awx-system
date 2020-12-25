@@ -1,0 +1,105 @@
+
+- name: Install borgmatic for AWX backup
+  apt:
+    pkg:
+    - borgmatic
+
+- name: Ensure backup location exists
+  delegate_to: '{{ backup_server_ip }}'
+  file:
+    path: '{{ backup_server_directory }}/AWX/{{ awx_url }}'
+    owner: '{{ backup_server_user }}'
+    group: '{{ backup_server_user }}'
+    state: directory
+    mode: '0755'
+    recurse: yes
+
+- name: Generate OpenSSH key on AWX system
+  community.crypto.openssh_keypair:
+    path: '/root/.ssh/borg_{{ awx_url }}_ed25519'
+    comment: 'Borg ssh key for {{ awx_url }}'
+    type: ed25519
+
+- name: Collect SSH public key value
+  shell: cat '/root/.ssh/borg_{{ awx_url }}_ed25519.pub'
+  register: public_key
+
+- name: Print public key to authorized_keys of backup server
+  delegate_to: '{{ backup_server_ip }}'
+  lineinfile:
+    path: '/home/{{ backup_server_user }}/.ssh/authorized_keys'
+    line: 'command="borg serve --restrict-to-path {{ backup_server_directory }}/AWX/{{ awx_url }}",restrict {{ public_key.stdout }}'
+    owner: '{{ backup_server_user }}'
+    group: '{{ backup_server_user }}'
+    mode: '0600'
+
+- name: Update SSH config on AWX system
+  blockinfile:
+    path: /root/.ssh/config
+    block: |
+      Host {{ backup_server_hostname }}
+          HostName {{ backup_server_ip }}
+          User {{ backup_server_user }}
+          IdentityFile ~/.ssh/borg_{{ awx_url }}_ed25519
+
+- name: Ensure borgmatix config location exists
+  file:
+    path: /root/.config/borgmatic/
+    owner: root
+    group: root
+    state: directory
+    mode: '0755'
+    recurse: yes
+
+- name: Make sure AWX system can SSH into 
+  shell: 'ssh -o StrictHostKeyChecking=no {{ backup_server_user }}@{{ backup_server_hostname }}'
+
+# ^ Would be more secure to check this manually!
+
+- name: Save borgmatic config file, template
+  template:
+    src: './roles/setup-backup/templates/config.yml.j2'
+    dest: '/root/.config/borgmatic/config.yml'
+
+- name: Initialise borg repo, set environmental variables
+  delegate_to: '{{ backup_server_ip }}'
+  shell: ' export BORG_PASSPHRASE={{ backup_encryption_passphrase }}'
+
+- name: Initialise borg repo, perform init
+  delegate_to: '{{ backup_server_ip }}'
+  shell: 'borg init --encryption=repokey {{ backup_server_directory }}/AWX/{{ awx_url }}'
+  args:
+    creates: '{{ backup_server_directory }}/AWX/{{ awx_url }}/nonce'
+
+- name: Creates an entry like "@reboot /some/job.sh"
+  cron:
+    name: "Backup AWX to backup.json and run borgmatic"
+    special_time: daily
+    job: "su - awx-export -c "/home/awx-export/.local/bin/export-awx.sh" > /var/lib/awx/projects/hosting/backup.json; /usr/bin/borgmatic"
+
+- name: Add the disabled user 'awx-export'
+  user:
+    name: awx-export
+    comment: 'A user account for dumping AWX daily.'
+    password: '!'
+    group: awx-export
+
+- name: Install awxkit for awx-export user
+  shell: 'su - awx-export -c "pip3 install awxkit"'
+
+- name: Save awx-export users .profile file, template
+  template:
+    src: './roles/setup-backup/templates/profile.j2'
+    dest: '/home/awx-export/.profile'
+    mode: '0644'
+    owner: awx-export
+    group: awx-export
+
+- name: Save awx-export.sh script, template
+  template:
+    src: './roles/setup-backup/templates/export-awx.sh.j2'
+    dest: '/home/awx-export/.local/bin/export-awx.sh'
+    mode: '0755'
+    owner: awx-export
+    group: awx-export
+

@@ -52,8 +52,8 @@
 - name: create prometheus datasource
   community.grafana.grafana_datasource:
     name: local_prometheus
-    # In the web interface direct access is named 'Server'.
-    access: proxy
+    # In the web interface direct access is named 'Server'. (trying instead of 'proxy')
+    access: direct
     ds_type: prometheus
     ds_url: 'http://127.0.0.1:9090'
     access: direct

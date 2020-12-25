@@ -1,0 +1,6 @@
+#!/bin/bash
+
+export TOWER_HOST=https://{{ awx_url }}
+export TOWER_USERNAME=admin
+export TOWER_PASSWORD={{ admin_password }}
+awx export

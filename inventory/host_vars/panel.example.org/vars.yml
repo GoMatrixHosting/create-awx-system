@@ -20,6 +20,13 @@ private_ssh_key: /key/location/id_ed25519
 private_ssh_key_password: << strong-password >>
 public_ssh_key: /key/location/id_ed25519.pub
 
+# Backup server settings
+backup_server_ip: 255.255.255.255
+backup_server_hostname: hostname
+backup_server_user: username
+backup_server_directory: '/location/of/backup'
+backup_encryption_passphrase: << strong-password >>
+
 # Hosting settings, only needed if setup is being used commercially.
 do_api_token: << do_api_token >>
 do_spaces_access_key: << do_spaces_access_key >>

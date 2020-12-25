@@ -1,0 +1,40 @@
+location:
+    source_directories:
+        - /
+    exclude_patterns:
+        - '- *.pyc'
+        - '- /var/log/borgbackup/'
+        - '- /var/lib/apt/lists/'
+        - '- /var/cache/'
+        - '- /var/tmp/'
+        - '- /dev'
+        - '- /proc'
+        - '- /sys'
+        - '- /tmp'
+
+    one_file_system: true
+
+    repositories:
+        - {{ backup_server_hostname }}:{{ backup_server_directory }}/AWX/{{ awx_url }}/
+
+    exclude_caches: true
+
+storage:
+    compression: auto,zstd
+    encryption_passphrase: {{ backup_encryption_passphrase }}
+    archive_name_format: '{hostname}-{now}'
+    checkpoint_interval: 600
+
+retention:
+    keep_daily: 7
+    keep_weekly: 4
+    keep_monthly: 12
+    prefix: '{hostname}-'
+
+consistency:
+    checks:
+        - repository
+        - archives
+
+    check_last: 3
+    prefix: '{hostname}-'
