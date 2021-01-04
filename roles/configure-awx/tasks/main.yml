@@ -2,5 +2,5 @@
 
 # Configure server after AWX installation
 - import_tasks: "{{ role_path }}/tasks/configure_awx.yml"
-
+  tags: setup-backup
 
