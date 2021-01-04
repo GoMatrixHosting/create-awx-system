@@ -2,5 +2,8 @@
 
 # Configure AWX backup
 - import_tasks: "{{ role_path }}/tasks/setup_backup.yml"
-  tags: setup-backup
+
+# Enable AWX backup
+- import_tasks: "{{ role_path }}/tasks/enable_backup.yml"
+  tags: enable-backup
 
