@@ -4,9 +4,10 @@
 # Create a server
 
 Create a Debian 10 server and setup SSH access to root user.
-
-'$ sudo apt install python3-apt-dbg python3-apt python-apt-doc python-apt-common'
-
+```
+$ ssh root@panel.example.org
+$ exit
+```
 
 # Setup DNS entry for it:
 
@@ -30,19 +31,25 @@ Edit host into: ./inventory/hosts
 Create folder for host at: ./inventory/host_vars/panel.example.org/
 
 Record these variables to ./inventory/host_vars/panel.example.org/vars.yml:
-- org_name (The name of your organisation, eg: GoMatrixHosting)
-- awx_url (The URL for AWX, eg: panel.example.org)
-- grafana_url (The URL for Grafana, eg: monitor.example.org)
-- certbot_email (eg: myemail@protonmail.com)
-- admin_password (For the AWX admin user, eg: NAMQvAHm6rFG6d2oxx2a)
-- private_ssh_key (Location of private key AWX will use.)
-- private_ssh_key_password (The password to this private key.)
-- public_ssh_key (Location of public key AWX will use.)
+- org_name 			(The name of your organisation.)
+- awx_url 			(The URL for AWX.)
+- grafana_url 			(The URL for Grafana.)
+- certbot_email 		(The organisations email.)
+- admin_password 		(Strong password for the AWX admin user.)
+- private_ssh_key 		(Location of private key AWX will use.)
+- private_ssh_key_password 	(Strong password for this private key.)
+- public_ssh_key 		(Location of public key AWX will use.)
+If you wish to configure a backup server, also define:
+- backup_server_ip 		(IP address of the backup server.)
+- backup_server_hostname 	(The hostname of the backup server.)
+- backup_server_user 		(The username of the backup server.)
+- backup_server_directory 	(The directory to backup to on the backup server.)
+- backup_encryption_passphrase 	(Strong password for the AWX borg backup.)
 If you will be using this setup commercially, also define:
-- do_api_token (Your DigitalOcean API token/)
-- do_spaces_access_key (Your DigitalOcean Spaces Access Key.)
-- do_spaces_secret_key (Your DigitalOcean Spaces Secret Key.)
-- do_image_master (eg: debian-10-x64)
+- do_api_token 			(Your DigitalOcean API token/)
+- do_spaces_access_key 		(Your DigitalOcean Spaces Access Key.)
+- do_spaces_secret_key 		(Your DigitalOcean Spaces Secret Key.)
+- do_image_master 		(eg: debian-10-x64)
 
 Run the script:
 
@@ -76,11 +83,11 @@ Next, run the playbook to install the Ansible AWX with the following command:
 `$ ansible-playbook -i ./awx/installer/inventory install.yml`
 
 
-3) Post-setup, configures existing AWX system and adds community packages.
+3) Post-setup, configures existing AWX system and adds community packages, also configures the AWX systems backup if 'setup-backup' tag is included.
 
 Run the script:
 
-`$ ansible-playbook -v -i ./inventory/hosts post-setup.yml`
+`$ ansible-playbook -v -i ./inventory/hosts -t "setup-backup" post-setup.yml`
 
 
 4) Setup grafana.
