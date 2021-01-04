@@ -40,6 +40,10 @@
     organization: "Default"
     kind: ssh
     state: absent
+    tower_host: "{{ awx_url }}"
+    tower_username: "admin"
+    tower_password: "{{ admin_password }}"
+    validate_certs: yes
   ignore_errors: yes
 
 - name: Remove 'Default' organisation
@@ -139,6 +143,24 @@
   copy:
     src: "{{ role_path }}/extra-vars/create-byo.yml"
     dest: "/var/tmp/create-byo.yml"
+
+- name: Update 'Ansible Create Subscription Membership' project
+  awx.awx.tower_project_update:
+    project: "Ansible Create Subscription Membership"
+    timeout: 300
+    tower_host: "{{ awx_url }}"
+    tower_username: "admin"
+    tower_password: "{{ admin_password }}"
+    validate_certs: yes
+
+- name: Update 'Ansible Delete Subscription Membership' project
+  awx.awx.tower_project_update:
+    project: "Ansible Delete Subscription Membership"
+    timeout: 300
+    tower_host: "{{ awx_url }}"
+    tower_username: "admin"
+    tower_password: "{{ admin_password }}"
+    validate_certs: yes
 
 - name: Create '00 - Ansible Create BYO Subscription' job template
   tower_job_template:

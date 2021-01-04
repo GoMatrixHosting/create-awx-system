@@ -65,14 +65,14 @@ Generate and record 3 strong passwords for the:
 - pg_password
 - admin_password (from above)
 
-^ Edit these into /awx/installer/inventory, also add project_data_dir line and change host_port:
+^ Edit these into ./awx/installer/inventory, also add project_data_dir line and change host_port:
 ```
 project_data_dir=/var/lib/awx/projects
 host_port=8080
 #host_port_ssl=443
 ```
 
-Next comment out the first line and edit the awx_url into ./installer/inventory
+Next comment out the first line and edit the awx_url into ./awx/installer/inventory
 ```
 #localhost ansible_connection=local ansible_python_interpreter="/usr/bin/env python3"
 panel.example.org
@@ -80,10 +80,15 @@ panel.example.org
 
 Next, run the playbook to install the Ansible AWX with the following command:
 
-`$ ansible-playbook -i ./awx/installer/inventory install.yml`
+`$ ansible-playbook -i ./awx/installer/inventory ./awx/installer/install.yml`
 
 
 3) Post-setup, configures existing AWX system and adds community packages, also configures the AWX systems backup if 'setup-backup' tag is included.
+
+Install prerequisite packages for ansible on the controller:
+
+`$ ansible-galaxy collection install community.crypto`
+`$ ansible-galaxy collection install awx.awx`
 
 Run the script:
 
@@ -93,3 +98,4 @@ Run the script:
 4) Setup grafana.
 
 The Grafana needs extra configuration to work, follow the [Grafana.md in the docs/ directory](docs/Grafana.md).
+

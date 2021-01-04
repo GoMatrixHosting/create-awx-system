@@ -75,7 +75,7 @@
   cron:
     name: "Backup AWX to backup.json and run borgmatic"
     special_time: daily
-    job: "su - awx-export -c "/home/awx-export/.local/bin/export-awx.sh" > /var/lib/awx/projects/hosting/backup.json; /usr/bin/borgmatic"
+    job: 'su - awx-export -c "/home/awx-export/.local/bin/export-awx.sh" > /var/lib/awx/projects/hosting/backup.json; /usr/bin/borgmatic'
 
 - name: Add the disabled user 'awx-export'
   user:
