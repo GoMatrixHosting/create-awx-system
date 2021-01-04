@@ -5,7 +5,7 @@
     - borgmatic
 
 - name: Ensure backup location exists
-  delegate_to: '{{ backup_server_ip }}'
+  delegate_to: '{{ backup_server_hostname }}'
   file:
     path: '{{ backup_server_directory }}/AWX/{{ awx_url }}'
     owner: '{{ backup_server_user }}'
@@ -25,7 +25,7 @@
   register: public_key
 
 - name: Print public key to authorized_keys of backup server
-  delegate_to: '{{ backup_server_ip }}'
+  delegate_to: '{{ backup_server_hostname }}'
   lineinfile:
     path: '/home/{{ backup_server_user }}/.ssh/authorized_keys'
     line: 'command="borg serve --restrict-to-path {{ backup_server_directory }}/AWX/{{ awx_url }}",restrict {{ public_key.stdout }}'
@@ -33,9 +33,18 @@
     group: '{{ backup_server_user }}'
     mode: '0600'
 
+- name: Ensure ssh config location exists
+  file:
+    path: /root/.ssh/
+    owner: root
+    group: root
+    state: directory
+    mode: '0755'
+
 - name: Update SSH config on AWX system
   blockinfile:
     path: /root/.ssh/config
+    create: yes
     block: |
       Host {{ backup_server_hostname }}
           HostName {{ backup_server_ip }}
@@ -51,31 +60,37 @@
     mode: '0755'
     recurse: yes
 
-- name: Make sure AWX system can SSH into 
-  shell: 'ssh -o StrictHostKeyChecking=no {{ backup_server_user }}@{{ backup_server_hostname }}'
+#- name: Make sure AWX system can SSH into backup server
+#  shell: 'ssh -o StrictHostKeyChecking=no {{ backup_server_user }}@{{ backup_server_hostname }}'
 
 # ^ Would be more secure to check this manually!
 
 - name: Save borgmatic config file, template
   template:
-    src: './roles/setup-backup/templates/config.yml.j2'
+    src: '{{ role_path }}/templates/config.yml.j2'
     dest: '/root/.config/borgmatic/config.yml'
 
-- name: Initialise borg repo, set environmental variables
-  delegate_to: '{{ backup_server_ip }}'
-  shell: ' export BORG_PASSPHRASE={{ backup_encryption_passphrase }}'
+#- name: Initialise borg repo, set environmental variables
+#  delegate_to: '{{ backup_server_hostname }}'
+#  shell: ' export BORG_PASSPHRASE={{ backup_encryption_passphrase }}'
 
 - name: Initialise borg repo, perform init
-  delegate_to: '{{ backup_server_ip }}'
-  shell: 'borg init --encryption=repokey {{ backup_server_directory }}/AWX/{{ awx_url }}'
+  delegate_to: '{{ backup_server_hostname }}'
+  shell: ' export BORG_PASSPHRASE={{ backup_encryption_passphrase }}; borg init --encryption=repokey {{ backup_server_directory }}/AWX/{{ awx_url }}'
   args:
     creates: '{{ backup_server_directory }}/AWX/{{ awx_url }}/nonce'
+
+- name: Ensure group "awx-export" exists
+  group:
+    name: awx-export
+    state: present
 
 - name: Add the disabled user 'awx-export'
   user:
     name: awx-export
     comment: 'A user account for dumping AWX daily.'
     password: '!'
+    shell: /bin/bash
     group: awx-export
 
 - name: Install awxkit for awx-export user
@@ -83,7 +98,7 @@
 
 - name: Save awx-export users .profile file, template
   template:
-    src: './roles/setup-backup/templates/profile.j2'
+    src: '{{ role_path }}/templates/profile.j2'
     dest: '/home/awx-export/.profile'
     mode: '0644'
     owner: awx-export
@@ -91,7 +106,7 @@
 
 - name: Save awx-export.sh script, template
   template:
-    src: './roles/setup-backup/templates/export-awx.sh.j2'
+    src: '{{ role_path }}/templates/export-awx.sh.j2'
     dest: '/home/awx-export/.local/bin/export-awx.sh'
     mode: '0755'
     owner: awx-export
