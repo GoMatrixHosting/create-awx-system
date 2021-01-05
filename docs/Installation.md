@@ -92,10 +92,16 @@ Install prerequisite packages for ansible on the controller:
 
 Run the script:
 
-`$ ansible-playbook -v -i ./inventory/hosts -t "setup-backup" post-setup.yml`
+`$ ansible-playbook -v -i ./inventory/hosts -t "enable-backup" post-setup.yml`
 
 
-4) Setup grafana.
+4) Perform initial SSH handshake from AWX to backup server.
+
+Manually SSH into the AWX tower, then manually SSH into the backup server:
+`$ ssh {{ backup_server_user }}@{{ backup_server_hostname }}`
+
+
+5) Setup grafana.
 
 The Grafana needs extra configuration to work, follow the [Grafana.md in the docs/ directory](docs/Grafana.md).
 
