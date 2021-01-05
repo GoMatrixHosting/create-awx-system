@@ -3,4 +3,4 @@
   cron:
     name: "Dump AWX database and run borgmatic"
     special_time: daily
-    job: docker exec -t awx_postgres pg_dump -U awx awx > /var/lib/awx/projects/awx-dump.sql; /usr/bin/borgmatic'
+    job: 'docker exec -t awx_postgres pg_dump -U awx awx > /var/lib/awx/projects/awx-dump.sql; /usr/bin/borgmatic'
