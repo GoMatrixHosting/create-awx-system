@@ -103,6 +103,8 @@ Run the script:
 Manually SSH into the AWX tower, then manually SSH into the backup server:
 `$ ssh {{ backup_server_user }}@{{ backup_server_hostname }}`
 
+Note the command-line here is restricted, so you won't be able to do anything besides connnect.
+
 
 5) Setup grafana.
 
