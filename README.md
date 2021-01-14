@@ -1,6 +1,5 @@
 # GoMatrixHosting AWX Setup - An AWX setup for managing multiple Matrix servers.
 
-
 ## Purpose
 
 This playbook spawns an AWX system that can create and manage multiple [Matrix](http://matrix.org/) servers. You can issue users an AWX login to their own 'organisation', which they can use to manage/configure 1 to N servers through.
@@ -38,3 +37,19 @@ This Ansible playbook can be improved in the following ways:
 
 - Matrix room: [#gomatrixhosting:perthchat.org](https://matrix.to/#/#gomatrixhosting:perthchat.org)
 
+## License
+
+    Copyright (C) 2021 GoMatrixHosting.com
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
