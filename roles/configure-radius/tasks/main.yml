@@ -1,0 +1,16 @@
+# IPO Summary:
+#
+# INPUT:
+# PROCESSING: install&configure FreeRADIUS, listens locally only, gateways to wp-oauth-provider
+# OUTPUT: notify: restart freeradius
+
+- block:
+  - name: Install FreeRADIUS packages
+    apt:
+      pkg:
+       - freeradius
+       - freeradius-python3
+       - python3-requests-oauthlib
+      default_release: buster-backports
+
+  tags: setup-configure-radius

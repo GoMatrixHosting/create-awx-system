@@ -5,6 +5,5 @@
 
   roles:
     - configure-awx
+    - configure-radius
     - setup-backup
-
-
