@@ -162,15 +162,15 @@
     tower_password: "{{ admin_password }}"
     validate_certs: yes
 
-- name: Create '00 - Ansible Create BYO Subscription' job template
+- name: Create '00 - Ansible Create Manual Subscription' job template
   tower_job_template:
-    name: "00 - Ansible Create BYO Subscription"
+    name: "00 - Ansible Create Manual Subscription"
     description: "Creates AWX Account for user, append random string to 'byo', creates initial organisation.yml and server_vars.yml file. Also creates a '[subscription_id] Provision Server' playbook in users account, where they will instead be prompted to connect their own server."
     job_type: run
     inventory: "{{ org_name }} Inventory"
     project: "Ansible Create Subscription Membership"
     playbook: setup.yml
-    extra_vars_path: '/var/tmp/create-byo.yml'
+    extra_vars_path: '/var/tmp/create-manual.yml'
     ask_extra_vars: yes
     state: present
     verbosity: 1
