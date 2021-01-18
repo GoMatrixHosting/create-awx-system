@@ -93,6 +93,7 @@ elif event_type == "member-account-updated":
     if "client_email" in line:
       old_client_email = line.replace('client_email: \"', '')
       old_client_email = old_client_email[:-2]
+  print("Previous client email is: " + old_client_email)
   org_file.close()
   org_file = open(path,'r')
   org_file_contents = org_file.read()
@@ -107,12 +108,15 @@ elif event_type == "member-account-updated":
     elif '\"username\": ' in line:
       if old_client_email in line:
         final_id = temp_id
+  print("Final ID is: " + final_id)
   if final_id == 'none':
     print('Email not found, exiting now..')
     sys.exit()
   awxkit_username_command = "/home/webhook/.local/bin/awx --conf.host https://{{ awx_url }} --conf.username admin --conf.password {{ admin_password }} user modify " + final_id + " --username " + new_client_email
   username_process = subprocess.check_output(awxkit_username_command, universal_newlines=True, shell=True)
+  print("Old org file contents: \n\n" + org_file_contents)
   new_org_file_contents = org_file_contents.replace(old_client_email, new_client_email)
+  print("New org file contents: \n\n" + org_file_contents)
   org_file = open(path,'w')
   org_file.write(new_org_file_contents)
   org_file.close()
