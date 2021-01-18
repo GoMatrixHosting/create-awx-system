@@ -56,7 +56,7 @@
     
 - name: Install awxkit for webhook user
   command: |
-    sudo -H -u webhook bash -c 'pip3 install awxkit=15.0.1'
+    sudo -H -u webhook bash -c 'pip3 install awxkit==15.0.1'
 
 - name: Configure awx-cli host
   command: |

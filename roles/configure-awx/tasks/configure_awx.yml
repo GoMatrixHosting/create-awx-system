@@ -141,8 +141,8 @@
 
 - name: Copy extra variables file to AWX host for use in below template task
   copy:
-    src: "{{ role_path }}/extra-vars/create-byo.yml"
-    dest: "/var/tmp/create-byo.yml"
+    src: "{{ role_path }}/extra-vars/create-manual.yml"
+    dest: "/var/tmp/create-manual.yml"
 
 - name: Update 'Ansible Create Subscription Membership' project
   awx.awx.tower_project_update:

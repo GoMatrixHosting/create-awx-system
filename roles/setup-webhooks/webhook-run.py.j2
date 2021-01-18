@@ -86,7 +86,7 @@ elif event_type == "member-account-updated":
   client_email = str(data['data']['member']['email'])
   print("Client email is: " + client_email)
   old_client_email = ""
-  # collect old email from /var/lib/awx/projects/clients/{{ member_id }}/organisation.yml
+  # collect old email from /var/lib/awx/projects/clients/member_id/organisation.yml
   path = '/var/lib/awx/projects/clients/' + member_id + '/organisation.yml'
   org_file = open(path,'r')
   for line in org_file.readlines():
