@@ -71,4 +71,13 @@
   args:
     creates: '{{ backup_server_directory }}/AWX/{{ awx_url }}/nonce'
 
-
+- name: Recursively change ownership of files in backup location
+  delegate_to: '{{ backup_server_hostname }}'
+  file:
+    path: '{{ backup_server_directory }}/AWX/{{ awx_url }}'
+    owner: '{{ backup_server_user }}'
+    group: '{{ backup_server_user }}'
+    state: directory
+    mode: '0755'
+    recurse: yes
+    
