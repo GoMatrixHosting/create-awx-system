@@ -86,7 +86,7 @@ Next, run the playbook to install the Ansible AWX with the following command:
 `$ ansible-playbook -i ./installer/inventory ./installer/install.yml`
 
 
-3) Post-setup, configures existing AWX system and adds community packages, also configures the AWX systems backup if 'setup-backup' tag is included.
+3) Post-setup, configures existing AWX system and adds community packages if 'configure-awx' tag set, also configures the AWX systems backup if 'setup-backup' and 'enable-backup' tag is included. Note that the backup machine will need SSH access to root.
 
 Install prerequisite packages for ansible on the controller:
 
