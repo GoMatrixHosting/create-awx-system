@@ -78,6 +78,5 @@
     owner: '{{ backup_server_user }}'
     group: '{{ backup_server_user }}'
     state: directory
-    mode: '0755'
     recurse: yes
     
