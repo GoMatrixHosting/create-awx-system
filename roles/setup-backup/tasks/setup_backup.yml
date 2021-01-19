@@ -62,8 +62,8 @@
 
 - name: Save borgmatic config file, template
   template:
-    src: '{{ role_path }}/templates/config.yml.j2'
-    dest: '/root/.config/borgmatic/config.yml'
+    src: '{{ role_path }}/templates/config.yaml.j2'
+    dest: '/root/.config/borgmatic/config.yaml'
 
 - name: Initialise borg repo, perform init
   delegate_to: '{{ backup_server_hostname }}'
