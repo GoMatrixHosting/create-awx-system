@@ -87,17 +87,17 @@ elif event_type == "member-account-updated":
   print("Client email is: " + client_email)
   old_client_email = ""
   # collect old email from /var/lib/awx/projects/clients/member_id/organisation.yml
-  org-file_path = '/var/lib/awx/projects/clients/' + member_id + '/organisation.yml'
-  org-file = open(org-file_path,'r')
-  for line in org-file.readlines():
+  org_file_path = '/var/lib/awx/projects/clients/' + member_id + '/organisation.yml'
+  org_file = open(org_file_path,'r')
+  for line in org_file.readlines():
     if "client_email" in line:
       old_client_email = line.replace('client_email: \"', '')
       old_client_email = old_client_email[:-2]
   print("Previous client email is: " + old_client_email)
-  org-file.close()
-  org-file = open(org-file_path,'r')
-  org-file_contents = org-file.read()
-  org-file.close()
+  org_file.close()
+  org_file = open(org_file_path,'r')
+  org_file_contents = org_file.read()
+  org_file.close()
   awxkit_list_command = "/home/webhook/.local/bin/awx --conf.host https://{{ awx_url }} --conf.username admin --conf.password {{ admin_password }} user list"
   list_process = subprocess.check_output(awxkit_list_command, universal_newlines=True, shell=True)
   final_id = 'none'
@@ -114,20 +114,20 @@ elif event_type == "member-account-updated":
     sys.exit()
   awxkit_username_command = "/home/webhook/.local/bin/awx --conf.host https://{{ awx_url }} --conf.username admin --conf.password {{ admin_password }} user modify " + final_id + " --username " + new_client_email
   username_process = subprocess.check_output(awxkit_username_command, universal_newlines=True, shell=True)
-  print("Old org file contents: \n\n" + org-file_contents)
-  new_org-file_contents = org-file_contents.replace(old_client_email, new_client_email)
-  print("New org file contents: \n\n" + org-file_contents)
-  org-file = open(org-file_path,'w')
-  org-file.write(new_org-file_contents)
-  org-file.close()
-  client-list_path = '/var/lib/awx/projects/clients/client-list'
-  client-list = open(client-list_path,'r')
-  client-list_contents = client-list.read()
-  new_client-list_contents = client-list_contents.replace(old_client_email, new_client_email)
-  client-list.close()
-  client-list = open(client-list_path,'w')
-  client-list.write(new_client-list_contents)
-  client-list.close()
+  print("Old org file contents: \n\n" + org_file_contents)
+  new_org_file_contents = org_file_contents.replace(old_client_email, new_client_email)
+  print("New org file contents: \n\n" + org_file_contents)
+  org_file = open(org_file_path,'w')
+  org_file.write(new_org_file_contents)
+  org_file.close()
+  client_list_path = '/var/lib/awx/projects/clients/client_list'
+  client_list = open(client_list_path,'r')
+  client_list_contents = client_list.read()
+  new_client_list_contents = client_list_contents.replace(old_client_email, new_client_email)
+  client_list.close()
+  client_list = open(client_list_path,'w')
+  client_list.write(new_client_list_contents)
+  client_list.close()
 
 # Notes on direct python method:
   #awx_job_launch_command = ["curl", "-H", "Host: 127.0.0.1:8080", "-H", 'Authorization: Bearer xxOAUTH_TOKENxx', '-H', 'Content-Type: application/json' ]
