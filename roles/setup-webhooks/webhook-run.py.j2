@@ -120,14 +120,14 @@ elif event_type == "member-account-updated":
   org-file = open(org-file_path,'w')
   org-file.write(new_org-file_contents)
   org-file.close()
-  client-file_path = '/var/lib/awx/projects/clients/client-file'
-  client-file = open(client-file_path,'r')
-  client-file_contents = client-file.read()
-  new_client-file_contents = client-file_contents.replace(old_client_email, new_client_email)
-  client-file.close()
-  client-file = open(client-file_path,'w')
-  client-file.write(new_client-file_contents)
-  client-file.close()
+  client-list_path = '/var/lib/awx/projects/clients/client-list'
+  client-list = open(client-list_path,'r')
+  client-list_contents = client-list.read()
+  new_client-list_contents = client-list_contents.replace(old_client_email, new_client_email)
+  client-list.close()
+  client-list = open(client-list_path,'w')
+  client-list.write(new_client-list_contents)
+  client-list.close()
 
 # Notes on direct python method:
   #awx_job_launch_command = ["curl", "-H", "Host: 127.0.0.1:8080", "-H", 'Authorization: Bearer xxOAUTH_TOKENxx', '-H', 'Content-Type: application/json' ]
