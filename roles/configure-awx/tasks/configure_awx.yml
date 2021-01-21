@@ -269,6 +269,28 @@
     tower_username: "admin"
     tower_password: "{{ admin_password }}"
     validate_certs: yes
+    
+- name: Copy extra variables file to AWX host for use in below template task
+  copy:
+    src: "{{ role_path }}/extra-vars/bind-user-account.yml"
+    dest: "/var/tmp/bind-user-account.yml"
+
+- name: Create '00 - Bind User Account' job template
+  tower_job_template:
+    name: "00 - Bind User Account"
+    description: "Binds an enterprise user account to the correct team."
+    job_type: run
+    inventory: "{{ org_name }} Inventory"
+    project: "Ansible Create Subscription Membership"
+    playbook: bind-user-account.yml
+    extra_vars_path: '/var/tmp/bind-user-account.yml'
+    ask_extra_vars: yes
+    state: present
+    verbosity: 1
+    tower_host: "{{ awx_url }}"
+    tower_username: "admin"
+    tower_password: "{{ admin_password }}"
+    validate_certs: yes
 
 - name: Install awx.awx collection in AWX docker
   command: docker exec awx_task /bin/bash -l -c "ansible-galaxy collection install awx.awx"
