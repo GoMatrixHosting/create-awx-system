@@ -20,7 +20,7 @@
 
   - name: Install FreeRADIUS local-OAUTHOracle virtual host file
     copy:
-      path: src: "{{ role_path }}/local-OAUTHOracle"
+      src: "{{ role_path }}/local-OAUTHOracle"
       dest: '/etc/freeradius/3.0/sites-available/'
       owner: freerad
       group: freerad

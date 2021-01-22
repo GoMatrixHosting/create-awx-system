@@ -1,0 +1,12 @@
+[Unit]
+Description=Swatchdog Log Monitoring Daemon
+After=syslog.target network.target auditd.service sshd.service
+
+[Service]
+ExecStart=/usr/bin/swatchdog --config-file=/etc/swatch.conf --tail-file=/var/log/awx_web.log --pid-file=/var/run/swatchdog.pid --daemon
+ExecStop=/usr/bin/kill -s KILL $(cat /var/run/swatchdog.pid)
+Type=forking
+PIDFile=/run/swatchdog.pid
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,98 @@
+
+
+- name: Update repositories and all packages on target machine
+  apt:
+    name: "*"
+    update_cache: yes
+
+- name: Install necessary utils on target machine
+  apt:
+    pkg:
+     - swatch
+
+- name: Ensure group "webhook" exists
+  group:
+    name: webhook
+    state: present
+
+- name: Add the disabled user account 'swatchdog' with a primary group of 'webhook'
+  user:
+    name: swatchdog
+    comment: Swatch user account for login monitoring.
+    password: '!'
+    shell: /bin/bash
+    group: webhook
+    
+- name: Collect the location of the awx_web containers log
+  shell: "/usr/bin/docker inspect --format '{''{.LogPath}''}' awx_web"
+  register: log_location
+
+- name: Create a symbolic link to the awx_web containers log
+  file:
+    src: "{{ log_location.stdout }}"
+    dest: /var/log/awx_web.log
+    owner: swatchdog
+    group: webhook
+    state: link
+
+- name: Install swatchdog.conf
+  copy:
+    src: "{{ role_path }}/swatchdog.conf"
+    dest: /etc/swatchdog.conf
+    owner: root
+    group: root
+    mode: '0644'
+    
+- name: Install bind-user.py
+  copy:
+    src: "{{ role_path }}/bind-user.py"
+    dest: /usr/local/bin/bind-user.py
+    owner: swatchdog
+    group: webhook
+    mode: '0550'
+
+- name: Swatchdog systemd unit
+  copy:
+    src: "{{ role_path }}/swatchdog.service"
+    dest: /etc/systemd/system/swatchdog.service
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Touch the swatchdog PID file
+  file:
+    path: /run/swatchdog.pid
+    state: touch
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Just force systemd to daemon-reload
+  systemd:
+    daemon_reload: yes
+    
+- name: Make sure swatchdog service is started
+  systemd:
+    state: started
+    name: swatchdog
+    
+- name: Make sure swatchdog service is enabled
+  systemd:
+    enabled: yes
+    name: swatchdog
+
+- name: Configure awx-cli host
+  command: |
+    su - swatchdog -c 'awx-cli config host {{ awx_url }}'
+
+- name: Configure awx-cli username
+  command: |
+    su - swatchdog -c 'awx-cli config username admin'
+
+- name: Configure awx-cli password
+  command: |
+    su - swatchdog -c 'awx-cli config password {{ admin_password }}'
+
+
+
+
