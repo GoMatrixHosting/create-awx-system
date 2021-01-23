@@ -27,7 +27,7 @@ for entry in split_input:
   if "@" in entry:
     client_email = entry
 
-print("client_email is:" + client_email)
+print("client_email is: " + client_email)
 
 if len(client_email) == 0:
   print("Client email not found! Exiting...")
@@ -45,6 +45,7 @@ client_file.close()
 client_file_contents_lines = client_file_contents.split("\n")
 for line in client_file_contents_lines:
   if (client_email in line) and (",bound" in line):
+    print("This user account is already bound. Exiting...")
     sys.exit()
   elif (client_email in line) and (",bound" not in line):
     member_id = line.split(',')[0]
@@ -54,10 +55,11 @@ print("Member_id is: " + member_id)
 extra_vars = {}
 extra_vars['member_id']=member_id
 extra_vars['client_email']=client_email
-awx_job_launch_command = ["awx-cli", "job", "launch", "-J", "00 - Bind User Account"]
+awx_job_launch_command = ["runuser", "-u", "swatchdog", "--", "awx-cli", "job", "launch", "-J", "00 - Bind User Account"]
 # passing extra_vars requires AWX's "PROMPT ON LAUNCH" to be enabled
 extravars = '--extra-vars=' + json.JSONEncoder().encode(extra_vars)
 awx_job_launch_command = awx_job_launch_command + [ extravars ]
+print(awx_job_launch_command)
 shellcmd(awx_job_launch_command)
 
 # if it does not, bind that user to the team, then add ',binded' to the end of that line
