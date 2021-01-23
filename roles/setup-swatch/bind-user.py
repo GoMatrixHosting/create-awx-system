@@ -21,8 +21,6 @@ client_email = ""
 
 split_input = input.split()
 
-print(split_input)
-
 for entry in split_input:
   if "@" in entry:
     client_email = entry
@@ -59,7 +57,6 @@ awx_job_launch_command = ["runuser", "-u", "swatchdog", "--", "awx-cli", "job", 
 # passing extra_vars requires AWX's "PROMPT ON LAUNCH" to be enabled
 extravars = '--extra-vars=' + json.JSONEncoder().encode(extra_vars)
 awx_job_launch_command = awx_job_launch_command + [ extravars ]
-print(awx_job_launch_command)
 shellcmd(awx_job_launch_command)
 
 # if it does not, bind that user to the team, then add ',binded' to the end of that line
