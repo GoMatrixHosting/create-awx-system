@@ -109,13 +109,13 @@
     tower_password: "{{ admin_password }}"
     validate_certs: yes
 
-- name: Add 'Ansible Create Subscription Membership' project to users organisation
+- name: Add 'Ansible Create Delete Subscription Membership' project to users organisation
   tower_project:
-    name: "Ansible Create Subscription Membership"
-    description: "Has 2 modes, where either the script is run after a memberpress subscription is created, a 'plan_title' is specified, this causes a digitalocean droplet and space to be created. Or a 'byo account' is created and the user connects their own server at provision stage."
+    name: "Ansible Create Delete Subscription Membership"
+    description: "The script is run after a memberpress subscription is created, a 'plan_title' is specified, this causes a digitalocean or on-premises provision stage to be setup. Or it deletes a single subscription, and/or an entire membership/organisation from the AWX setup."
     organization: "{{ org_name }}"
     scm_type: git
-    scm_url: "https://gitlab.com/GoMatrixHosting/ansible-create-subscription-membership.git"
+    scm_url: "https://gitlab.com/GoMatrixHosting/ansible-create-delete-subscription-membership.git"
     scm_delete_on_update: yes
     scm_update_on_launch: yes
     state: present
@@ -124,27 +124,7 @@
     tower_password: "{{ admin_password }}"
     validate_certs: yes
 
-- name: Add 'Ansible Delete Subscription Membership' project to users organisation
-  tower_project:
-    name: "Ansible Delete Subscription Membership"
-    description: "Deletes a single subscription, and/or an entire membership/organisation from the AWX setup."
-    organization: "{{ org_name }}"
-    scm_type: git
-    scm_url: "https://gitlab.com/GoMatrixHosting/ansible-delete-subscription-membership.git"
-    scm_delete_on_update: yes
-    scm_update_on_launch: yes
-    state: present
-    tower_host: "{{ awx_url }}"
-    tower_username: "admin"
-    tower_password: "{{ admin_password }}"
-    validate_certs: yes
-
-- name: Copy extra variables file to AWX host for use in below template task
-  copy:
-    src: "{{ role_path }}/extra-vars/create-manual.yml"
-    dest: "/var/tmp/create-manual.yml"
-
-- name: Update 'Ansible Create Subscription Membership' project
+- name: Update 'Ansible Create Delete Subscription Membership' project
   awx.awx.tower_project_update:
     project: "Ansible Create Subscription Membership"
     timeout: 300
@@ -152,15 +132,11 @@
     tower_username: "admin"
     tower_password: "{{ admin_password }}"
     validate_certs: yes
-
-- name: Update 'Ansible Delete Subscription Membership' project
-  awx.awx.tower_project_update:
-    project: "Ansible Delete Subscription Membership"
-    timeout: 300
-    tower_host: "{{ awx_url }}"
-    tower_username: "admin"
-    tower_password: "{{ admin_password }}"
-    validate_certs: yes
+    
+- name: Copy extra variables file to AWX host for use in below template task
+  copy:
+    src: "{{ role_path }}/extra-vars/create-manual.yml"
+    dest: "/var/tmp/create-manual.yml"
 
 - name: Create '00 - Ansible Create Manual Subscription' job template
   tower_job_template:
@@ -168,8 +144,8 @@
     description: "Creates AWX Account for user, append random string to 'byo', creates initial organisation.yml and server_vars.yml file. Also creates a '[subscription_id] Provision Server' playbook in users account, where they will instead be prompted to connect their own server."
     job_type: run
     inventory: "{{ org_name }} Inventory"
-    project: "Ansible Create Subscription Membership"
-    playbook: setup.yml
+    project: "Ansible Create Delete Subscription Membership"
+    playbook: create.yml
     extra_vars_path: '/var/tmp/create-manual.yml'
     ask_extra_vars: yes
     state: present
@@ -190,8 +166,8 @@
     description: "Creates AWX Account for user, creates initial organisation.yml and server_vars.yml file. Creates a DigitalOcean droplet and space. Also creates initial '[subscription_id] Provision Server' playbook in users account."
     job_type: run
     inventory: "{{ org_name }} Inventory"
-    project: "Ansible Create Subscription Membership"
-    playbook: setup.yml
+    project: "Ansible Create Delete Subscription Membership"
+    playbook: create.yml
     extra_vars_path: '/var/tmp/create-mp.yml'
     ask_extra_vars: yes
     state: present
@@ -212,8 +188,8 @@
     description: "Playbook to remove clients AWX Organisation and local files on the AWX server."
     job_type: run
     inventory: "{{ org_name }} Inventory"
-    project: "Ansible Delete Subscription Membership"
-    playbook: setup.yml
+    project: "Ansible Create Delete Subscription Membership"
+    playbook: delete.yml
     extra_vars_path: '/var/tmp/delete-member.yml'
     ask_extra_vars: yes
     state: present
@@ -235,8 +211,8 @@
     description: "Removes job templates, digitalocean resources, and files/folders associated with a subscription."
     job_type: run
     inventory: "{{ org_name }} Inventory"
-    project: "Ansible Delete Subscription Membership"
-    playbook: setup.yml
+    project: "Ansible Create Delete Subscription Membership"
+    playbook: delete.yml
     extra_vars_path: '/var/tmp/delete-subscription.yml'
     ask_extra_vars: yes
     state: present
@@ -258,8 +234,8 @@
     description: "Restores a servers configs, media repo and postgresql database from /chroot/backup/."
     job_type: run
     inventory: "{{ org_name }} Inventory"
-    project: "Ansible Delete Subscription Membership"
-    playbook: setup.yml
+    project: "Ansible Create Delete Subscription Membership"
+    playbook: create.yml
     extra_vars_path: '/var/tmp/restore-and-import-postgresql-dump.yml'
     ask_extra_vars: yes
     state: present
@@ -281,7 +257,7 @@
     description: "Binds an enterprise user account to the correct team."
     job_type: run
     inventory: "{{ org_name }} Inventory"
-    project: "Ansible Create Subscription Membership"
+    project: "Ansible Create Delete Subscription Membership"
     playbook: bind-user-account.yml
     extra_vars_path: '/var/tmp/bind-user-account.yml'
     ask_extra_vars: yes
