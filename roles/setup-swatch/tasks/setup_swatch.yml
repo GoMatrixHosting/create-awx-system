@@ -13,6 +13,7 @@
 - name: Ensure group "webhook" exists
   group:
     name: webhook
+    gid: 1000
     state: present
 
 - name: Add the disabled user account 'swatchdog' with a primary group of 'webhook'
@@ -21,6 +22,7 @@
     comment: Swatch user account for login monitoring.
     password: '!'
     shell: /bin/bash
+    uid: 1001
     group: webhook
     
 - name: Collect the location of the awx_web containers log

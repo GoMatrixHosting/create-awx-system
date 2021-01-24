@@ -15,6 +15,7 @@
 - name: Ensure group "webhook" exists
   group:
     name: webhook
+    gid: 1000
     state: present
 
 - name: Add the disabled user account 'webhook' with a specific uid and a primary group of 'webhook'
@@ -23,6 +24,7 @@
     comment: Webhook user account for webhooks service.
     password: '!'
     shell: /bin/bash
+    uid: 1000
     group: webhook
 
 - name: webhook systemd unit

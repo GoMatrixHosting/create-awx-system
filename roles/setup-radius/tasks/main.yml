@@ -13,7 +13,7 @@
        - python3-requests-oauthlib
       default_release: buster-backports
 
-  - name: Enable FreeRADIUS Auth-Type OAUTHOracle
+  - name: Force FreeRADIUS auth-type PAP
     lineinfile:
       path: '/etc/freeradius/3.0/users'
       line: "DEFAULT\t\tAuth-Type = pap"
