@@ -93,7 +93,7 @@ Next, run the playbook to install the Ansible AWX with the following command:
 Install prerequisite packages for ansible on the controller:
 
 `$ ansible-galaxy collection install community.crypto`
-`$ ansible-galaxy collection install awx.awx`
+`$ ansible-galaxy collection install awx.awx:15.0.1`
 
 Run the script:
 

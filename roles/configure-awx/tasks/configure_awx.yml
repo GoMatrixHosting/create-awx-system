@@ -269,7 +269,7 @@
     validate_certs: yes
 
 - name: Install awx.awx collection in AWX docker
-  command: docker exec awx_task /bin/bash -l -c "ansible-galaxy collection install awx.awx"
+  command: docker exec awx_task /bin/bash -l -c "ansible-galaxy collection install awx.awx:15.0.1"
 
 - name: Install community.digitalocean collection in AWX docker
   command: docker exec awx_task /bin/bash -l -c "ansible-galaxy collection install community.digitalocean"
