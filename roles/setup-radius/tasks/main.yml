@@ -1,5 +1,10 @@
 
 - block:
+  - name: Add buster-backports repository into sources list
+    apt_repository:
+      repo: deb http://deb.debian.org/debian buster-backports main
+      state: present
+
   - name: Install FreeRADIUS packages
     apt:
       pkg:

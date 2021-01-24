@@ -83,6 +83,23 @@ Next comment out the first line and edit the awx_url into ./installer/inventory
 panel.example.org
 ```
 
+Next, comment out the following line to allow a local build:
+```
+#dockerhub_base=ansible
+```
+
+Copy in custom media logos:
+```
+$ cp ../create-awx-system/media/favicon.ico ./awx/ui/client/assets/favicon.ico
+$ cp ../create-awx-system/media/logo-header.svg ./awx/ui/client/assets/logo-header.svg
+$ cp ../create-awx-system/media/logo-login.svg ./awx/ui/client/assets/logo-login.svg
+```
+
+Edit the capital letters in 'PowerTools' out of the Dockerfile.j2:
+```
+$ sed -i 's/PowerTools/powertools/g' ./installer/roles/image_build/templates/Dockerfile.j2
+```
+
 Next, run the playbook to install the Ansible AWX with the following command:
 
 `$ ansible-playbook -i ./installer/inventory ./installer/install.yml`
@@ -93,7 +110,7 @@ Next, run the playbook to install the Ansible AWX with the following command:
 Install prerequisite packages for ansible on the controller:
 
 `$ ansible-galaxy collection install community.crypto`
-`$ ansible-galaxy collection install awx.awx`
+`$ ansible-galaxy collection install awx.awx,v15.0.1`
 
 Run the script:
 
