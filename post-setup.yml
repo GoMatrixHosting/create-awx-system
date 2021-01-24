@@ -5,6 +5,6 @@
 
   roles:
     - configure-awx
-    - configure-radius
+    - setup-radius
     - setup-swatch
     - setup-backup

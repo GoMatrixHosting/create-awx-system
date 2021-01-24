@@ -24,6 +24,7 @@ public_ssh_key: /key/location/id_ed25519.pub
 radius_secret: << strong-password >>
 oauth_client_id: << from wp-oath-provider >>
 oauth_client_secret: << from wp-oath-provider >>
+wp_url: example.org
 
 # Backup server settings
 backup_server_ip: 255.255.255.255
