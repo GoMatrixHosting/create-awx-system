@@ -126,7 +126,7 @@
 
 - name: Update 'Ansible Create Delete Subscription Membership' project
   awx.awx.tower_project_update:
-    project: "Ansible Create Subscription Membership"
+    project: "Ansible Create Delete Subscription Membership"
     timeout: 300
     tower_host: "{{ awx_url }}"
     tower_username: "admin"
