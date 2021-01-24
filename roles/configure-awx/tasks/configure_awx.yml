@@ -270,7 +270,16 @@
    
 - name: Install ansible-tower-cli pip package in AWX docker
   command: docker exec awx_task /bin/bash -l -c "pip3 install ansible-tower-cli"   
-   
+
+- name: Configure tower-cli in AWX docker 1
+  command: docker exec awx_task /bin/bash -l -c "tower-cli config host https://{{ awx_url }}"
+
+- name: Configure tower-cli in AWX docker 2
+  command: docker exec awx_task /bin/bash -l -c "tower-cli config username admin"
+
+- name: Configure tower-cli in AWX docker 3
+  command: docker exec awx_task /bin/bash -l -c "tower-cli config password {{ admin_password }}"
+
 - name: Install awx.awx collection in AWX docker
   command: docker exec awx_task /bin/bash -l -c "ansible-galaxy collection install awx.awx:15.0.1"
 
