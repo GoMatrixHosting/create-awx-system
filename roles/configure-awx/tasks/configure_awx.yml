@@ -267,7 +267,10 @@
     tower_username: "admin"
     tower_password: "{{ admin_password }}"
     validate_certs: yes
-
+   
+- name: Install ansible-tower-cli pip package in AWX docker
+  command: docker exec awx_task /bin/bash -l -c "pip3 install ansible-tower-cli"   
+   
 - name: Install awx.awx collection in AWX docker
   command: docker exec awx_task /bin/bash -l -c "ansible-galaxy collection install awx.awx:15.0.1"
 
