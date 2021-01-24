@@ -11,7 +11,7 @@
   - name: Enable FreeRADIUS Auth-Type OAUTHOracle
     lineinfile:
       path: '/etc/freeradius/3.0/users'
-      line: 'DEFAULT         Auth-Type = pap'
+      line: "DEFAULT\t\tAuth-Type = pap"
 
   - name: Install custom exec module
     copy:
@@ -61,7 +61,7 @@
     register: awx_web_ip
 
   - debug:
-    msg: "{{ awx_web_ip.stdout }}"
+      msg: "{{ awx_web_ip.stdout }}"
     
   - name: Insert custom listener config into clients.conf
     blockinfile:
