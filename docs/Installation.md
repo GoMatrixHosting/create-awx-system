@@ -95,7 +95,7 @@ Install prerequisite packages for ansible on the controller:
 
 Run the script:
 
-`$ ansible-playbook -v -i ./inventory/hosts -t "configure-awx,setup-swatchdog,setup-backup,enable-backup" post-setup.yml`
+`$ ansible-playbook -v -i ./inventory/hosts -t "configure-awx,setup-radius,setup-swatchdog,setup-backup,enable-backup" post-setup.yml`
 
 
 4) Perform initial SSH handshake from AWX to backup server.
@@ -106,7 +106,16 @@ Manually SSH into the AWX tower, then manually SSH into the backup server:
 Note the command-line here is restricted, so you won't be able to do anything besides connnect.
 
 
-5) Setup grafana.
+5) Connect FreeRADIUS server to AWX
+
+In the 'Authentication' > 'Radius' page:
+
+RADIUS SERVER:	172.17.0.1
+RADIUS PORT:	1812
+RADIUS SECRET:	"{{ radius_secret }}"
+
+
+6) Setup grafana.
 
 The Grafana needs extra configuration to work, follow the [Grafana.md in the docs/ directory](docs/Grafana.md).
 
