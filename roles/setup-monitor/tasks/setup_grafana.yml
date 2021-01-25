@@ -48,7 +48,7 @@
 
 # handle secure data - workflow example
 # this will create/update the datasource but dont update the secure data on updates
-# so you can assert if all tasks are changed=False
+# so you can assert if all tasks are changed
 - name: create prometheus datasource
   community.grafana.grafana_datasource:
     name: local_prometheus

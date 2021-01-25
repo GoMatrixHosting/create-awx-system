@@ -16,7 +16,7 @@ Map 2 A records for panel.example.org and monitor.example.org to the servers IP.
 
 # Installation
 
-Installation is broken up into 4 stages:
+Installation is broken up into 6 stages:
 
 1) Pre-setup, setup before the awx playbook is run, installs Docker and sets up TLS proxy for AWX, optionally website hooks and grafana are also setup.
 
@@ -58,6 +58,7 @@ Run the script:
 
 2) Run the AWX deployment script.
 ```
+$ cd ..
 $ wget https://github.com/ansible/awx/archive/15.0.1.tar.gz
 $ tar -xf 15.0.1.tar.gz
 $ cd ./awx-15.0.1/
@@ -70,9 +71,10 @@ Generate and record 3 strong passwords for the:
 
 ^ Edit these into ./installer/inventory, also add project_data_dir line and change host_port:
 ```
-project_data_dir=/var/lib/awx/projects
 host_port=8080
 #host_port_ssl=443
+...
+project_data_dir=/var/lib/awx/projects
 ```
 
 Next comment out the first line and edit the awx_url into ./installer/inventory
@@ -86,27 +88,36 @@ Next, run the playbook to install the Ansible AWX with the following command:
 `$ ansible-playbook -i ./installer/inventory ./installer/install.yml`
 
 
-3) Post-setup, configures existing AWX system and adds community packages, also configures the AWX systems backup if 'setup-backup' tag is included.
+3) Post-setup, configures existing AWX system and adds community packages if 'configure-awx' tag set, also configures the AWX systems backup if 'setup-backup' and 'enable-backup' tag is included. Note that the backup machine will need SSH access to root.
 
 Install prerequisite packages for ansible on the controller:
 
 `$ ansible-galaxy collection install community.crypto`
-`$ ansible-galaxy collection install awx.awx`
+`$ ansible-galaxy collection install awx.awx:15.0.1`
 
 Run the script:
 
-`$ ansible-playbook -v -i ./inventory/hosts -t "enable-backup" post-setup.yml`
+`$ ansible-playbook -v -i ./inventory/hosts -t "configure-awx,setup-radius,setup-swatchdog,setup-backup,enable-backup" post-setup.yml`
 
 
 4) Perform initial SSH handshake from AWX to backup server.
 
 Manually SSH into the AWX tower, then manually SSH into the backup server:
-`$ ssh {{ backup_server_user }}@{{ backup_server_hostname }}`
+`$ ssh {{ backup_server_hostname }}`
 
 Note the command-line here is restricted, so you won't be able to do anything besides connnect.
 
 
-5) Setup grafana.
+5) Connect FreeRADIUS server to AWX
+
+In the 'Authentication' > 'Radius' page:
+
+RADIUS SERVER:	172.17.0.1
+RADIUS PORT:	1812
+RADIUS SECRET:	"{{ radius_secret }}"
+
+
+6) Setup grafana.
 
 The Grafana needs extra configuration to work, follow the [Grafana.md in the docs/ directory](docs/Grafana.md).
 

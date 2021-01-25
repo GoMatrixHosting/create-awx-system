@@ -62,8 +62,8 @@
 
 - name: Save borgmatic config file, template
   template:
-    src: '{{ role_path }}/templates/config.yml.j2'
-    dest: '/root/.config/borgmatic/config.yml'
+    src: '{{ role_path }}/templates/config.yaml.j2'
+    dest: '/root/.config/borgmatic/config.yaml'
 
 - name: Initialise borg repo, perform init
   delegate_to: '{{ backup_server_hostname }}'
@@ -71,4 +71,12 @@
   args:
     creates: '{{ backup_server_directory }}/AWX/{{ awx_url }}/nonce'
 
-
+- name: Recursively change ownership of files in backup location
+  delegate_to: '{{ backup_server_hostname }}'
+  file:
+    path: '{{ backup_server_directory }}/AWX/{{ awx_url }}'
+    owner: '{{ backup_server_user }}'
+    group: '{{ backup_server_user }}'
+    state: directory
+    recurse: yes
+    

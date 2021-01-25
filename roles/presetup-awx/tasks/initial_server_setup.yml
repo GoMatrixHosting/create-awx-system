@@ -20,15 +20,21 @@
     - python-pip
 
 - name: Create swapfile with the right permissions
-  command: 'fallocate -l 4G /swapfile && chmod 600 /swapfile'
+  command: 'fallocate -l 4G /swapfile'
   register: swapfile_new
-  with_first_found:
-    - files:
-        - /swapfile
-      skip: true
+  args:
+    creates: /swapfile
+    
+- name: Set correct permissions on swapfile
+  command: 'chmod 600 /swapfile'
+  when: swapfile_new.delta is defined
 
-- name: Enable swapfile
-  command: mkswap /swapfile && swapon /swapfile
+- name: Make swapfile
+  command: 'mkswap /swapfile'
+  when: swapfile_new.delta is defined
+  
+- name: Make swapfile
+  command: 'swapon /swapfile'
   when: swapfile_new.delta is defined
 
 - name: Make swapfile permanent in /etc/fstab

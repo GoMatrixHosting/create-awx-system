@@ -44,7 +44,7 @@
 #
 ######################################################################
 
-server local-OAUTHOracle {
+server default {
 #
 #  If you want the server to listen on additional addresses, or on
 #  additional ports, you can use multiple "listen" sections.
@@ -133,7 +133,7 @@ listen {
 	#  If your system does not support this feature, you will
 	#  get an error if you try to use it.
 	#
-	interface = docker0
+#	interface = eth0
 
 	#  Per-socket lists of clients.  This is a very useful feature.
 	#
@@ -481,7 +481,78 @@ authorize {
 #  the post-auth section is for.
 #
 authenticate {
-	Auth-Type PHP { OAUTHOracle }
+	#
+	#  PAP authentication, when a back-end database listed
+	#  in the 'authorize' section supplies a password.  The
+	#  password can be clear-text, or encrypted.
+	Auth-Type PAP {
+		exec
+	}
+
+	#
+	#  Most people want CHAP authentication
+	#  A back-end database listed in the 'authorize' section
+	#  MUST supply a CLEAR TEXT password.  Encrypted passwords
+	#  won't work.
+	Auth-Type CHAP {
+		chap
+	}
+
+	#
+	#  MSCHAP authentication.
+	Auth-Type MS-CHAP {
+		mschap
+	}
+
+	#
+	#  For old names, too.
+	#
+	mschap
+
+	#
+	#  If you have a Cisco SIP server authenticating against
+	#  FreeRADIUS, uncomment the following line, and the 'digest'
+	#  line in the 'authorize' section.
+	digest
+
+	#
+	#  Pluggable Authentication Modules.
+#	pam
+
+	#  Uncomment it if you want to use ldap for authentication
+	#
+	#  Note that this means "check plain-text password against
+	#  the ldap database", which means that EAP won't work,
+	#  as it does not supply a plain-text password.
+	#
+	#  We do NOT recommend using this.  LDAP servers are databases.
+	#  They are NOT authentication servers.  FreeRADIUS is an
+	#  authentication server, and knows what to do with authentication.
+	#  LDAP servers do not.
+	#
+#	Auth-Type LDAP {
+#		ldap
+#	}
+
+	#
+	#  Allow EAP authentication.
+	eap
+
+	#
+	#  The older configurations sent a number of attributes in
+	#  Access-Challenge packets, which wasn't strictly correct.
+	#  If you want to filter out these attributes, uncomment
+	#  the following lines.
+	#
+#	Auth-Type eap {
+#		eap {
+#			handled = 1
+#		}
+#		if (handled && (Response-Packet-Type == Access-Challenge)) {
+#			attr_filter.access_challenge.post-auth
+#			handled  # override the "updated" code from attr_filter
+#		}
+#	}
 }
 
 
@@ -897,3 +968,4 @@ post-proxy {
 #	}
 }
 }
+

@@ -15,6 +15,7 @@
 - name: Ensure group "webhook" exists
   group:
     name: webhook
+    gid: 1000
     state: present
 
 - name: Add the disabled user account 'webhook' with a specific uid and a primary group of 'webhook'
@@ -22,6 +23,8 @@
     name: webhook
     comment: Webhook user account for webhooks service.
     password: '!'
+    shell: /bin/bash
+    uid: 1000
     group: webhook
 
 - name: webhook systemd unit
@@ -40,10 +43,10 @@
     group: root
     mode: '0644'
 
-- name: Install webhook-run.py executable
-  copy:
-    src: "{{ role_path }}/webhook-run.py"
-    dest: "/usr/local/bin/webhook-run.py"
+- name: Save borgmatic config file, template
+  template:
+    src: '{{ role_path }}/webhook-run.py.j2'
+    dest: '/usr/local/bin/webhook-run.py'
     owner: root
     group: root
     mode: '0755'
@@ -52,6 +55,10 @@
   service:
     name: webhook
     state: restarted
+    
+- name: Install awxkit for webhook user
+  command: |
+    sudo -H -u webhook bash -c 'pip3 install awxkit==15.0.1'
 
 - name: Configure awx-cli host
   command: |
@@ -61,7 +68,7 @@
   command: |
     sudo -H -u webhook bash -c 'awx-cli config username admin'
 
-- name: Configure awx-cli host
+- name: Configure awx-cli password
   command: |
     sudo -H -u webhook bash -c 'awx-cli config password {{ admin_password }}'
 
