@@ -81,9 +81,9 @@ elif event_type == "subscription-expired":
 # ~/.local/bin/awx --conf.host https://panel.example.org --conf.username admin --conf.password xxxxxxxxxxxxxxx user modify 3 --username billy.bob2
 
 elif event_type == "member-account-updated":
-  member_id = str(data['data']['member']['id'])
+  member_id = str(data['data']['id'])
   print("Member ID: " + member_id)
-  client_email = str(data['data']['member']['email'])
+  client_email = str(data['data']['email'])
   print("Client email is: " + client_email)
   old_client_email = ""
   # collect old email from /var/lib/awx/projects/clients/member_id/organisation.yml
@@ -112,18 +112,18 @@ elif event_type == "member-account-updated":
   if final_id == 'none':
     print('Email not found, exiting now..')
     sys.exit()
-  awxkit_username_command = "/home/webhook/.local/bin/awx --conf.host https://{{ awx_url }} --conf.username admin --conf.password {{ admin_password }} user modify " + final_id + " --username " + new_client_email
+  awxkit_username_command = "/home/webhook/.local/bin/awx --conf.host https://{{ awx_url }} --conf.username admin --conf.password {{ admin_password }} user modify " + final_id + " --username " + client_email
   username_process = subprocess.check_output(awxkit_username_command, universal_newlines=True, shell=True)
   print("Old org file contents: \n\n" + org_file_contents)
-  new_org_file_contents = org_file_contents.replace(old_client_email, new_client_email)
-  print("New org file contents: \n\n" + org_file_contents)
+  new_org_file_contents = org_file_contents.replace(old_client_email, client_email)
+  print("New org file contents: \n\n" + new_org_file_contents)
   org_file = open(org_file_path,'w')
   org_file.write(new_org_file_contents)
   org_file.close()
-  client_list_path = '/var/lib/awx/projects/clients/client_list'
+  client_list_path = '/var/lib/awx/projects/clients/client-list'
   client_list = open(client_list_path,'r')
   client_list_contents = client_list.read()
-  new_client_list_contents = client_list_contents.replace(old_client_email, new_client_email)
+  new_client_list_contents = client_list_contents.replace(old_client_email, client_email)
   client_list.close()
   client_list = open(client_list_path,'w')
   client_list.write(new_client_list_contents)
