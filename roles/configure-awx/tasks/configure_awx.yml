@@ -132,7 +132,29 @@
     tower_username: "admin"
     tower_password: "{{ admin_password }}"
     validate_certs: yes
-    
+
+- name: Copy extra variables file to AWX host for use in below template task
+  copy:
+    src: "{{ role_path }}/extra-vars/create-account.yml"
+    dest: "/var/tmp/create-account.yml"
+
+- name: Create '00 - Ansible Create Account' job template
+  tower_job_template:
+    name: "00 - Ansible Create Account"
+    description: "Performs initial organisation/team creation before subscription is confirmed."
+    job_type: run
+    inventory: "{{ org_name }} Inventory"
+    project: "Ansible Create Delete Subscription Membership"
+    playbook: pre-create.yml
+    extra_vars_path: '/var/tmp/create-account.yml'
+    ask_extra_vars: yes
+    state: present
+    verbosity: 1
+    tower_host: "{{ awx_url }}"
+    tower_username: "admin"
+    tower_password: "{{ admin_password }}"
+    validate_certs: yes
+
 - name: Copy extra variables file to AWX host for use in below template task
   copy:
     src: "{{ role_path }}/extra-vars/create-manual.yml"
