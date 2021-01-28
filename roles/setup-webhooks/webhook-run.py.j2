@@ -46,9 +46,18 @@ if event_type == "member-added":
   extravars = '--extra-vars=' + json.JSONEncoder().encode(extra_vars)
   awx_job_launch_command = awx_job_launch_command + [ extravars ]
   shellcmd(awx_job_launch_command)
+  # Add client entry to client-list file
   client_file_path = "/var/lib/awx/projects/clients/client-list"
   client_file = open(client_file_path,'a')
   client_file.write(member_id + "," + client_email)
+  client_file.close()
+  # Remove empty lines from file
+  client_file = open(client_file_path,'r')
+  client_file_contents = client_file.read()
+  client_file.close()
+  new_client_file_contents = client_file_contents.replace("\n\n","\n")
+  client_file = open(client_file_path,'w')
+  client_file.write(new_client_file_contents)
   client_file.close()
 
 elif event_type == "recurring-transaction-completed":
