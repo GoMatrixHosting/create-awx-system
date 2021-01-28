@@ -38,7 +38,6 @@ if event_type == "member-added":
   print("Client Email: " + client_email)
   member_id = str(data['data']['id'])
   print("Member ID: " + member_id)
-
   extra_vars = {}
   extra_vars['client_email']=client_email
   extra_vars['member_id']=member_id
@@ -47,6 +46,11 @@ if event_type == "member-added":
   extravars = '--extra-vars=' + json.JSONEncoder().encode(extra_vars)
   awx_job_launch_command = awx_job_launch_command + [ extravars ]
   shellcmd(awx_job_launch_command)
+  client_file_path = "/var/lib/awx/projects/clients/client-list"
+  client_file = open(client_file_path,'a')
+  client_file.write("\n")
+  client_file.write(member_id + "," + client_email)
+  client_file.close()
 
 elif event_type == "recurring-transaction-completed":
   plan_title = str(data['data']['membership']['title'])
