@@ -48,7 +48,6 @@ if event_type == "member-added":
   shellcmd(awx_job_launch_command)
   client_file_path = "/var/lib/awx/projects/clients/client-list"
   client_file = open(client_file_path,'a')
-  client_file.write("\n")
   client_file.write(member_id + "," + client_email)
   client_file.close()
 
