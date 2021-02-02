@@ -49,7 +49,7 @@ if event_type == "member-added":
   # Add client entry to client-list file
   client_file_path = "/var/lib/awx/projects/clients/client-list"
   client_file = open(client_file_path,'a')
-  client_file.write(member_id + "," + client_email)
+  client_file.write(member_id + "," + client_email + "\n")
   client_file.close()
   # Remove empty lines from file
   client_file = open(client_file_path,'r')
