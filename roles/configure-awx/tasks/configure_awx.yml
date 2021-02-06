@@ -1,116 +1,133 @@
 
+- name: Collect AWX admin token the hard way!
+  delegate_to: 127.0.0.1
+  shell: |
+      curl -sku admin:{{ admin_password }} -H "Content-Type: application/json" -X POST -d '{"description":"Tower CLI", "application":null, "scope":"write"}' https://{{ awx_url }}/api/v2/users/1/personal_tokens/ | jq '.token' | sed -r 's/\"//g'
+  register: tower_token
+  no_log: True
+
 - name: Remove 'Demo Job Template' job template
-  tower_job_template:
+  awx.awx.tower_job_template:
     name: "Demo Job Template"
     job_type: run
     project: "Demo Project"
     playbook: hello_world.yml
     state: absent
-    tower_host: "{{ awx_url }}"
-    tower_username: "admin"
-    tower_password: "{{ admin_password }}"
+    tower_host: "https://{{ awx_url }}"
+    tower_oauthtoken: "{{ tower_token.stdout }}"
+    #tower_username: "{{ tower_username }}"
+    #tower_password: "{{ tower_password }}"
     validate_certs: yes
   ignore_errors: yes
 
 - name: Remove 'Demo Project' project from 'Default' organisation
-  tower_project:
+  awx.awx.tower_project:
     name: "Demo Project"
     organization: "Default"
     state: absent
-    tower_host: "{{ awx_url }}"
-    tower_username: "admin"
-    tower_password: "{{ admin_password }}"
+    tower_host: "https://{{ awx_url }}"
+    tower_oauthtoken: "{{ tower_token.stdout }}"
+    #tower_username: "{{ tower_username }}"
+    #tower_password: "{{ tower_password }}"
     validate_certs: yes
   ignore_errors: yes
 
 - name: Remove 'Demo Inventory'
-  tower_inventory:
+  awx.awx.tower_inventory:
     name: "Demo Inventory"
     organization: "Default"
     state: absent
-    tower_host: "{{ awx_url }}"
-    tower_username: "admin"
-    tower_password: "{{ admin_password }}"
+    tower_host: "https://{{ awx_url }}"
+    tower_oauthtoken: "{{ tower_token.stdout }}"
+    #tower_username: "{{ tower_username }}"
+    #tower_password: "{{ tower_password }}"
     validate_certs: yes
   ignore_errors: yes
 
 - name: Remove 'Demo Credential' credential
-  tower_credential:
+  awx.awx.tower_credential:
     name: "Demo Credential"
     organization: "Default"
     kind: ssh
     state: absent
-    tower_host: "{{ awx_url }}"
-    tower_username: "admin"
-    tower_password: "{{ admin_password }}"
+    tower_host: "https://{{ awx_url }}"
+    tower_oauthtoken: "{{ tower_token.stdout }}"
+    #tower_username: "{{ tower_username }}"
+    #tower_password: "{{ tower_password }}"
     validate_certs: yes
   ignore_errors: yes
 
 - name: Remove 'Default' organisation
-  tower_organization:
+  awx.awx.tower_organization:
     name: "Default"
     state: absent
-    tower_host: "{{ awx_url }}"
-    tower_username: "admin"
-    tower_password: "{{ admin_password }}"
+    tower_host: "https://{{ awx_url }}"
+    tower_oauthtoken: "{{ tower_token.stdout }}"
+    #tower_username: "{{ tower_username }}"
+    #tower_password: "{{ tower_password }}"
     validate_certs: yes
   ignore_errors: yes
 
 - name: Create main organisation
-  tower_organization:
+  awx.awx.tower_organization:
     name: "{{ org_name }}"
     description: "The main organisation that is used to manage other organisations."
     state: present
-    tower_host: "{{ awx_url }}"
-    tower_username: "admin"
-    tower_password: "{{ admin_password }}"
+    tower_host: "https://{{ awx_url }}"
+    tower_oauthtoken: "{{ tower_token.stdout }}"
+    #tower_username: "{{ tower_username }}"
+    #tower_password: "{{ tower_password }}"
     validate_certs: yes
 
 - name: Add admin to main organisation
-  tower_role:
+  awx.awx.tower_role:
     user: "admin"
     organization: "{{ org_name }}"
     role: member
-    tower_host: "{{ awx_url }}"
-    tower_username: "admin"
-    tower_password: "{{ admin_password }}"
+    tower_host: "https://{{ awx_url }}"
+    tower_oauthtoken: "{{ tower_token.stdout }}"
+    #tower_username: "{{ tower_username }}"
+    #tower_password: "{{ tower_password }}"
     validate_certs: yes
 
 - name: Add tower inventory
-  tower_inventory:
+  awx.awx.tower_inventory:
     name: "{{ org_name }} Inventory"
     description: "{{ org_name }} inventory"
     organization: "{{ org_name }}"
     state: present
-    tower_host: "{{ awx_url }}"
-    tower_username: "admin"
-    tower_password: "{{ admin_password }}"
+    tower_host: "https://{{ awx_url }}"
+    tower_oauthtoken: "{{ tower_token.stdout }}"
+    #tower_username: "{{ tower_username }}"
+    #tower_password: "{{ tower_password }}"
     validate_certs: yes
 
 - name: Allow user account to administrate/use this inventory
-  tower_role:
+  awx.awx.tower_role:
     user: "admin"
     inventory: "{{ org_name }} Inventory"
     role: use
     state: present
-    tower_host: "{{ awx_url }}"
-    tower_username: "admin"
-    tower_password: "{{ admin_password }}"
+    tower_host: "https://{{ awx_url }}"
+    tower_oauthtoken: "{{ tower_token.stdout }}"
+    #tower_username: "{{ tower_username }}"
+    #tower_password: "{{ tower_password }}"
     validate_certs: yes
 
 - name: Add localhost to admin organisations inventory
-  tower_host:
+  awx.awx.tower_host:
     name: "localhost"
     description: "The AWX server itself."
     inventory: "{{ org_name }} Inventory"
     state: present
-    tower_host: "{{ awx_url }}"
-    tower_username: "admin"
-    tower_password: "{{ admin_password }}"
+    tower_host: "https://{{ awx_url }}"
+    tower_oauthtoken: "{{ tower_token.stdout }}"
+    #tower_username: "{{ tower_username }}"
+    #tower_password: "{{ tower_password }}"
     validate_certs: yes
 
 - name: Add 'Ansible Create Delete Subscription Membership' project to users organisation
-  tower_project:
+  awx.awx.tower_project:
     name: "Ansible Create Delete Subscription Membership"
     description: "The script is run after a memberpress subscription is created, a 'plan_title' is specified, this causes a digitalocean or on-premises provision stage to be setup. Or it deletes a single subscription, and/or an entire membership/organisation from the AWX setup."
     organization: "{{ org_name }}"
@@ -119,18 +136,20 @@
     scm_delete_on_update: yes
     scm_update_on_launch: yes
     state: present
-    tower_host: "{{ awx_url }}"
-    tower_username: "admin"
-    tower_password: "{{ admin_password }}"
+    tower_host: "https://{{ awx_url }}"
+    tower_oauthtoken: "{{ tower_token.stdout }}"
+    #tower_username: "{{ tower_username }}"
+    #tower_password: "{{ tower_password }}"
     validate_certs: yes
 
 - name: Update 'Ansible Create Delete Subscription Membership' project
   awx.awx.tower_project_update:
     project: "Ansible Create Delete Subscription Membership"
     timeout: 300
-    tower_host: "{{ awx_url }}"
-    tower_username: "admin"
-    tower_password: "{{ admin_password }}"
+    tower_host: "https://{{ awx_url }}"
+    tower_oauthtoken: "{{ tower_token.stdout }}"
+    #tower_username: "{{ tower_username }}"
+    #tower_password: "{{ tower_password }}"
     validate_certs: yes
 
 - name: Copy extra variables file to AWX host for use in below template task
@@ -139,7 +158,7 @@
     dest: "/var/tmp/create-account.yml"
 
 - name: Create '00 - Ansible Create Account' job template
-  tower_job_template:
+  awx.awx.tower_job_template:
     name: "00 - Ansible Create Account"
     description: "Performs initial organisation/team creation before subscription is confirmed."
     job_type: run
@@ -150,9 +169,10 @@
     ask_extra_vars: yes
     state: present
     verbosity: 1
-    tower_host: "{{ awx_url }}"
-    tower_username: "admin"
-    tower_password: "{{ admin_password }}"
+    tower_host: "https://{{ awx_url }}"
+    tower_oauthtoken: "{{ tower_token.stdout }}"
+    #tower_username: "{{ tower_username }}"
+    #tower_password: "{{ tower_password }}"
     validate_certs: yes
 
 - name: Copy extra variables file to AWX host for use in below template task
@@ -161,7 +181,7 @@
     dest: "/var/tmp/create-manual.yml"
 
 - name: Create '00 - Ansible Create Manual Subscription' job template
-  tower_job_template:
+  awx.awx.tower_job_template:
     name: "00 - Ansible Create Manual Subscription"
     description: "Creates AWX Account for user, append random string to 'byo', creates initial organisation.yml and server_vars.yml file. Also creates a '[subscription_id] Provision Server' playbook in users account, where they will instead be prompted to connect their own server."
     job_type: run
@@ -172,9 +192,10 @@
     ask_extra_vars: yes
     state: present
     verbosity: 1
-    tower_host: "{{ awx_url }}"
-    tower_username: "admin"
-    tower_password: "{{ admin_password }}"
+    tower_host: "https://{{ awx_url }}"
+    tower_oauthtoken: "{{ tower_token.stdout }}"
+    #tower_username: "{{ tower_username }}"
+    #tower_password: "{{ tower_password }}"
     validate_certs: yes
 
 - name: Copy extra variables file to AWX host for use in below template task
@@ -183,7 +204,7 @@
     dest: "/var/tmp/create-mp.yml"
 
 - name: Create '00 - Ansible Create MP Subscription' job template
-  tower_job_template:
+  awx.awx.tower_job_template:
     name: "00 - Ansible Create MP Subscription"
     description: "Creates AWX Account for user, creates initial organisation.yml and server_vars.yml file. Creates a DigitalOcean droplet and space. Also creates initial '[subscription_id] Provision Server' playbook in users account."
     job_type: run
@@ -194,9 +215,10 @@
     ask_extra_vars: yes
     state: present
     verbosity: 1
-    tower_host: "{{ awx_url }}"
-    tower_username: "admin"
-    tower_password: "{{ admin_password }}"
+    tower_host: "https://{{ awx_url }}"
+    tower_oauthtoken: "{{ tower_token.stdout }}"
+    #tower_username: "{{ tower_username }}"
+    #tower_password: "{{ tower_password }}"
     validate_certs: yes
 
 - name: Copy extra variables file to AWX host for use in below template task
@@ -205,7 +227,7 @@
     dest: "/var/tmp/delete-member.yml"
 
 - name: Create '00 - Ansible Delete Membership' job template
-  tower_job_template:
+  awx.awx.tower_job_template:
     name: "00 - Ansible Delete Membership"
     description: "Playbook to remove clients AWX Organisation and local files on the AWX server."
     job_type: run
@@ -217,9 +239,10 @@
     state: present
     verbosity: 1
     job_tags: delete-membership
-    tower_host: "{{ awx_url }}"
-    tower_username: "admin"
-    tower_password: "{{ admin_password }}"
+    tower_host: "https://{{ awx_url }}"
+    tower_oauthtoken: "{{ tower_token.stdout }}"
+    #tower_username: "{{ tower_username }}"
+    #tower_password: "{{ tower_password }}"
     validate_certs: yes
 
 - name: Copy extra variables file to AWX host for use in below template task
@@ -228,7 +251,7 @@
     dest: "/var/tmp/delete-subscription.yml"
 
 - name: Create '00 - Ansible Delete Subscription' job template
-  tower_job_template:
+  awx.awx.tower_job_template:
     name: "00 - Ansible Delete Subscription"
     description: "Removes job templates, digitalocean resources, and files/folders associated with a subscription."
     job_type: run
@@ -240,9 +263,10 @@
     state: present
     verbosity: 1
     job_tags: delete-subscription
-    tower_host: "{{ awx_url }}"
-    tower_username: "admin"
-    tower_password: "{{ admin_password }}"
+    tower_host: "https://{{ awx_url }}"
+    tower_oauthtoken: "{{ tower_token.stdout }}"
+    #tower_username: "{{ tower_username }}"
+    #tower_password: "{{ tower_password }}"
     validate_certs: yes
 
 - name: Copy extra variables file to AWX host for use in below template task
@@ -251,7 +275,7 @@
     dest: "/var/tmp/restore-and-import-postgresql-dump.yml"
 
 - name: Create '00 - Restore and Import Postgresql Dump' job template
-  tower_job_template:
+  awx.awx.tower_job_template:
     name: "00 - Restore and Import Postgresql Dump"
     description: "Restores a servers configs, media repo and postgresql database from /chroot/backup/."
     job_type: run
@@ -263,9 +287,10 @@
     state: present
     verbosity: 1
     job_tags: import-postgres, import-awx
-    tower_host: "{{ awx_url }}"
-    tower_username: "admin"
-    tower_password: "{{ admin_password }}"
+    tower_host: "https://{{ awx_url }}"
+    tower_oauthtoken: "{{ tower_token.stdout }}"
+    #tower_username: "{{ tower_username }}"
+    #tower_password: "{{ tower_password }}"
     validate_certs: yes
     
 - name: Copy extra variables file to AWX host for use in below template task
@@ -274,7 +299,7 @@
     dest: "/var/tmp/bind-user-account.yml"
 
 - name: Create '00 - Bind User Account' job template
-  tower_job_template:
+  awx.awx.tower_job_template:
     name: "00 - Bind User Account"
     description: "Binds an enterprise user account to the correct team."
     job_type: run
@@ -285,9 +310,10 @@
     ask_extra_vars: yes
     state: present
     verbosity: 1
-    tower_host: "{{ awx_url }}"
-    tower_username: "admin"
-    tower_password: "{{ admin_password }}"
+    tower_host: "https://{{ awx_url }}"
+    tower_oauthtoken: "{{ tower_token.stdout }}"
+    #tower_username: "{{ tower_username }}"
+    #tower_password: "{{ tower_password }}"
     validate_certs: yes
    
 #- name: Install ansible-tower-cli pip package in AWX docker
