@@ -1,0 +1,8 @@
+{
+  "server_path_postgres_dump": "/chroot/backup/postgres_2020-12-20.sql"
+  "subscription_id": "I-CREUS74S6969"
+  "member_id": "31"
+  "target": "matrix.fishbole.xyz"
+  "matrix_domain": "fishbole.xyz"
+  "matrix_awx_enabled": "true"
+}
