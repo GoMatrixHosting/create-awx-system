@@ -11,6 +11,7 @@ certbot_email: myemail@protonmail.com
 grafana_admin_password: << strong-password >>
 
 # AWX settings
+admin_username: admin
 secret_key: << strong-password >>
 pg_password: << strong-password >>
 admin_password: << strong-password >>
