@@ -151,10 +151,10 @@
     #tower_password: "{{ tower_password }}"
     validate_certs: yes
 
-- name: Copy extra variables file to AWX host for use in below template task
-  copy:
-    src: "{{ role_path }}/extra-vars/create-account.json"
-    dest: "/var/tmp/create-account.json"
+#- name: Copy extra variables file to AWX host for use in below template task
+#  copy:
+#    src: "{{ role_path }}/extra-vars/create-account.json"
+#    dest: "/var/tmp/create-account.json"
 
 - name: Create '00 - Ansible Create Account' job template
   awx.awx.tower_job_template:
@@ -165,7 +165,7 @@
     project: "Ansible Create Delete Subscription Membership"
     playbook: pre-create.yml
     #extra_vars_path: '/var/tmp/create-account.yml'
-    extra_vars: "{{ lookup('file', '/var/tmp/create-account.json') }}"
+    extra_vars: "{{ lookup('file', '{{ role_path }}/extra-vars/create-account.json') }}"
     ask_extra_vars: yes
     state: present
     verbosity: 1
@@ -175,10 +175,10 @@
     #tower_password: "{{ tower_password }}"
     validate_certs: yes
 
-- name: Copy extra variables file to AWX host for use in below template task
-  copy:
-    src: "{{ role_path }}/extra-vars/create-manual.json"
-    dest: "/var/tmp/create-manual.json"
+#- name: Copy extra variables file to AWX host for use in below template task
+#  copy:
+#    src: "{{ role_path }}/extra-vars/create-manual.json"
+#    dest: "/var/tmp/create-manual.json"
 
 - name: Create '00 - Ansible Create Manual Subscription' job template
   awx.awx.tower_job_template:
@@ -189,7 +189,7 @@
     project: "Ansible Create Delete Subscription Membership"
     playbook: create.yml
     #extra_vars_path: '/var/tmp/create-manual.yml'
-    extra_vars: "{{ lookup('file', '/var/tmp/create-manual.json') }}"
+    extra_vars: "{{ lookup('file', '{{ role_path }}/extra-vars/create-manual.json') }}"
     ask_extra_vars: yes
     state: present
     verbosity: 1
@@ -199,10 +199,10 @@
     #tower_password: "{{ tower_password }}"
     validate_certs: yes
 
-- name: Copy extra variables file to AWX host for use in below template task
-  copy:
-    src: "{{ role_path }}/extra-vars/create-mp.json"
-    dest: "/var/tmp/create-mp.json"
+#- name: Copy extra variables file to AWX host for use in below template task
+#  copy:
+#    src: "{{ role_path }}/extra-vars/create-mp.json"
+#    dest: "/var/tmp/create-mp.json"
 
 - name: Create '00 - Ansible Create MP Subscription' job template
   awx.awx.tower_job_template:
@@ -213,7 +213,7 @@
     project: "Ansible Create Delete Subscription Membership"
     playbook: create.yml
     #extra_vars_path: '/var/tmp/create-mp.yml'
-    extra_vars: "{{ lookup('file', '/var/tmp/create-mp.json') }}"
+    extra_vars: "{{ lookup('file', '{{ role_path }}/extra-vars/create-mp.json') }}"
     ask_extra_vars: yes
     state: present
     verbosity: 1
@@ -223,10 +223,10 @@
     #tower_password: "{{ tower_password }}"
     validate_certs: yes
 
-- name: Copy extra variables file to AWX host for use in below template task
-  copy:
-    src: "{{ role_path }}/extra-vars/delete-member.json"
-    dest: "/var/tmp/delete-member.json"
+#- name: Copy extra variables file to AWX host for use in below template task
+#  copy:
+#    src: "{{ role_path }}/extra-vars/delete-member.json"
+#    dest: "/var/tmp/delete-member.json"
 
 - name: Create '00 - Ansible Delete Membership' job template
   awx.awx.tower_job_template:
@@ -237,7 +237,7 @@
     project: "Ansible Create Delete Subscription Membership"
     playbook: delete.yml
     #extra_vars_path: '/var/tmp/delete-member.yml'
-    extra_vars: "{{ lookup('file', '/var/tmp/delete-member.json') }}"
+    extra_vars: "{{ lookup('file', '{{ role_path }}/extra-vars/delete-member.json') }}"
     ask_extra_vars: yes
     state: present
     verbosity: 1
@@ -248,10 +248,10 @@
     #tower_password: "{{ tower_password }}"
     validate_certs: yes
 
-- name: Copy extra variables file to AWX host for use in below template task
-  copy:
-    src: "{{ role_path }}/extra-vars/delete-subscription.json"
-    dest: "/var/tmp/delete-subscription.json"
+#- name: Copy extra variables file to AWX host for use in below template task
+#  copy:
+#    src: "{{ role_path }}/extra-vars/delete-subscription.json"
+#    dest: "/var/tmp/delete-subscription.json"
 
 - name: Create '00 - Ansible Delete Subscription' job template
   awx.awx.tower_job_template:
@@ -262,7 +262,7 @@
     project: "Ansible Create Delete Subscription Membership"
     playbook: delete.yml
     #extra_vars_path: '/var/tmp/delete-subscription.yml'
-    extra_vars: "{{ lookup('file', '/var/tmp/delete-subscription.json') }}"
+    extra_vars: "{{ lookup('file', '{{ role_path }}/extra-vars/delete-subscription.json') }}"
     ask_extra_vars: yes
     state: present
     verbosity: 1
@@ -273,10 +273,10 @@
     #tower_password: "{{ tower_password }}"
     validate_certs: yes
 
-- name: Copy extra variables file to AWX host for use in below template task
-  copy:
-    src: "{{ role_path }}/extra-vars/restore-and-import-postgresql-dump.json"
-    dest: "/var/tmp/restore-and-import-postgresql-dump.json"
+#- name: Copy extra variables file to AWX host for use in below template task
+#  copy:
+#    src: "{{ role_path }}/extra-vars/restore-and-import-postgresql-dump.json"
+#    dest: "/var/tmp/restore-and-import-postgresql-dump.json"
 
 - name: Create '00 - Restore and Import Postgresql Dump' job template
   awx.awx.tower_job_template:
@@ -287,7 +287,7 @@
     project: "Ansible Create Delete Subscription Membership"
     playbook: create.yml
     #extra_vars_path: '/var/tmp/restore-and-import-postgresql-dump.yml'
-    extra_vars: "{{ lookup('file', '/var/tmp/restore-and-import-postgresql-dump.json') }}"
+    extra_vars: "{{ lookup('file', '{{ role_path }}/extra-vars/restore-and-import-postgresql-dump.json') }}"
     ask_extra_vars: yes
     state: present
     verbosity: 1
@@ -298,10 +298,10 @@
     #tower_password: "{{ tower_password }}"
     validate_certs: yes
     
-- name: Copy extra variables file to AWX host for use in below template task
-  copy:
-    src: "{{ role_path }}/extra-vars/bind-user-account.json"
-    dest: "/var/tmp/bind-user-account.json"
+#- name: Copy extra variables file to AWX host for use in below template task
+#  copy:
+#    src: "{{ role_path }}/extra-vars/bind-user-account.json"
+#    dest: "/var/tmp/bind-user-account.json"
 
 - name: Create '00 - Bind User Account' job template
   awx.awx.tower_job_template:
@@ -312,7 +312,7 @@
     project: "Ansible Create Delete Subscription Membership"
     playbook: bind-user-account.yml
     #extra_vars_path: '/var/tmp/bind-user-account.yml'
-    extra_vars: "{{ lookup('file', '/var/tmp/bind-user-account.json') }}"
+    extra_vars: "{{ lookup('file', '{{ role_path }}/extra-vars/bind-user-account.json') }}"
     ask_extra_vars: yes
     state: present
     verbosity: 1
