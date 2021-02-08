@@ -84,7 +84,7 @@
     ufw:
       rule: allow
       port: '1812'
-      from_ip: "{{ awx_web_ip.stdout }}"
+      from_ip: "{{ awx_web_ip.stdout }}/24"
       proto: udp
       
   - name: Disable 'inner-tunnel' config by removing link
