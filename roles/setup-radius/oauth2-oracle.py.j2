@@ -12,6 +12,10 @@ client_secret = r'{{ oauth_client_secret }}'
 username = os.environ['USER_NAME'].strip('"')
 password = os.environ['USER_PASSWORD'].strip('"')
 
+# To address strange behaviour where AWX constantly tries to auth against admin user.
+if username == "admin":
+    sys.exit(5)
+
 import oauthlib.oauth2.rfc6749.errors
 from oauthlib.oauth2 import LegacyApplicationClient
 from requests_oauthlib import OAuth2Session
