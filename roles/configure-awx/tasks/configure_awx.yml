@@ -116,24 +116,42 @@
 #$  ansible-vault encrypt --vault-id unlock_ssh_password@vault.key --output=./vaulted_ssh_password.yml plaintext_ssh_password.yml
 
 - name: Set vault_unlock_ssh_password key file
+  delegate_to: 127.0.0.1
   shell: |
      echo -n {{ vault_unlock_ssh_password }} > /tmp/vault.key
   
 - name: Set plaintext_ssh_password variable file
+  delegate_to: 127.0.0.1
   shell: |
      echo -e "---\nprivate_ssh_key_password: '{{ private_ssh_key_password }}'" > /tmp/plaintext_ssh_password.yml
 
-- name: Encrypt the contents of plaintext_ssh_password variable file and store in hosting folder
+- name: Encrypt the contents of plaintext_ssh_password variable file
+  delegate_to: 127.0.0.1
   shell: |
-     ansible-vault encrypt --vault-id unlock_ssh_password@/tmp/vault.key --output=/var/lib/awx/projects/hosting/vaulted_ssh_password.yml plaintext_ssh_password.yml
+     ansible-vault encrypt --vault-id unlock_ssh_password@/tmp/vault.key --output=/tmp/vaulted_ssh_password.yml plaintext_ssh_password.yml
+     
+- name: Copy vaulted_ssh_password.yml to the AWX hosting folder
+  copy:
+    src: '/tmp/vaulted_ssh_password.yml'
+    dest: /var/lib/awx/projects/hosting/vaulted_ssh_password.yml
+    owner: root
+    group: root
+    mode: '0600'
 
 - name: Shred the vault_unlock_ssh_password key file
+  delegate_to: 127.0.0.1
   shell: |
     shred -u /tmp/vault.key
      
 - name: Shred the plaintext_ssh_password variable file
+  delegate_to: 127.0.0.1
   shell: |
     shred -u /tmp/plaintext_ssh_password.yml
+    
+- name: Shred the vaulted_ssh_password variable file
+  delegate_to: 127.0.0.1
+  shell: |
+    shred -u /tmp/vaulted_ssh_password.yml
      
 - name: Add AWX Unlock SSH Password credential to admin users account
   awx.awx.tower_credential:
