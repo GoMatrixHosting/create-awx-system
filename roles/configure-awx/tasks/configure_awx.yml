@@ -104,16 +104,46 @@
     tower_host: "https://{{ awx_url }}"
     tower_oauthtoken: "{{ tower_token.stdout }}"
     validate_certs: yes
-    
-- name: Add AWX SSH Key Password credential to admin users account
+
+# need section here to create vars file then encrypt it
+
+#"{{ vault_unlock_ssh_password }}"
+
+#$  echo -n zZNfdL31XS3yINXRDdvn > vault.key
+
+#$  echo -e "---\nprivate_ssh_key_password: 'AIAmuE2lJi4lTqU20LSQ'" > plaintext_ssh_password.yml
+
+#$  ansible-vault encrypt --vault-id unlock_ssh_password@vault.key --output=./vaulted_ssh_password.yml plaintext_ssh_password.yml
+
+- name: Set vault_unlock_ssh_password key file
+  shell: |
+     echo -n {{ vault_unlock_ssh_password }} > /tmp/vault.key"
+  
+- name: Set plaintext_ssh_password variable file
+  shell: |
+     echo -e "---\nprivate_ssh_key_password: '{{ private_ssh_key_password }}'" > /tmp/plaintext_ssh_password.yml
+
+- name: Encrypt the contents of plaintext_ssh_password variable file and store in hosting folder
+  shell: |
+     ansible-vault encrypt --vault-id unlock_ssh_password@/tmp/vault.key --output=/var/lib/awx/projects/hosting/vaulted_ssh_password.yml plaintext_ssh_password.yml
+
+- name: Shred the vault_unlock_ssh_password key file
+  shell: |
+    shred -u /tmp/vault.key
+     
+- name: Shred the plaintext_ssh_password variable file
+  shell: |
+    shred -u /tmp/plaintext_ssh_password.yml
+     
+- name: Add AWX Unlock SSH Password credential to admin users account
   awx.awx.tower_credential:
-    name: "AWX SSH Key Password"
-    description: "The password to unlock the client systems SSH key."
+    name: "AWX Unlock SSH Password"
+    description: "The password to unlock the variable file containing the client systems SSH key password."
     credential_type: Vault
     organization: "{{ org_name }}"
     inputs: 
-      vault_id: private_ssh_key_password
-      vault_password: "{{ private_ssh_key_password }}"
+      vault_id: unlock_ssh_password
+      vault_password: "{{ vault_unlock_ssh_password }}"
     tower_host: "https://{{ awx_url }}"
     tower_oauthtoken: "{{ tower_token.stdout }}"
     validate_certs: yes
@@ -164,7 +194,7 @@
     inventory: "{{ org_name }} Inventory"
     project: "Ansible Create Delete Subscription Membership"
     playbook: create.yml
-    credential: "AWX SSH Key Password"
+    credential: "AWX Unlock SSH Password"
     extra_vars: "{{ lookup('file', '{{ role_path }}/extra-vars/create-manual.json') }}"
     ask_extra_vars: yes
     state: present
@@ -181,7 +211,7 @@
     inventory: "{{ org_name }} Inventory"
     project: "Ansible Create Delete Subscription Membership"
     playbook: create.yml
-    credential: "AWX SSH Key Password"
+    credential: "AWX Unlock SSH Password"
     extra_vars: "{{ lookup('file', '{{ role_path }}/extra-vars/create-mp.json') }}"
     ask_extra_vars: yes
     state: present
