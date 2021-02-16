@@ -117,7 +117,7 @@
 
 - name: Set vault_unlock_ssh_password key file
   shell: |
-     echo -n {{ vault_unlock_ssh_password }} > /tmp/vault.key"
+     echo -n {{ vault_unlock_ssh_password }} > /tmp/vault.key
   
 - name: Set plaintext_ssh_password variable file
   shell: |
