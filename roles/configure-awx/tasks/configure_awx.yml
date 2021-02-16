@@ -105,16 +105,6 @@
     tower_oauthtoken: "{{ tower_token.stdout }}"
     validate_certs: yes
 
-# need section here to create vars file then encrypt it
-
-#"{{ vault_unlock_ssh_password }}"
-
-#$  echo -n zZNfdL31XS3yINXRDdvn > vault.key
-
-#$  echo -e "---\nprivate_ssh_key_password: 'AIAmuE2lJi4lTqU20LSQ'" > plaintext_ssh_password.yml
-
-#$  ansible-vault encrypt --vault-id unlock_ssh_password@vault.key --output=./vaulted_ssh_password.yml plaintext_ssh_password.yml
-
 - name: Set vault_unlock_ssh_password key file
   delegate_to: 127.0.0.1
   become: false
@@ -126,7 +116,7 @@
   delegate_to: 127.0.0.1
   become: false
   shell: |
-    echo -e "---\nprivate_ssh_key_password: '{{ private_ssh_key_password }}'" > /tmp/plaintext_ssh_password.yml
+    echo "---\nprivate_ssh_key_password: '{{ private_ssh_key_password }}'" > /tmp/plaintext_ssh_password.yml
   no_log: true
 
 - name: Encrypt the contents of plaintext_ssh_password variable file
