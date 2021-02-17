@@ -237,6 +237,7 @@
     ask_extra_vars: yes
     state: present
     verbosity: 1
+    skip_tags: manual-subscription
     tower_host: "https://{{ awx_url }}"
     tower_oauthtoken: "{{ tower_token.stdout }}"
     validate_certs: yes
