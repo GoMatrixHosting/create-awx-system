@@ -1,0 +1,78 @@
+{
+  "name": "Manual Subscription",
+  "description": "",
+  "spec": [
+    {
+      "question_name": "Client First Name",
+      "question_description": "The first name of the client.",
+      "required": true,
+      "min": 0,
+      "max": 256,
+      "default": "Billy",
+      "choices": "",
+      "new_question": true,
+      "variable": "client_first_name",
+      "type": "text"
+    },
+    {
+      "question_name": "Client Last Name",
+      "question_description": "The last name of the client.",
+      "required": true,
+      "min": 0,
+      "max": 256,
+      "default": "Bob",
+      "choices": "",
+      "new_question": true,
+      "variable": "client_last_name",
+      "type": "text"
+    },
+    {
+      "question_name": "Client Email",
+      "question_description": "The email address of the client, it will be used to login to AWX.",
+      "required": true,
+      "min": 0,
+      "max": 256,
+      "default": "billybob@protonmail.com",
+      "choices": "",
+      "new_question": true,
+      "variable": "client_email",
+      "type": "text"
+    },
+    {
+      "question_name": "Client Password",
+      "question_description": "The password the client will use to login to AWX.",
+      "required": false,
+      "min": 0,
+      "max": 256,
+      "default": "",
+      "choices": "",
+      "new_question": true,
+      "variable": "client_password",
+      "type": "password"
+    },
+    {
+      "question_name": "Member ID",
+      "question_description": "A unique string to represent this user. If you're not sure what to enter just concatenate the users first and last name.",
+      "required": true,
+      "min": 0,
+      "max": 64,
+      "default": "billy.bob",
+      "choices": "",
+      "new_question": true,
+      "variable": "member_id",
+      "type": "text"
+    },
+    {
+      "question_name": "Plan Title",
+      "question_description": "Selects the kind of plan the user will have.",
+      "required": false,
+      "min": null,
+      "max": null,
+      "default": "Small On-Premises Server",
+      "choices": "Small On-Premises Server\nMedium On-Premises Server\nLarge On-Premises Server\nSmall DigitalOcean Server\nMedium DigitalOcean Server\nLarge DigitalOcean Server",
+      "new_question": true,
+      "variable": "plan_title",
+      "type": "multiplechoice"
+    }
+  ]
+}

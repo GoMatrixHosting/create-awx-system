@@ -215,6 +215,8 @@
     credential: "AWX Unlock SSH Password"
     extra_vars: "{{ lookup('file', '{{ role_path }}/extra-vars/create-manual.json') }}"
     ask_extra_vars: yes
+    survey_enabled: true
+    survey_spec: "{{ lookup('file', '{{ role_path }}/surveys/manual_subsription.json.j2') }}"
     state: present
     verbosity: 1
     job_tags: manual-subscription
