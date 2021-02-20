@@ -172,7 +172,8 @@
     description: "The script is run after a memberpress subscription is created, a 'plan_title' is specified, this causes a digitalocean or on-premises provision stage to be setup. Or it deletes a single subscription, and/or an entire membership/organisation from the AWX setup."
     organization: "{{ org_name }}"
     scm_type: git
-    scm_url: "https://gitlab.com/GoMatrixHosting/ansible-create-delete-subscription-membership.git"
+    scm_url: "{{ create_delete_source }}"
+    scm_branch: "{{ create_delete_branch }}"
     scm_delete_on_update: yes
     scm_update_on_launch: yes
     state: present
