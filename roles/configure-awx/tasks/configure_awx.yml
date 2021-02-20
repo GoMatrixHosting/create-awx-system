@@ -233,7 +233,6 @@
     project: "Ansible Create Delete Subscription Membership"
     playbook: create.yml
     credential: "AWX Unlock SSH Password"
-    extra_vars: "{{ lookup('file', '{{ role_path }}/extra-vars/create-mp.json') }}"
     ask_extra_vars: yes
     state: present
     verbosity: 1
