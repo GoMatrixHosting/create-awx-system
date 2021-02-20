@@ -11,6 +11,7 @@ certbot_email: myemail@protonmail.com
 grafana_admin_password: << strong-password >>
 
 # AWX settings
+admin_username: admin
 secret_key: << strong-password >>
 pg_password: << strong-password >>
 admin_password: << strong-password >>
@@ -18,6 +19,7 @@ admin_password: << strong-password >>
 # SSH keys
 private_ssh_key: /key/location/id_ed25519
 private_ssh_key_password: << strong-password >>
+vault_unlock_ssh_password: << strong-password >>
 public_ssh_key: /key/location/id_ed25519.pub
 
 # FreeRADIUS

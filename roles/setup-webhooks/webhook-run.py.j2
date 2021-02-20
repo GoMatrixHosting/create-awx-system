@@ -19,6 +19,7 @@ def shellcmd(command):
 
 #########################################
 # Hard Coded AWX/Tower Credentials      #
+create_account_job_template = "00 - Ansible Create Account"
 create_subscription_job_template = "00 - Ansible Create MP Subscription"
 delete_subscription_job_template = "00 - Ansible Delete Subscription"
 #########################################
@@ -32,7 +33,34 @@ print(json.dumps(data, indent = 1))
 event_type = str(data['event'])
 print("Event type is: " + event_type)
 
-if event_type == "recurring-transaction-completed":
+if event_type == "member-added":
+  client_email = str(data['data']['email'])
+  print("Client Email: " + client_email)
+  member_id = str(data['data']['id'])
+  print("Member ID: " + member_id)
+  extra_vars = {}
+  extra_vars['client_email']=client_email
+  extra_vars['member_id']=member_id
+  awx_job_launch_command = ["awx-cli", "job", "launch", "-J", create_account_job_template]
+  # passing extra_vars requires AWX's "PROMPT ON LAUNCH" to be enabled
+  extravars = '--extra-vars=' + json.JSONEncoder().encode(extra_vars)
+  awx_job_launch_command = awx_job_launch_command + [ extravars ]
+  shellcmd(awx_job_launch_command)
+  # Add client entry to client-list file
+  client_file_path = "/var/lib/awx/projects/clients/client-list"
+  client_file = open(client_file_path,'a')
+  client_file.write(member_id + "," + client_email + "\n")
+  client_file.close()
+  # Remove empty lines from file
+  client_file = open(client_file_path,'r')
+  client_file_contents = client_file.read()
+  client_file.close()
+  new_client_file_contents = client_file_contents.replace("\n\n","\n")
+  client_file = open(client_file_path,'w')
+  client_file.write(new_client_file_contents)
+  client_file.close()
+
+elif event_type == "recurring-transaction-completed":
   plan_title = str(data['data']['membership']['title'])
   print("Plan selected: " + data['data']['membership']['title'])
   subscription_id = str(data['data']['subscription']['subscr_id'])

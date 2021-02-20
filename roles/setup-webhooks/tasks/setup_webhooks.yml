@@ -43,7 +43,7 @@
     group: root
     mode: '0644'
 
-- name: Save borgmatic config file, template
+- name: Save webhook-run.py template
   template:
     src: '{{ role_path }}/webhook-run.py.j2'
     dest: '/usr/local/bin/webhook-run.py'

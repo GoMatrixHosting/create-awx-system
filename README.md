@@ -2,28 +2,20 @@
 
 ## Purpose
 
-This playbook spawns an AWX system that can create and manage multiple [Matrix](http://matrix.org/) servers. You can issue users an AWX login to their own 'organisation', which they can use to manage/configure 1 to N servers through.
+This playbook spawns an AWX system that can create and manage multiple [Matrix](http://matrix.org/) servers. You can issue users an AWX login to their own 'organisation', which they can use to manage/configure 1 to N servers.
 
-Users can be assigned a server from DigitalOcean at the creation of the account, or they can be prompted to connect their own server in the 2nd 'provision' stage. This script is free to use in a commercial context with the MemberPress addon, we've published a seperate webhook resolver for it that allows the creation and deletion of 'members' and their 'subscriptions'.
+Users can be assigned a server from Digitalocean, or they can connect their own on-premises server. This script is free to use in a commercial context with the 'MemberPress Plus' and 'WP Oauth Sever' addons. It can also be run in a non-commercial context.
+
+The system is arranged into 'members' each with their own 'subscriptions'. After creating a subscription the user enters the 'provision stage' where they defined the URLs they will use, the servers location and whether or not there's already a website at the base domain. They then proceed onto the 'deploy stage' where they can configure their Matrix sever.
 
 Ideally this system can manage the updates, configuration, backups and monitoring on it's own. It is an extension of the popular deploy script [spantaleev/matrix-docker-ansible-deploy](https://github.com/spantaleev/matrix-docker-ansible-deploy).
+
+Warning: This project is currently alpha quality and should only be run by the brave.
 
 
 ## Installation
 
 To configure and install this AWX setup on your own server, follow the [Installation.md in the docs/ directory](docs/Installation.md).
-
-
-## Docker images used by this playbook
-
-
-This playbook sets up your server using the following Docker images:
-
-- [matrixdotorg/synapse](https://hub.docker.com/r/matrixdotorg/synapse/) - the official [Synapse](https://github.com/matrix-org/synapse) Matrix homeserver (optional)
-
-- [instrumentisto/coturn](https://hub.docker.com/r/instrumentisto/coturn/) - the [Coturn](https://github.com/coturn/coturn) STUN/TURN server (optional)
-
-- [vectorim/riot-web](https://hub.docker.com/r/vectorim/riot-web/) - the [Element](https://element.io/) web client (optional)
 
 
 ## Deficiencies
@@ -53,3 +45,4 @@ This Ansible playbook can be improved in the following ways:
 
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+    

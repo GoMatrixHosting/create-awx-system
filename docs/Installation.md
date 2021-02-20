@@ -59,9 +59,9 @@ Run the script:
 2) Run the AWX deployment script.
 ```
 $ cd ..
-$ wget https://github.com/ansible/awx/archive/15.0.1.tar.gz
-$ tar -xf 15.0.1.tar.gz
-$ cd ./awx-15.0.1/
+$ wget https://github.com/ansible/awx/archive/17.0.1.tar.gz
+$ tar -xf 17.0.1.tar.gz
+$ cd ./awx-17.0.1/
 ```
 
 Generate and record 3 strong passwords for the:
@@ -93,7 +93,7 @@ Next, run the playbook to install the Ansible AWX with the following command:
 Install prerequisite packages for ansible on the controller:
 
 `$ ansible-galaxy collection install community.crypto`
-`$ ansible-galaxy collection install awx.awx:15.0.1`
+`$ ansible-galaxy collection install awx.awx:17.0.1`
 
 Run the script:
 
@@ -112,7 +112,7 @@ Note the command-line here is restricted, so you won't be able to do anything be
 
 In the 'Authentication' > 'Radius' page:
 
-RADIUS SERVER:	172.17.0.1
+RADIUS SERVER:	Public IP of the AWX server.
 RADIUS PORT:	1812
 RADIUS SECRET:	"{{ radius_secret }}"
 
