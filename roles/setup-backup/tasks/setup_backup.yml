@@ -14,6 +14,14 @@
     mode: '0755'
     recurse: yes
 
+- name: Ensure ssh config location exists
+  file:
+    path: /root/.ssh/
+    owner: root
+    group: root
+    state: directory
+    mode: '0755'
+
 - name: Generate OpenSSH key on AWX system
   community.crypto.openssh_keypair:
     path: '/root/.ssh/borg_{{ awx_url }}_ed25519'
@@ -32,14 +40,6 @@
     owner: '{{ backup_server_user }}'
     group: '{{ backup_server_user }}'
     mode: '0600'
-
-- name: Ensure ssh config location exists
-  file:
-    path: /root/.ssh/
-    owner: root
-    group: root
-    state: directory
-    mode: '0755'
 
 - name: Update SSH config on AWX system
   blockinfile:
