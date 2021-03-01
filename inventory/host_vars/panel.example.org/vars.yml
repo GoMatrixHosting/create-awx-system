@@ -25,10 +25,10 @@ deploy_source: https://gitlab.com/GoMatrixHosting/gomatrixhosting-matrix-docker-
 deploy_branch: testing
 
 # SSH Keys
-private_ssh_key: /key/location/id_ed25519
-private_ssh_key_password: << strong-password >>
+client_private_ssh_key: /key/location/id_ed25519
+client_private_ssh_key_password: << strong-password >>
 vault_unlock_ssh_password: << strong-password >>
-public_ssh_key: /key/location/id_ed25519.pub
+client_public_ssh_key: /key/location/id_ed25519.pub
 
 # FreeRADIUS
 radius_secret: << strong-password >>
@@ -43,8 +43,8 @@ backup_server_user: username
 backup_server_directory: '/location/of/backup'
 backup_server_location: 'Perth, Western Australia'
 backup_encryption_passphrase: << strong-password >>
-client_backup_private_ssh_key: /key/location/client_id_ed25519
-client_backup_public_ssh_key: /key/location/client_id_ed25519.pub
+backup_private_ssh_key: /key/location/client_id_ed25519
+backup_public_ssh_key: /key/location/client_id_ed25519.pub
 
 # DigitalOcean Settings
 do_api_token: << do_api_token >>
