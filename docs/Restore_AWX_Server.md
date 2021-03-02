@@ -1,5 +1,5 @@
 
-~~ AWX System Backup && Restore ~~
+~~ Restore AWX Server ~~
 
 1) Ensure a recent backup has executed properly:
 

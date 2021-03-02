@@ -1,19 +1,20 @@
 
+~~ Import Matrix Server ~~
 
 1) Extract variables needed to re-create subscription:
 
-On controller, extract matrix.tar.gz, examine /matrix/awx/organisation.yml and /matrix/awx/server_vars.yml and extra_vars.yml, copy:
+On controller, extract matrix.tar.gz, examine /matrix/awx/organisation.yml and /matrix/awx/server_vars.yml and extra_vars.json, copy:
 
 - subscription_id: I-CREUS74S6969			[/matrix/awx/extra_vars.yml]
 - member_id: 31						[/matrix/awx/extra_vars.yml]
 - client_email: "bobfett@protonmail.com"		[/matrix/awx/organisation.yml]
 - client_first_name: "Bob"				[/matrix/awx/organisation.yml]
 - client_last_name: "Fett"				[/matrix/awx/organisation.yml]
-- plan_title: Small Server				[/matrix/awx/server_vars.yml]
-- byo_bool: False					[/matrix/awx/server_vars.yml]
+- plan_title: Small DigitalOcean Server			[/matrix/awx/server_vars.yml]
+- subscription_type: digitalocean			[/matrix/awx/server_vars.yml]
 
 
-2) Observe 'plan_title' and 'byo_bool' in server_vars.yml, if it's a MP subscription launch '00 - Ansible Create MP Subscription' with the above variables, otherwise launch '00 - Ansible Create BYO Subscription'.
+2) Observe 'plan_title' and 'subscription_type' in server_vars.yml, if it's a MemberPress subscription launch '00 - Ansible Create MP Subscription' with the above variables, otherwise launch '00 - Ansible Create Manual Subscription'.
 
 
 3) Before provisioning look at matrix_vars.yml, with that and the previous files record:
@@ -24,7 +25,7 @@ On controller, extract matrix.tar.gz, examine /matrix/awx/organisation.yml and /
 - matrix_nginx_proxy_base_domain_serving_enabled: true	[/matrix/awx/matrix_vars.yml]
 
 
-4) Provision with these survery answers:
+4) Provision with these survey answers:
 
 SET BASE DOMAIN - matrix-domain
 
