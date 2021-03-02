@@ -16,9 +16,12 @@ Map 2 A records for panel.example.org and monitor.example.org to the servers IP.
 
 # Installation
 
-Installation is broken up into 6 stages:
+Installation is broken up into 7 stages:
 
-1) Optionally, create a backup server. You should be able to access root using a IP that the AWX server can reach and the 'client_private_ssh_key', it should also contain a depriviledged user 'backup_server_user' and backup location 'backup_server_location'.
+1) Optionally, create a backup server. You should be able to access root using a IP that the AWX server can reach and the 'client_private_ssh_key', it should also contain a depriviledged user 'backup_server_user' and backup location 'backup_server_location'. Collect its SSH fingerprint and save it to 'backup_server_ssh_fingerprint', to collect it run:
+
+$ ssh-keyscan -t ed25519 {{ backup_server_ip }} 2>/dev/null
+{{ backup_server_ip }} ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOdNgn7zqlpWIsiTV91QLEtRnXH18uMC27zVJYHsql/D
 
 
 2) Pre-setup, setup before the awx playbook is run, installs Docker and sets up TLS proxy for AWX, optionally website hooks and grafana are also setup.
