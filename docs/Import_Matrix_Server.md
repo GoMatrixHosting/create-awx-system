@@ -70,7 +70,7 @@ matrix_vars.yml                               100% 3840    13.1KB/s   00:00
 8) Clear known_hosts entry in AWX for that particular server:
 
 root@AWX-5-panel:~# docker exec -i -t awx_task bash
-bash-4.4# sed '/^matrix.absolutematrix.com/d' -i /root/.ssh/known_hosts
+bash-4.4# sed '/^matrix.fishbole.xyz/d' -i /root/.ssh/known_hosts
 
 
 9) As admin user, after the DNS is updated, run 'Deploy/Update a Server' without the 'start' tag. This is needed to initialise docker for the 'setup-nginx' tag we use in the next step.
@@ -78,9 +78,9 @@ bash-4.4# sed '/^matrix.absolutematrix.com/d' -i /root/.ssh/known_hosts
 
 10A - (Admin Upload) Copy backup into /chroot/export/ with SCP:
 
-~/Documents$ scp ./chroot/export/* root@matrix.absolutematrix.com:/chroot/export/
-matrix.tar.gz                                                            100% 6139KB 738.3KB/s   00:08
-postgres_2021-03-02.sql.gz                                               100% 7496KB 796.3KB/s   00:09 
+~/Documents$ scp ./chroot/export/* root@matrix.fishbole.xyz:/chroot/export/
+matrix.tar.gz                                                       100% 6139KB 738.3KB/s   00:08
+postgres_2021-03-02.sql.gz                                          100% 7496KB 796.3KB/s   00:09 
 
 
 
@@ -88,11 +88,11 @@ postgres_2021-03-02.sql.gz                                               100% 74
 
 Then SFTP in and import the backup data you previously exported.
 
-sftp> put -r /home/chatoasis/Documents/export/* ./export/
+sftp> put -r /home/chatoasis/Documents/chroot/export/* ./export/
 Uploading /home/chatoasis/Documents/export/matrix.tar.gz to /./export/matrix.tar.gz
-/home/chatoasis/Documents/export/matrix.tar.gz                         100% 8288KB 779.4KB/s   00:10
-Uploading /home/chatoasis/Documents/export/postgres_2020-12-20.sql.gz to /./export/postgres_2020-12-20.sql.gz
-/home/chatoasis/Documents/export/postgres_2020-12-20.sql.gz            100%   35KB 153.0KB/s   00:00
+/home/chatoasis/Documents/export/matrix.tar.gz                        100% 8288KB 779.4KB/s   00:10
+Uploading /home/chatoasis/Documents/chroot/export/postgres_2021-03-02.sql.gz to /./export/postgres_2021-03-02.sql.gz
+/home/chatoasis/Documents/chroot/export/postgres_2021-03-02.sql.gz    100%   35KB 153.0KB/s   00:00
 
 
 11) Import the database dump:
@@ -112,6 +112,9 @@ matrix_awx_enabled: true
 
 
 12) Run 'Provision a New Server' again to load up the surveys from matrix_vars.yml
+
+
+12) Uncomment export.sh from toot users crontab.
 
 
 13) Run 'Start/Restart all Services' job template, then try and login.

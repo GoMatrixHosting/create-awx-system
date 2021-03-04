@@ -46,6 +46,7 @@ backup_awx_encryption_passphrase: << strong-password >>
 backup_private_ssh_key: /key/location/client_id_ed25519
 backup_public_ssh_key: /key/location/client_id_ed25519.pub
 backup_server_ssh_fingerprint: '180.255.91.58 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOdNgn7zqlpWIsiTV91QLEtRnXH18uMC27zVJYHsql/D'
+vault_client_backup_passphrase: << strong-password >>
 
 # DigitalOcean Settings
 do_api_token: << do_api_token >>
