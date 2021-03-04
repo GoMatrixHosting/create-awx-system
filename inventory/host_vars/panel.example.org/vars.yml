@@ -42,7 +42,7 @@ backup_server_hostname: hostname
 backup_server_user: username
 backup_server_directory: '/location/of/backup'
 backup_server_location: 'Perth, Western Australia'
-backup_encryption_passphrase: << strong-password >>
+backup_awx_encryption_passphrase: << strong-password >>
 backup_private_ssh_key: /key/location/client_id_ed25519
 backup_public_ssh_key: /key/location/client_id_ed25519.pub
 backup_server_ssh_fingerprint: '180.255.91.58 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOdNgn7zqlpWIsiTV91QLEtRnXH18uMC27zVJYHsql/D'

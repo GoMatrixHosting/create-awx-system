@@ -76,7 +76,7 @@
 
 - name: Initialise borg repo, perform init
   delegate_to: '{{ backup_server_hostname }}'
-  shell: ' export BORG_PASSPHRASE={{ backup_encryption_passphrase }}; borg init --encryption=repokey {{ backup_server_directory }}/AWX/{{ awx_url }}'
+  shell: ' export BORG_PASSPHRASE={{ backup_awx_encryption_passphrase }}; borg init --encryption=repokey {{ backup_server_directory }}/AWX/{{ awx_url }}'
   args:
     creates: '{{ backup_server_directory }}/AWX/{{ awx_url }}/nonce'
 

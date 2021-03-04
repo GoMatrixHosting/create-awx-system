@@ -38,7 +38,10 @@ SET ELEMENT SUBDOMAIN - Copy only the subdomain from matrix_server_fqn_element, 
 SELECT REGION - Figure it out from the do_droplet_region. (Or a different one if you're trying to migrate it)
 
 
-4) Copy the DNS information and send it to the customer so they can configure DNS again. For Example:
+4) Edit Deploy/Update a Server to not include the 'start' tag.
+
+
+5) Copy the DNS information and send it to the customer so they can configure DNS again. For Example:
 
         "Your server has been created! You now need to configure your DNS to have the",
         "following records:",
@@ -54,36 +57,35 @@ SELECT REGION - Figure it out from the do_droplet_region. (Or a different one if
         "Setting the IPv6 record is optional. If you need help doing this please contact us."
 
 
-5) Login to the new server and comment out the export.sh in root users crontab.
+6) Login to the new server and comment out the export.sh in root users crontab.
 
 
-6) Load matrix_vars.yml from the restored backup into AWX:
+7) Load matrix_vars.yml from the restored backup into AWX:
 
-~/Documents$ scp ./chroot/export/matrix/awx/matrix_vars.yml panel.topgunmatrix.com:/var/lib/awx/projects/clients/billy.bob/T-ER7RHIKBRKE6/
-matrix_vars.yml                                                                                       100% 3840    16.8KB/s   00:00
+~/Documents$ tar -xf ./chroot/export/matrix.tar.gz
+~/Documents$ scp ./awx/matrix_vars.yml panel.topgunmatrix.com:/var/lib/awx/projects/clients/billy.bob/T-FKFAMCCR7CHX/
+matrix_vars.yml                               100% 3840    13.1KB/s   00:00 
 
 
-7) Clear known_hosts entry in AWX for that particular server:
+8) Clear known_hosts entry in AWX for that particular server:
 
 root@AWX-5-panel:~# docker exec -i -t awx_task bash
 bash-4.4# sed '/^matrix.absolutematrix.com/d' -i /root/.ssh/known_hosts
 
 
-8) As admin user, after the DNS is updated, run 'Deploy/Update a Server' without the 'start' tag. This is needed to initialise docker for the 'setup-nginx' tag we use in the next step.
+9) As admin user, after the DNS is updated, run 'Deploy/Update a Server' without the 'start' tag. This is needed to initialise docker for the 'setup-nginx' tag we use in the next step.
 
 
-9A - (Admin Upload) Copy backup into /chroot/export/ with SCP:
+10A - (Admin Upload) Copy backup into /chroot/export/ with SCP:
 
 ~/Documents$ scp ./chroot/export/* root@matrix.absolutematrix.com:/chroot/export/
 matrix.tar.gz                                                            100% 6139KB 738.3KB/s   00:08
 postgres_2021-03-02.sql.gz                                               100% 7496KB 796.3KB/s   00:09 
 
 
-I DON'T THINK THIS IS NEEDED:
-9B - (User Upload) As admin user, run 'Configure Website + Access Export' without the 'start' tag.
 
+10B - (User Upload) As admin user, run 'Configure Website + Access Export' without the 'start' tag.
 
-I DON'T THINK THIS IS NEEDED:
 Then SFTP in and import the backup data you previously exported.
 
 sftp> put -r /home/chatoasis/Documents/export/* ./export/
@@ -93,11 +95,11 @@ Uploading /home/chatoasis/Documents/export/postgres_2020-12-20.sql.gz to /./expo
 /home/chatoasis/Documents/export/postgres_2020-12-20.sql.gz            100%   35KB 153.0KB/s   00:00
 
 
-10) Import the database dump:
+11) Import the database dump:
 
 Run the '00 - Restore and Import Postgresql Dump' job template, 
 with 'import-postgres' and 'import-awx' tags, 
-with specific clients project, inventory and ssh credential,
+with specific members deploy project, inventory and ssh credential,
 include all the extra variables found in /matrix/awx/extra_vars.yml and the {{ server_path_postgres_dump }}, for example:
 
 ---
@@ -109,9 +111,9 @@ matrix_domain: "fishbole.xyz"
 matrix_awx_enabled: true
 
 
-11) Run 'Provision a New Server' again to load up the surveys from matrix_vars.yml
+12) Run 'Provision a New Server' again to load up the surveys from matrix_vars.yml
 
 
-12) Run 'Start/Restart all Services' job template, then try and login.
+13) Run 'Start/Restart all Services' job template, then try and login.
 
 

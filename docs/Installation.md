@@ -59,7 +59,7 @@ If you will be using a backup server, also define:
 - backup_server_user 		(The username of the backup server.)
 - backup_server_directory 	(The directory to backup to on the backup server.)
 - backup_server_location:	(The location of the backup server.)
-- backup_encryption_passphrase 	(Strong password for the AWX borg backup.)
+- backup_awx_encryption_passphrase 	(Strong password for the AWX borg backup.)
 - backup_private_ssh_key	(Location of passwordless private backup key AWX will use.)
 - backup_public_ssh_key		(Location of public backup key AWX will use.)
 
