@@ -62,7 +62,6 @@ If you will be using a backup server, also define:
 - backup_awx_encryption_passphrase 	(Strong password for the AWX borg backup.)
 - backup_private_ssh_key	(Location of passwordless private backup key AWX will use.)
 - backup_public_ssh_key		(Location of public backup key AWX will use.)
-- vault_client_backup_passphrase	(Strong password to vault client backup passwords.)
 
 If you will be using this setup commercially, also define:
 - radius_secret			(Strong password for authenticating AWX against FreeRadius.)
