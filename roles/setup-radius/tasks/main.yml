@@ -58,6 +58,11 @@
       group: freerad
       state: link
       
+  - name: Remove EAP symbollic link
+    file:
+      path: '/etc/freeradius/3.0/mods-enabled/eap'
+      state: absent
+      
 # docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' awx_web
 # 172.18.0.4
     
