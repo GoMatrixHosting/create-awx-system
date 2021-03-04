@@ -3,31 +3,33 @@
 
 1) Extract variables needed to re-create subscription:
 
-On controller, extract matrix.tar.gz, examine /matrix/awx/organisation.yml and /matrix/awx/server_vars.yml and extra_vars.json, copy:
+On controller, extract matrix.tar.gz, examine /matrix/awx/organisation.yml and /matrix/awx/matrix_awx.yml and /matrix/awx/server_vars.yml and /matrix/awx/extra_vars.json, copy:
 
-- subscription_id: I-CREUS74S6969			[/matrix/awx/extra_vars.yml]
-- member_id: 31						[/matrix/awx/extra_vars.yml]
 - client_email: "bobfett@protonmail.com"		[/matrix/awx/organisation.yml]
 - client_first_name: "Bob"				[/matrix/awx/organisation.yml]
 - client_last_name: "Fett"				[/matrix/awx/organisation.yml]
-- plan_title: Small DigitalOcean Server			[/matrix/awx/server_vars.yml]
-- subscription_type: digitalocean			[/matrix/awx/server_vars.yml]
-
-
-2) Observe 'plan_title' and 'subscription_type' in server_vars.yml, if it's a MemberPress subscription launch '00 - Ansible Create MP Subscription' with the above variables, otherwise launch '00 - Ansible Create Manual Subscription'.
-
-
-3) Before provisioning look at matrix_vars.yml, with that and the previous files record:
-
-- matrix_domain: fishbole.xyz				[/matrix/awx/matrix_vars.yml]
-- do_droplet_region: tor1				[/matrix/awx/server_vars.yml]
 - matrix_server_fqn_element: element.fishbole.xyz	[/matrix/awx/matrix_vars.yml]
 - matrix_nginx_proxy_base_domain_serving_enabled: true	[/matrix/awx/matrix_vars.yml]
+- plan_title: Small DigitalOcean Server			[/matrix/awx/server_vars.yml]
+- subscription_type: digitalocean			[/matrix/awx/server_vars.yml]
+- matrix_domain: fishbole.xyz				[/matrix/awx/extra_vars.yml]
+- subscription_id: I-CREUS74S6969			[/matrix/awx/extra_vars.yml]
+- member_id: 31						[/matrix/awx/extra_vars.yml]
+
+As well as:
+
+- do_droplet_region: tor1				[/matrix/awx/server_vars.yml]
+OR
+- server_ipv4: 134.209.44.206				[/matrix/awx/server_vars.yml]
+- server_ipv6: 2604:a880:800:c1::181:7001		[/matrix/awx/server_vars.yml]
 
 
-4) Provision with these survey answers:
+2) Observe 'subscription_id' in server_vars.yml, if it's a MemberPress subscription (Starts with I-) launch '00 - Ansible Create MP Subscription' with the above variables, otherwise if it's a manual subscription (Starts with T-) launch '00 - Ansible Create Manual Subscription'.
 
-SET BASE DOMAIN - matrix-domain
+
+3) Provision with these survey answers:
+
+SET BASE DOMAIN - matrix_domain
 
 BASE DOMAIN USED - If matrix_nginx_proxy_base_domain_serving_enabled: true, then select 'false', otherwise select 'true'. 
 
@@ -36,7 +38,7 @@ SET ELEMENT SUBDOMAIN - Copy only the subdomain from matrix_server_fqn_element, 
 SELECT REGION - Figure it out from the do_droplet_region. (Or a different one if you're trying to migrate it)
 
 
-5) Copy the DNS information and send it to the customer so they can configure DNS again. For Example:
+4) Copy the DNS information and send it to the customer so they can configure DNS again. For Example:
 
         "Your server has been created! You now need to configure your DNS to have the",
         "following records:",
@@ -52,33 +54,42 @@ SELECT REGION - Figure it out from the do_droplet_region. (Or a different one if
         "Setting the IPv6 record is optional. If you need help doing this please contact us."
 
 
-6) Comment out the backup.sh in roots crontab.
+5) Login to the new server and comment out the export.sh in root users crontab.
 
 
-7) Load matrix_vars.yml from backup into AWX:
+6) Load matrix_vars.yml from the restored backup into AWX:
 
-root@AWX-panel:~# nano /var/lib/awx/projects/clients/31/I-CREUS74S6969/matrix_vars.yml
+~/Documents$ scp ./chroot/export/matrix/awx/matrix_vars.yml panel.topgunmatrix.com:/var/lib/awx/projects/clients/billy.bob/T-ER7RHIKBRKE6/
+matrix_vars.yml                                                                                       100% 3840    16.8KB/s   00:00
 
-HERE
+
+7) Clear known_hosts entry in AWX for that particular server:
+
+root@AWX-5-panel:~# docker exec -i -t awx_task bash
+bash-4.4# sed '/^matrix.absolutematrix.com/d' -i /root/.ssh/known_hosts
+
 
 8) As admin user, after the DNS is updated, run 'Deploy/Update a Server' without the 'start' tag. This is needed to initialise docker for the 'setup-nginx' tag we use in the next step.
 
 
-9A - Admin Upload) Copy backup into /chroot/backup/ with SCP:
+9A - (Admin Upload) Copy backup into /chroot/export/ with SCP:
 
-~/Documents/export$ scp ./* root@matrix.fishbole.xyz:/chroot/backup/
-matrix.tar.gz                                                          100% 8288KB 703.3KB/s   00:11
-postgres_2020-12-20.sql.gz                                             100%   35KB  89.8KB/s   00:00
+~/Documents$ scp ./chroot/export/* root@matrix.absolutematrix.com:/chroot/export/
+matrix.tar.gz                                                            100% 6139KB 738.3KB/s   00:08
+postgres_2021-03-02.sql.gz                                               100% 7496KB 796.3KB/s   00:09 
 
 
-9B - User Upload) As admin user, run 'Configure Website + Access Backup' without the 'start' tag.
+I DON'T THINK THIS IS NEEDED:
+9B - (User Upload) As admin user, run 'Configure Website + Access Export' without the 'start' tag.
 
+
+I DON'T THINK THIS IS NEEDED:
 Then SFTP in and import the backup data you previously exported.
 
-sftp> put -r /home/chatoasis/Documents/export/* ./backup/
-Uploading /home/chatoasis/Documents/export/matrix.tar.gz to /./backup/matrix.tar.gz
+sftp> put -r /home/chatoasis/Documents/export/* ./export/
+Uploading /home/chatoasis/Documents/export/matrix.tar.gz to /./export/matrix.tar.gz
 /home/chatoasis/Documents/export/matrix.tar.gz                         100% 8288KB 779.4KB/s   00:10
-Uploading /home/chatoasis/Documents/export/postgres_2020-12-20.sql.gz to /./backup/postgres_2020-12-20.sql.gz
+Uploading /home/chatoasis/Documents/export/postgres_2020-12-20.sql.gz to /./export/postgres_2020-12-20.sql.gz
 /home/chatoasis/Documents/export/postgres_2020-12-20.sql.gz            100%   35KB 153.0KB/s   00:00
 
 
@@ -90,7 +101,7 @@ with specific clients project, inventory and ssh credential,
 include all the extra variables found in /matrix/awx/extra_vars.yml and the {{ server_path_postgres_dump }}, for example:
 
 ---
-server_path_postgres_dump: /chroot/backup/postgres_2020-12-20.sql.gz
+server_path_postgres_dump: /chroot/export/postgres_2020-12-20.sql.gz
 subscription_id: I-CREUS74S6969
 member_id: 31
 target: "matrix.fishbole.xyz"
@@ -102,10 +113,5 @@ matrix_awx_enabled: true
 
 
 12) Run 'Start/Restart all Services' job template, then try and login.
-
-
-
-
-.
 
 
