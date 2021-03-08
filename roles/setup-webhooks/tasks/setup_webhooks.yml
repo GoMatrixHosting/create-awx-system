@@ -18,6 +18,14 @@
     gid: 1000
     state: present
 
+- name: Touch client-list file, but add/remove some permissions
+  file:
+    path: '/var/lib/awx/projects/clients/client-list'
+    mode: '0660'
+    owner: root
+    group: webhook
+    state: touch
+
 - name: Add the disabled user account 'webhook' with a specific uid and a primary group of 'webhook'
   user:
     name: webhook
