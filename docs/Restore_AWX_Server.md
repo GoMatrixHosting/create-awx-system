@@ -25,7 +25,7 @@ pcadmin@backup-server:/mnt/backup-dir/AWX/extracted$ borg extract /mnt/backup-di
 
 4) Re-create AWX setup on the new server:
 
-Using the same vars.yml, follow the setup steps in Installation.md until the end of step 2.
+Using the same vars.yml, follow the setup steps in Installation.md until the end of step 3.
 
 
 5) Ensure old backup repo is deleted/moved:

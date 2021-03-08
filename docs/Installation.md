@@ -49,7 +49,7 @@ Record these variables to ./inventory/host_vars/panel.example.org/vars.yml:
 - deploy_source			(Repository URL for 'matrix-docker-ansible-deploy'.)
 - deploy_branch			(Branch of this repository to use.)
 - client_private_ssh_key 	(Location of private client key AWX will use.)
-- private_ssh_key_password 	(Strong password for this private key.)
+- client_private_ssh_key_password 	(Strong password for this private key.)
 - vault_unlock_ssh_password:	(Strong password to vault the private_ssh_key_password.)
 - client_public_ssh_key 	(Location of public client key AWX will use.)
 
