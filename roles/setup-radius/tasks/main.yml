@@ -72,18 +72,14 @@
 
   - debug:
       msg: "{{ awx_web_ip.stdout }}"
-    
-  - name: Insert custom listener config into clients.conf
-    blockinfile:
-      path: /etc/freeradius/3.0/clients.conf
-      block: |
-        client {{ awx_web_ip.stdout }} {
-                ipaddr		= {{ awx_web_ip.stdout }}
-                protocol	= udp
-                secret          = {{ radius_secret }}
-                shortname       = awx_container
-                nastype         = other
-        }
+
+  - name: Template the clients.conf file
+    template:
+      src: "{{ role_path }}/clients.conf.j2"
+      dest: /etc/freeradius/3.0/clients.conf
+      owner: freerad
+      group: freerad
+      mode: '0640'
 
   - name: Allow container access to UDP port 1812 with UFW
     ufw:
