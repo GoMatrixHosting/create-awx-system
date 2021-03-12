@@ -363,7 +363,7 @@ authorize {
 
 	#
 	# Look for realms in user@domain format
-	suffix
+#	suffix
 #	ntdomain
 
 	#
