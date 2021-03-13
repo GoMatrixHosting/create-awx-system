@@ -4,7 +4,15 @@
     path: '/var/lib/awx/projects/hosting/'
     owner: root
     group: root
-    mode: '0744'
+    mode: '0740'
+    state: directory
+
+- name: Ensure /projects/hosting/ directory exists for the AWX setup
+  file:
+    path: '/var/lib/awx/projects/clients/'
+    owner: root
+    group: root
+    mode: '0711'
     state: directory
 
 - name: Save new 'hosting_vars.yml' config file, template

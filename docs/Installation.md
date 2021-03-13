@@ -81,9 +81,9 @@ Run the script:
 3) Run the AWX deployment script.
 ```
 $ cd ..
-$ wget https://github.com/ansible/awx/archive/17.0.1.tar.gz
-$ tar -xf 17.0.1.tar.gz
-$ cd ./awx-17.0.1/
+$ wget https://github.com/ansible/awx/archive/17.1.0.tar.gz
+$ tar -xf 17.1.0.tar.gz
+$ cd ./awx-17.1.0/
 ```
 
 Generate and record 3 strong passwords for the:
@@ -115,7 +115,7 @@ Next, run the playbook to install the Ansible AWX with the following command:
 Install prerequisite packages for ansible on the controller:
 
 `$ ansible-galaxy collection install community.crypto`
-`$ ansible-galaxy collection install awx.awx:17.0.1`
+`$ ansible-galaxy collection install --force awx.awx:17.1.0`
 
 Run the script:
 
