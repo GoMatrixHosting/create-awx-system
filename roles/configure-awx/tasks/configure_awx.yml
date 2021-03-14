@@ -302,9 +302,9 @@
   command: cat /etc/timezone
   register: timezone_output
 
-- name: Create an rrule string for a schedule for every Sunday
+- name: Create an rrule string for a schedule for everyday
   set_fact:
-    rrule_line: "DTSTART;TZID={{ timezone_output.stdout }}:20200101T000000 RRULE:FREQ=WEEKLY;INTERVAL=1;BYDAY=SU"
+    rrule_line: "DTSTART;TZID={{ timezone_output.stdout }}:20200101T000000 RRULE:FREQ=WEEKLY;INTERVAL=1;BYDAY=SU,MO,TU,WE,TH,FR,SA"
 
 - name: Build a schedule for '00 - Backup All Servers' job template
   awx.awx.tower_schedule:
