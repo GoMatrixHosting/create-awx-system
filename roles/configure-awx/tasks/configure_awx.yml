@@ -284,6 +284,39 @@
     tower_oauthtoken: "{{ tower_token.stdout }}"
     validate_certs: yes
 
+- name: Create '00 - Backup All Servers' job template
+  awx.awx.tower_job_template:
+    name: "00 - Backup All Servers"
+    description: "Performs a sequential backup of every server connected to AWX."
+    job_type: run
+    inventory: "{{ org_name }} Inventory"
+    project: "Ansible Create Delete Subscription Membership"
+    playbook: backup-all.yml
+    state: present
+    verbosity: 1
+    tower_host: "https://{{ awx_url }}"
+    tower_oauthtoken: "{{ tower_token.stdout }}"
+    validate_certs: yes
+
+- name: Collect timezone of AWX server (Debian and derivatives only) 
+  command: cat /etc/timezone
+  register: timezone_output
+
+- name: Create an rrule string for a schedule for every Sunday
+  set_fact:
+    rrule_line: "DTSTART;TZID={{ timezone_output.stdout }}:20200101T000000 RRULE:FREQ=WEEKLY;INTERVAL=1;BYDAY=SU"
+
+- name: Build a schedule for '00 - Backup All Servers' job template
+  awx.awx.tower_schedule:
+    name: "00 - Backup All Servers Schedule"
+    enabled: yes
+    state: present
+    unified_job_template: "00 - Backup All Servers"
+    rrule: "{{ rrule_line }}"
+    tower_host: "https://{{ awx_url }}"
+    tower_oauthtoken: "{{ tower_token.stdout }}"
+    validate_certs: yes
+
 - name: Create '00 - Restore and Import Postgresql Dump' job template
   awx.awx.tower_job_template:
     name: "00 - Restore and Import Postgresql Dump"
@@ -318,7 +351,7 @@
     validate_certs: yes
 
 - name: Install awx.awx collection in AWX docker
-  command: docker exec awx_task /bin/bash -l -c "ansible-galaxy collection install awx.awx:17.0.1"
+  command: docker exec awx_task /bin/bash -l -c "ansible-galaxy collection install --force awx.awx:17.1.0"
 
 - name: Install community.digitalocean collection in AWX docker
   command: docker exec awx_task /bin/bash -l -c "ansible-galaxy collection install community.digitalocean"
