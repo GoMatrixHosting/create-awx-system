@@ -4,7 +4,15 @@
     path: '/var/lib/awx/projects/hosting/'
     owner: root
     group: root
-    mode: '0744'
+    mode: '0740'
+    state: directory
+
+- name: Ensure /projects/hosting/ directory exists for the AWX setup
+  file:
+    path: '/var/lib/awx/projects/clients/'
+    owner: root
+    group: root
+    mode: '0711'
     state: directory
 
 - name: Save new 'hosting_vars.yml' config file, template
@@ -14,16 +22,34 @@
 
 - name: Copy private SSH key to hosting directory for the AWX setup
   copy:
-    src: '{{ private_ssh_key }}'
-    dest: /var/lib/awx/projects/hosting/private.key
+    src: '{{ client_private_ssh_key }}'
+    dest: /var/lib/awx/projects/hosting/client_private.key
     owner: root
     group: root
     mode: '0600'
 
 - name: Copy public SSH key to hosting directory for the AWX setup
   copy:
-    src: '{{ public_ssh_key }}'
-    dest: /var/lib/awx/projects/hosting/public.key
+    src: '{{ client_public_ssh_key }}'
+    dest: /var/lib/awx/projects/hosting/client_public.key
     owner: root
     group: root
     mode: '0600'
+    
+- name: Copy backup private SSH key to hosting directory for the AWX setup
+  copy:
+    src: '{{ backup_private_ssh_key }}'
+    dest: /var/lib/awx/projects/hosting/backup_private.key
+    owner: root
+    group: root
+    mode: '0600'
+  when: backup_private_ssh_key is defined
+
+- name: Copy backup public SSH key to hosting directory for the AWX setup
+  copy:
+    src: '{{ backup_public_ssh_key }}'
+    dest: /var/lib/awx/projects/hosting/backup_public.key
+    owner: root
+    group: root
+    mode: '0600'
+  when: backup_public_ssh_key is defined

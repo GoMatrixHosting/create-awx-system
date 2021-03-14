@@ -1,4 +1,12 @@
 
+- name: Ensure /var/lib/awx has correct permissions for webhook user
+  file:
+    path: '/var/lib/awx'
+    owner: root
+    group: root
+    mode: '0755'
+    state: directory
+
 - name: Collect AWX admin token the hard way!
   shell: |
       curl -sku admin:{{ admin_password }} -H "Content-Type: application/json" -X POST -d '{"description":"Tower CLI", "application":null, "scope":"write"}' https://{{ awx_url }}/api/v2/users/1/personal_tokens/ | jq '.token' | sed -r 's/\"//g'
@@ -116,7 +124,7 @@
   delegate_to: 127.0.0.1
   become: false
   shell: |
-    echo "---\nprivate_ssh_key_password: '{{ private_ssh_key_password }}'" > /tmp/plaintext_ssh_password.yml
+    echo "---\nclient_private_ssh_key_password: '{{ client_private_ssh_key_password }}'" > /tmp/plaintext_ssh_password.yml
   no_log: true
 
 - name: Encrypt the contents of plaintext_ssh_password variable file
@@ -276,6 +284,39 @@
     tower_oauthtoken: "{{ tower_token.stdout }}"
     validate_certs: yes
 
+- name: Create '00 - Backup All Servers' job template
+  awx.awx.tower_job_template:
+    name: "00 - Backup All Servers"
+    description: "Performs a sequential backup of every server connected to AWX."
+    job_type: run
+    inventory: "{{ org_name }} Inventory"
+    project: "Ansible Create Delete Subscription Membership"
+    playbook: backup-all.yml
+    state: present
+    verbosity: 1
+    tower_host: "https://{{ awx_url }}"
+    tower_oauthtoken: "{{ tower_token.stdout }}"
+    validate_certs: yes
+
+- name: Collect timezone of AWX server (Debian and derivatives only) 
+  command: cat /etc/timezone
+  register: timezone_output
+
+- name: Create an rrule string for a schedule for everyday
+  set_fact:
+    rrule_line: "DTSTART;TZID={{ timezone_output.stdout }}:20200101T000000 RRULE:FREQ=WEEKLY;INTERVAL=1;BYDAY=SU,MO,TU,WE,TH,FR,SA"
+
+- name: Build a schedule for '00 - Backup All Servers' job template
+  awx.awx.tower_schedule:
+    name: "00 - Backup All Servers Schedule"
+    enabled: yes
+    state: present
+    unified_job_template: "00 - Backup All Servers"
+    rrule: "{{ rrule_line }}"
+    tower_host: "https://{{ awx_url }}"
+    tower_oauthtoken: "{{ tower_token.stdout }}"
+    validate_certs: yes
+
 - name: Create '00 - Restore and Import Postgresql Dump' job template
   awx.awx.tower_job_template:
     name: "00 - Restore and Import Postgresql Dump"
@@ -310,7 +351,7 @@
     validate_certs: yes
 
 - name: Install awx.awx collection in AWX docker
-  command: docker exec awx_task /bin/bash -l -c "ansible-galaxy collection install awx.awx:17.0.1"
+  command: docker exec awx_task /bin/bash -l -c "ansible-galaxy collection install --force awx.awx:17.1.0"
 
 - name: Install community.digitalocean collection in AWX docker
   command: docker exec awx_task /bin/bash -l -c "ansible-galaxy collection install community.digitalocean"

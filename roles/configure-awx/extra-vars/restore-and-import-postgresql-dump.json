@@ -1,5 +1,5 @@
 {
-  "server_path_postgres_dump": "/chroot/backup/postgres_2020-12-20.sql",
+  "server_path_postgres_dump": "/chroot/export/postgres_2021-03-02.sql.gz",
   "subscription_id": "I-CREUS74S6969",
   "member_id": "31",
   "target": "matrix.fishbole.xyz",

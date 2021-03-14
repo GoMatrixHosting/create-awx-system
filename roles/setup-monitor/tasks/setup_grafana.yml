@@ -56,7 +56,6 @@
     access: direct
     ds_type: prometheus
     ds_url: 'http://127.0.0.1:9090'
-    access: direct
     tls_skip_verify: true
     url: "https://{{ grafana_url }}"
     grafana_user: "admin"

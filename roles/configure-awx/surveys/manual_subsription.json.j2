@@ -40,8 +40,8 @@
     },
     {
       "question_name": "Client Password",
-      "question_description": "The password the client will use to login to AWX.",
-      "required": true,
+      "question_description": "The password the client will use to login to AWX. This only needs to be defined if the member doesn't already exist.",
+      "required": false,
       "min": 0,
       "max": 256,
       "default": "",
@@ -68,8 +68,8 @@
       "required": true,
       "min": null,
       "max": null,
-      "default": "Small On-Premises Server",
-      "choices": "Small On-Premises Server\nMedium On-Premises Server\nLarge On-Premises Server\nSmall DigitalOcean Server\nMedium DigitalOcean Server\nLarge DigitalOcean Server",
+      "default": "Small DigitalOcean Server",
+      "choices": "Micro DigitalOcean Server\nSmall DigitalOcean Server\nMedium DigitalOcean Server\nLarge DigitalOcean Server\nJumbo 500 DigitalOcean Server\nJumbo 1000 DigitalOcean Server\nJumbo 2000 DigitalOcean Server\nJumbo 5000 DigitalOcean Server\nMicro On-Premises Server\nSmall On-Premises Server\nMedium On-Premises Server\nLarge On-Premises Server\nJumbo 500 On-Premises Server\nJumbo 1000 On-Premises Server\nJumbo 2000 On-Premises Server\nJumbo 5000 On-Premises Server",
       "new_question": true,
       "variable": "plan_title",
       "type": "multiplechoice"

@@ -16,9 +16,15 @@ Map 2 A records for panel.example.org and monitor.example.org to the servers IP.
 
 # Installation
 
-Installation is broken up into 6 stages:
+Installation is broken up into 7 stages:
 
-1) Pre-setup, setup before the awx playbook is run, installs Docker and sets up TLS proxy for AWX, optionally website hooks and grafana are also setup.
+1) Optionally, create a backup server. You should be able to access root using a IP that the AWX server can reach and the 'client_private_ssh_key', it should also contain a depriviledged user 'backup_server_user' and backup location 'backup_server_location'. Collect its SSH fingerprint and save it to 'backup_server_ssh_fingerprint', to collect it run this command:
+
+$ ssh-keyscan -t ed25519 {{ backup_server_ip }} 2>/dev/null
+255.150.40.99 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOdNgn7zqlpWIsiTV91QLEtRnXH18uMC27zVJYHsql/D
+
+
+2) Pre-setup, setup before the awx playbook is run, installs Docker and sets up TLS proxy for AWX, optionally website hooks and grafana are also setup.
 
 `$ git clone https://gitlab.com/GoMatrixHosting/create-awx-system.git`
 
@@ -36,16 +42,32 @@ Record these variables to ./inventory/host_vars/panel.example.org/vars.yml:
 - grafana_url 			(The URL for Grafana.)
 - certbot_email 		(The organisations email.)
 - admin_password 		(Strong password for the AWX admin user.)
-- private_ssh_key 		(Location of private key AWX will use.)
-- private_ssh_key_password 	(Strong password for this private key.)
-- public_ssh_key 		(Location of public key AWX will use.)
-If you wish to configure a backup server, also define:
+- create_delete_source		(Repository URL for 'Ansible Create Delete Subscription Membership'.)
+- create_delete_branch		(Branch of this repository to use.)
+- provision_source		(Repository URL for 'Ansible Provision'.)
+- provision_branch		(Branch of this repository to use.)
+- deploy_source			(Repository URL for 'matrix-docker-ansible-deploy'.)
+- deploy_branch			(Branch of this repository to use.)
+- client_private_ssh_key 	(Location of private client key AWX will use.)
+- client_private_ssh_key_password 	(Strong password for this private key.)
+- vault_unlock_ssh_password:	(Strong password to vault the private_ssh_key_password.)
+- client_public_ssh_key 	(Location of public client key AWX will use.)
+
+If you will be using a backup server, also define:
 - backup_server_ip 		(IP address of the backup server.)
 - backup_server_hostname 	(The hostname of the backup server.)
 - backup_server_user 		(The username of the backup server.)
 - backup_server_directory 	(The directory to backup to on the backup server.)
-- backup_encryption_passphrase 	(Strong password for the AWX borg backup.)
+- backup_server_location:	(The location of the backup server.)
+- backup_awx_encryption_passphrase 	(Strong password for the AWX borg backup.)
+- backup_private_ssh_key	(Location of passwordless private backup key AWX will use.)
+- backup_public_ssh_key		(Location of public backup key AWX will use.)
+
 If you will be using this setup commercially, also define:
+- radius_secret			(Strong password for authenticating AWX against FreeRadius.)
+- oauth_client_id		(client_id from WP Oauth Server WordPress plugin.)
+- oauth_client_secret		(client_secret from WP Oauth Server WordPress plugin.)
+- wp_url			(The URL of the front-end WordPress site.)
 - do_api_token 			(Your DigitalOcean API token/)
 - do_spaces_access_key 		(Your DigitalOcean Spaces Access Key.)
 - do_spaces_secret_key 		(Your DigitalOcean Spaces Secret Key.)
@@ -56,12 +78,12 @@ Run the script:
 `$ ansible-playbook -v -i ./inventory/hosts -t "setup,setup-monitor,setup-webhooks" pre-setup.yml`
 
 
-2) Run the AWX deployment script.
+3) Run the AWX deployment script.
 ```
 $ cd ..
-$ wget https://github.com/ansible/awx/archive/17.0.1.tar.gz
-$ tar -xf 17.0.1.tar.gz
-$ cd ./awx-17.0.1/
+$ wget https://github.com/ansible/awx/archive/17.1.0.tar.gz
+$ tar -xf 17.1.0.tar.gz
+$ cd ./awx-17.1.0/
 ```
 
 Generate and record 3 strong passwords for the:
@@ -88,19 +110,19 @@ Next, run the playbook to install the Ansible AWX with the following command:
 `$ ansible-playbook -i ./installer/inventory ./installer/install.yml`
 
 
-3) Post-setup, configures existing AWX system and adds community packages if 'configure-awx' tag set, also configures the AWX systems backup if 'setup-backup' and 'enable-backup' tag is included. Note that the backup machine will need SSH access to root.
+4) Post-setup, configures existing AWX system and adds community packages if 'configure-awx' tag set, also configures the AWX systems backup if 'setup-backup' and 'enable-backup' tag is included. Note that the backup machine will need SSH access to root.
 
 Install prerequisite packages for ansible on the controller:
 
 `$ ansible-galaxy collection install community.crypto`
-`$ ansible-galaxy collection install awx.awx:17.0.1`
+`$ ansible-galaxy collection install --force awx.awx:17.1.0`
 
 Run the script:
 
 `$ ansible-playbook -v -i ./inventory/hosts -t "configure-awx,setup-radius,setup-swatchdog,setup-backup,enable-backup" post-setup.yml`
 
 
-4) Perform initial SSH handshake from AWX to backup server.
+5) Perform initial SSH handshake from AWX to backup server.
 
 Manually SSH into the AWX tower, then manually SSH into the backup server:
 `$ ssh {{ backup_server_hostname }}`
@@ -108,7 +130,7 @@ Manually SSH into the AWX tower, then manually SSH into the backup server:
 Note the command-line here is restricted, so you won't be able to do anything besides connnect.
 
 
-5) Connect FreeRADIUS server to AWX
+6) Connect AWX to FreeRADIUS server
 
 In the 'Authentication' > 'Radius' page:
 
@@ -117,7 +139,7 @@ RADIUS PORT:	1812
 RADIUS SECRET:	"{{ radius_secret }}"
 
 
-6) Setup grafana.
+7) Setup grafana.
 
 The Grafana needs extra configuration to work, follow the [Grafana.md in the docs/ directory](docs/Grafana.md).
 

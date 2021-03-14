@@ -1,5 +1,5 @@
 
-~~ AWX System Backup && Restore ~~
+~~ Restore AWX Server ~~
 
 1) Ensure a recent backup has executed properly:
 
@@ -25,7 +25,7 @@ pcadmin@backup-server:/mnt/backup-dir/AWX/extracted$ borg extract /mnt/backup-di
 
 4) Re-create AWX setup on the new server:
 
-Using the same vars.yml, follow the setup steps in Installation.md until the end of step 2.
+Using the same vars.yml, follow the setup steps in Installation.md until the end of step 3.
 
 
 5) Ensure old backup repo is deleted/moved:
@@ -38,7 +38,7 @@ pcadmin@backup-server:/mnt/backup-dir/AWX$ mv ./panel.example.org ./panel.exampl
 
 7) Run post-setup.yml while skipping the 'enable-backup' and 'configure-awx' tag:
 
-$ ansible-playbook -v -i ./inventory/hosts -t "setup-radius,setup-swatchdog,setup-backup" --skip-tags="configure-awx,enable-backup" post-setup.yml
+$ ansible-playbook -v -i ./inventory/hosts -t "setup-radius,setup-swatchdog,setup-backup" post-setup.yml
 
 
 8) Restore /var/lib/awx/projects to new AWX system with correct permissions:
@@ -50,7 +50,8 @@ awx_web
 root@AWX-new:~# apt install rsync
 root@AWX-new:~# rm -r /var/lib/awx/projects/*
 
-$ rsync -av /mnt/backup-dir/AWX/extracted/var/lib/awx/projects root@panel.example.org:/var/lib/awx/
+$ rsync -av backup-server:/mnt/backup-dir/AWX/extracted/var/lib/awx/projects ./
+$ rsync -av ./projects panel.example.org:/var/lib/awx/
 
 root@AWX-new:~# chown -R root:root /var/lib/awx/projects
 root@AWX-new:~# chmod 755 /var
@@ -69,13 +70,12 @@ root@AWX-new:~# chmod 600 /var/lib/awx/projects/clients/*/*/*
 
 9) Run import on AWX tower:
 
-root@AWX-new:~# cp /var/lib/awx/projects/awx-dump.sql /root/.awx/pgdocker/10/data/
+root@AWX-new:~# cp /var/lib/awx/projects/awx-dump.sql /root/.awx/pgdocker/12/data/
 root@AWX-new:~# docker exec -it awx_postgres /bin/bash
 root@ce48e2584014:/# dropdb -U awx awx
 root@ce48e2584014:/# createdb -U awx awx
 root@ce48e2584014:/# psql -U awx awx < /var/lib/postgresql/data/awx-dump.sql
 root@ce48e2584014:/# exit
-exit
 root@AWX-new:~# docker start awx_task
 awx_task
 root@AWX-new:~# docker start awx_web
@@ -84,12 +84,12 @@ awx_web
 
 10) Check if the data has been imported properly:
 
-Try login as a user account, looks good :)
+Try login as a user account, looks good? :)
 
 
 11) Activate backup and complete installation:
 
 $ ansible-playbook -v -i ./inventory/hosts -t "enable-backup" post-setup.yml
 
-*Follow rest of Installation.md
+*Follow the rest of Installation.md from step 5.
 

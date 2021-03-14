@@ -21,7 +21,7 @@ location:
 
 storage:
     compression: auto,zstd
-    encryption_passphrase: {{ backup_encryption_passphrase }}
+    encryption_passphrase: {{ backup_awx_encryption_passphrase }}
     archive_name_format: '{hostname}-{now}'
     checkpoint_interval: 600
 

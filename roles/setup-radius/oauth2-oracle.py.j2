@@ -4,11 +4,7 @@ import os,sys
 
 client_id = r'{{ oauth_client_id }}'
 client_secret = r'{{ oauth_client_secret }}'
-#username = r'user@example.com'
-#password = r'xxxx'
 
-#username = sys.argv[1]
-#password = sys.argv[2]
 username = os.environ['USER_NAME'].strip('"')
 password = os.environ['USER_PASSWORD'].strip('"')
 
@@ -35,10 +31,6 @@ except oauthlib.oauth2.rfc6749.errors.InvalidGrantError as e:
     # Server reports bad username/password
     with open('/tmp/test-radius-oracle.log', "a") as f:
         f.write(t + ' ' + sys.argv[0] + ' login failed for: ' + username + '\n')
-#except NameError as e:
-#    print('NameError caught: ' + str(e))
-#except Exception as e:
-#    print('generic Exception caught: ' + str(e))
 
 sys.exit(1)
 
