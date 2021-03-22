@@ -123,4 +123,15 @@
   pip:
     name: docker-compose==1.21.0
 
+- name: Save docker config file, template
+  template:
+    src: '{{ role_path }}/templates/daemon.json.j2'
+    dest: '/etc/docker/daemon.json'
+
+- name: Creates a crontab entry for trimming systemd logs"
+  cron:
+    name: "Trim Systemd Logs"
+    user: root
+    special_time: daily
+    job: "sudo journalctl --vacuum-time=28d"
 
