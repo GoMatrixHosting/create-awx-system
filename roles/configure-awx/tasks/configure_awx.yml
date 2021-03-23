@@ -166,15 +166,28 @@
   shell: |
     shred -u /tmp/vaulted_ssh_password.yml
      
-- name: Add AWX Unlock SSH Password credential to admin users account
+- name: Add Unlock SSH Password credential to admin users account
   awx.awx.tower_credential:
-    name: "AWX Unlock SSH Password"
+    name: "Unlock SSH Password"
     description: "The password to unlock the variable file containing the client systems SSH key password."
     credential_type: Vault
     organization: "{{ org_name }}"
     inputs: 
       vault_id: unlock_ssh_password
       vault_password: "{{ vault_unlock_ssh_password }}"
+    tower_host: "https://{{ awx_url }}"
+    tower_oauthtoken: "{{ tower_token.stdout }}"
+    validate_certs: yes
+
+- name: Add Unlock Borg Passwords credential to admin users account
+  awx.awx.tower_credential:
+    name: "Unlock Borg Passwords"
+    description: "The password to unlock the variable files containing the clients borg repository keys."
+    credential_type: Vault
+    organization: "{{ org_name }}"
+    inputs: 
+      vault_id: unlock_borg_passwords
+      vault_password: "{{ vault_unlock_borg_passwords }}"
     tower_host: "https://{{ awx_url }}"
     tower_oauthtoken: "{{ tower_token.stdout }}"
     validate_certs: yes
