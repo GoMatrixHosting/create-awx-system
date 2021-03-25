@@ -179,18 +179,18 @@
     tower_oauthtoken: "{{ tower_token.stdout }}"
     validate_certs: yes
 
-- name: Add Unlock Borg Passwords credential to admin users account
-  awx.awx.tower_credential:
-    name: "Unlock Borg Passwords"
-    description: "The password to unlock the variable files containing the clients borg repository keys."
-    credential_type: Vault
-    organization: "{{ org_name }}"
-    inputs: 
-      vault_id: unlock_borg_passwords
-      vault_password: "{{ vault_unlock_borg_passwords }}"
-    tower_host: "https://{{ awx_url }}"
-    tower_oauthtoken: "{{ tower_token.stdout }}"
-    validate_certs: yes
+#- name: Add Unlock Borg Passwords credential to admin users account
+#  awx.awx.tower_credential:
+#    name: "Unlock Borg Passwords"
+#    description: "The password to unlock the variable files containing the clients borg repository keys."
+#    credential_type: Vault
+#    organization: "{{ org_name }}"
+#    inputs: 
+#      vault_id: unlock_borg_passwords
+#      vault_password: "{{ vault_unlock_borg_passwords }}"
+#    tower_host: "https://{{ awx_url }}"
+#    tower_oauthtoken: "{{ tower_token.stdout }}"
+#    validate_certs: yes
 
 - name: Add 'Ansible Create Delete Subscription Membership' project to users organisation
   awx.awx.tower_project:
@@ -239,7 +239,7 @@
     inventory: "{{ org_name }} Inventory"
     project: "Ansible Create Delete Subscription Membership"
     playbook: create.yml
-    credentials: ["Unlock SSH Password", "Unlock Borg Passwords"]
+    credentials: "Unlock SSH Password"
     ask_extra_vars: yes
     survey_enabled: true
     survey_spec: "{{ lookup('file', '{{ role_path }}/surveys/manual_subsription.json.j2') }}"
@@ -258,7 +258,7 @@
     inventory: "{{ org_name }} Inventory"
     project: "Ansible Create Delete Subscription Membership"
     playbook: create.yml
-    credentials: ["Unlock SSH Password", "Unlock Borg Passwords"]
+    credentials: "Unlock SSH Password"
     extra_vars: "{{ lookup('file', '{{ role_path }}/extra-vars/create-mp.json') }}"
     ask_extra_vars: yes
     state: present

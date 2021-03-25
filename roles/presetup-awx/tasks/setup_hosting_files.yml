@@ -7,6 +7,14 @@
     mode: '0740'
     state: directory
 
+- name: Ensure /projects/backups/ directory exists for the AWX setup
+  file:
+    path: '/var/lib/awx/projects/backups/'
+    owner: root
+    group: root
+    mode: '0740'
+    state: directory
+
 - name: Ensure /projects/hosting/ directory exists for the AWX setup
   file:
     path: '/var/lib/awx/projects/clients/'
