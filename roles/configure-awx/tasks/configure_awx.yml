@@ -275,7 +275,7 @@
     job_type: run
     inventory: "{{ org_name }} Inventory"
     project: "Ansible Create Delete Subscription Membership"
-    playbook: delete.yml
+    playbook: delete_member.yml
     extra_vars: "{{ lookup('file', '{{ role_path }}/extra-vars/delete-member.json') }}"
     ask_extra_vars: yes
     state: present
@@ -292,7 +292,7 @@
     job_type: run
     inventory: "{{ org_name }} Inventory"
     project: "Ansible Create Delete Subscription Membership"
-    playbook: delete.yml
+    playbook: delete_subscription.yml
     extra_vars: "{{ lookup('file', '{{ role_path }}/extra-vars/delete-subscription.json') }}"
     ask_extra_vars: yes
     state: present
