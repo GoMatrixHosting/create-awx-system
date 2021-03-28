@@ -36,7 +36,7 @@
   delegate_to: '{{ backup_server_hostname }}'
   lineinfile:
     path: '/home/{{ backup_server_user }}/.ssh/authorized_keys'
-    line: '# AWX backups'
+    line: '# AWX Backups'
     owner: '{{ backup_server_user }}'
     group: '{{ backup_server_user }}'
     mode: '0600'
