@@ -316,6 +316,20 @@
     tower_oauthtoken: "{{ tower_token.stdout }}"
     validate_certs: yes
 
+- name: Create '00 - Reprovision All Servers' job template
+  awx.awx.tower_job_template:
+    name: "00 - Reprovision All Servers"
+    description: "Re-provisions every Matrix server connected to AWX."
+    job_type: run
+    inventory: "{{ org_name }} Inventory"
+    project: "Ansible Create Delete Subscription Membership"
+    playbook: reprovision-all.yml
+    state: present
+    verbosity: 1
+    tower_host: "https://{{ awx_url }}"
+    tower_oauthtoken: "{{ tower_token.stdout }}"
+    validate_certs: yes
+
 - name: Collect timezone of AWX server (Debian and derivatives only) 
   command: cat /etc/timezone
   register: timezone_output
