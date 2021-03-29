@@ -1,29 +1,23 @@
-import os
-from datetime import datetime
-import shutil
+from os import listdir, path
+from datetime import datetime, timedelta
+from shutil import rmtree
 
 client_backup_dir = '{{ backup_server_directory }}/Clients/'
 
-backup_dirs = os.listdir(client_backup_dir)
+backup_dirs = listdir(client_backup_dir)
 
 print(backup_dirs)
 
 for directory in backup_dirs:
     print(directory)
-    for subdir, dirs, files in os.walk(client_backup_dir + directory):
-        for file in files:
-            if os.path.join(subdir, file) == (client_backup_dir + directory + "/delete_me"):
-                print(os.path.join(subdir, file)) 
-                print("found!")
-                delete_me_file = client_backup_dir + directory + "/delete_me"
-                with open(delete_me_file, 'r') as file:
-                    data = file.read().replace('\n', '')
-                    print(data)
-                    today = datetime.today().strftime('%d-%m-%Y')
-                    print(today)
-                    print("today is more recent than date : ", today > data)
-                    if today > data:
-                        shutil.rmtree((client_backup_dir + directory))
-
-# Example file:
-#27-03-2021
+    mod_date = datetime.fromtimestamp(path.getmtime(client_backup_dir + directory))
+    del_date = datetime.fromtimestamp(path.getmtime(client_backup_dir + directory)) + timedelta(days={{ backup_server_days_retention }})
+    print("Modification time: " + str(mod_date))
+    print("Deletion time: " + str(del_date))
+    today = datetime.now()
+    print("Todays time: " + str(today))
+    if today > del_date:
+        print("Removing directory " + client_backup_dir + directory)
+        rmtree((client_backup_dir + directory))
+    else:
+        print("Skipping...")
