@@ -20,7 +20,7 @@ backup_user@backup_server:/mnt/backup-dir/extracted$ borg extract /mnt/backup-di
 
 3) Download extracted export to controller:
 
-michael@gomatrixhosting:~/Documents$ scp -r backup_user@backup_server:/mnt/backup-dir/extracted/chroot ./
+michael@gomatrixhosting:~/Documents$ scp -r backup_server:/mnt/backup-dir/extracted/chroot ./
 matrix.tar.gz                                              100% 6139KB   5.7MB/s   00:01
 postgres_2021-03-02.sql.gz                                 100% 7496KB   6.4MB/s   00:01
 
