@@ -1,0 +1,23 @@
+from os import listdir, path
+from datetime import datetime, timedelta
+from shutil import rmtree
+
+client_backup_dir = '{{ backup_server_directory }}/Clients/'
+
+backup_dirs = listdir(client_backup_dir)
+
+print(backup_dirs)
+
+for directory in backup_dirs:
+    print(directory)
+    mod_date = datetime.fromtimestamp(path.getmtime(client_backup_dir + directory))
+    del_date = datetime.fromtimestamp(path.getmtime(client_backup_dir + directory)) + timedelta(days={{ backup_server_days_retention }})
+    print("Modification time: " + str(mod_date))
+    print("Deletion time: " + str(del_date))
+    today = datetime.now()
+    print("Todays time: " + str(today))
+    if today > del_date:
+        print("Removing directory " + client_backup_dir + directory)
+        rmtree((client_backup_dir + directory))
+    else:
+        print("Skipping...")

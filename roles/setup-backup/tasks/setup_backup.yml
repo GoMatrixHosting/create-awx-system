@@ -36,7 +36,7 @@
   delegate_to: '{{ backup_server_hostname }}'
   lineinfile:
     path: '/home/{{ backup_server_user }}/.ssh/authorized_keys'
-    line: '# AWX backups'
+    line: '# AWX Backups'
     owner: '{{ backup_server_user }}'
     group: '{{ backup_server_user }}'
     mode: '0600'
@@ -45,6 +45,7 @@
   delegate_to: '{{ backup_server_hostname }}'
   lineinfile:
     path: '/home/{{ backup_server_user }}/.ssh/authorized_keys'
+    insertafter: '# AWX Backups'
     line: 'command="borg serve --restrict-to-path {{ backup_server_directory }}/AWX/{{ awx_url }}",restrict {{ public_key.stdout }}'
     owner: '{{ backup_server_user }}'
     group: '{{ backup_server_user }}'
@@ -57,6 +58,7 @@
     block: |
       Host {{ backup_server_hostname }}
           HostName {{ backup_server_ip }}
+          Port {{ backup_server_ssh_port }}
           User {{ backup_server_user }}
           IdentityFile ~/.ssh/borg_{{ awx_url }}_ed25519
 
@@ -88,4 +90,17 @@
     group: '{{ backup_server_user }}'
     state: directory
     recurse: yes
+
+- name: Save clean_backups.py script, template
+  delegate_to: '{{ backup_server_hostname }}'
+  template:
+    src: '{{ role_path }}/templates/cleanup_backups.py.j2'
+    dest: '/root/cleanup_backups.py'
+    
+- name: Ensure the cleanup_backups.py script runs every day
+  delegate_to: '{{ backup_server_hostname }}'
+  cron:
+    name: "Run cleanup_backups.py script"
+    special_time: daily
+    job: "python3 /root/cleanup_backups.py"
     

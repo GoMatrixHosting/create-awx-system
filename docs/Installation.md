@@ -62,6 +62,7 @@ If you will be using a backup server, also define:
 - backup_awx_encryption_passphrase 	(Strong password for the AWX borg backup.)
 - backup_private_ssh_key	(Location of passwordless private backup key AWX will use.)
 - backup_public_ssh_key		(Location of public backup key AWX will use.)
+- vault_unlock_borg_passwords	(Strong password to vault the clients borg backup keys.)
 
 If you will be using this setup commercially, also define:
 - radius_secret			(Strong password for authenticating AWX against FreeRadius.)
@@ -139,7 +140,14 @@ RADIUS PORT:	1812
 RADIUS SECRET:	"{{ radius_secret }}"
 
 
-7) Setup grafana.
+7) Set base URL in AWX
+
+Settings > Miscellaneous System Settings > Edit
+
+Change 'Base URL of the Tower host' to your AWX systems URL.
+
+
+8) Setup grafana.
 
 The Grafana needs extra configuration to work, follow the [Grafana.md in the docs/ directory](docs/Grafana.md).
 

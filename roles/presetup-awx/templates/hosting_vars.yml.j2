@@ -1,17 +1,19 @@
-# DigitalOcean Settings
-do_api_token: '{{ do_api_token }}'
-do_spaces_access_key: '{{ do_spaces_access_key }}'
-do_spaces_secret_key: '{{ do_spaces_secret_key }}'
-do_image_master: '{{ do_image_master }}'
 # Tower Settings
 tower_host: '{{ awx_url }}'
 tower_username: '{{ admin_username }}'
 tower_password: '{{ admin_password }}'
+# Hosting Settings
+certbot_email: '{{ certbot_email }}'
 # Repository Settings
 provision_source: '{{ provision_source }}'
 provision_branch: '{{ provision_branch }}'
 deploy_source: '{{ deploy_source }}'
 deploy_branch: '{{ deploy_branch }}'
+# DigitalOcean Settings
+do_api_token: '{{ do_api_token }}'
+do_spaces_access_key: '{{ do_spaces_access_key }}'
+do_spaces_secret_key: '{{ do_spaces_secret_key }}'
+do_image_master: '{{ do_image_master }}'
 # Backup Settings
 backup_server_ip: '{{ backup_server_ip }}'
 backup_server_hostname: '{{ backup_server_hostname }}'
