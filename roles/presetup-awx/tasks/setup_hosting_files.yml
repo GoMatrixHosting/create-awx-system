@@ -23,10 +23,17 @@
     mode: '0711'
     state: directory
 
-- name: Save new 'hosting_vars.yml' config file, template
+- name: Save new 'hosting_vars.yml' config file if backup enabled, template
   template:
     src: './roles/presetup-awx/templates/hosting_vars.yml.j2'
     dest: '/var/lib/awx/projects/hosting/hosting_vars.yml'
+  when: backup_server_enabled|bool
+  
+- name: Save new 'hosting_vars.yml' config file if backup disabled, template
+  template:
+    src: './roles/presetup-awx/templates/hosting_vars_2.yml.j2'
+    dest: '/var/lib/awx/projects/hosting/hosting_vars.yml'
+  when: not backup_server_enabled|bool
 
 - name: Copy private SSH key to hosting directory for the AWX setup
   copy:

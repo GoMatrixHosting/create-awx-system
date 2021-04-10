@@ -37,6 +37,7 @@ oauth_client_secret: << from wp-oath-provider >>
 wp_url: example.org
 
 # Backup Server Settings
+backup_server_enabled: true
 backup_server_ip: 255.255.255.255
 backup_server_ssh_port: 22
 backup_server_hostname: hostname
