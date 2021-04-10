@@ -18,11 +18,11 @@ admin_password: << strong-password >>
 
 # Repository Settings
 create_delete_source: https://gitlab.com/GoMatrixHosting/ansible-create-delete-subscription-membership.git
-create_delete_branch: testing
+create_delete_branch: master
 provision_source: https://gitlab.com/GoMatrixHosting/ansible-provision-server.git
-provision_branch: testing
-deploy_source: https://gitlab.com/GoMatrixHosting/gomatrixhosting-matrix-docker-ansible-deploy.git
-deploy_branch: testing
+provision_branch: master
+deploy_source: https://github.com/spantaleev/matrix-docker-ansible-deploy.git
+deploy_branch: master
 
 # SSH Keys
 client_private_ssh_key: /key/location/id_ed25519
