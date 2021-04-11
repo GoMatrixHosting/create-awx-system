@@ -179,19 +179,6 @@
     tower_oauthtoken: "{{ tower_token.stdout }}"
     validate_certs: yes
 
-#- name: Add Unlock Borg Passwords credential to admin users account
-#  awx.awx.tower_credential:
-#    name: "Unlock Borg Passwords"
-#    description: "The password to unlock the variable files containing the clients borg repository keys."
-#    credential_type: Vault
-#    organization: "{{ org_name }}"
-#    inputs: 
-#      vault_id: unlock_borg_passwords
-#      vault_password: "{{ vault_unlock_borg_passwords }}"
-#    tower_host: "https://{{ awx_url }}"
-#    tower_oauthtoken: "{{ tower_token.stdout }}"
-#    validate_certs: yes
-
 - name: Add 'Ansible Create Delete Subscription Membership' project to users organisation
   awx.awx.tower_project:
     name: "Ansible Create Delete Subscription Membership"
@@ -315,6 +302,7 @@
     tower_host: "https://{{ awx_url }}"
     tower_oauthtoken: "{{ tower_token.stdout }}"
     validate_certs: yes
+  when: backup_server_enabled|bool
 
 - name: Create '00 - Reprovision All Servers' job template
   awx.awx.tower_job_template:

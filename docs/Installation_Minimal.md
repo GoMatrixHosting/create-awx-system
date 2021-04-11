@@ -34,7 +34,6 @@ Create folder for host at: ./inventory/host_vars/panel.example.org/
 Record these variables to ./inventory/host_vars/panel.example.org/vars.yml:
 - org_name 			(The name of your organisation.)
 - awx_url 			(The URL for AWX.)
-- grafana_url 			(The URL for Grafana.)
 - certbot_email 		(The organisations email.)
 - admin_password 		(Strong password for the AWX admin user.)
 - create_delete_source		(Repository URL for 'Ansible Create Delete Subscription Membership'.)
@@ -72,7 +71,7 @@ Run the script:
 `$ ansible-playbook -v -i ./inventory/hosts -t "setup" pre-setup.yml`
 
 
-3) Run the AWX deployment script.
+2) Run the AWX deployment script.
 ```
 $ cd ..
 $ wget https://github.com/ansible/awx/archive/17.1.0.tar.gz
@@ -104,7 +103,7 @@ Next, run the playbook to install the Ansible AWX with the following command:
 `$ ansible-playbook -i ./installer/inventory ./installer/install.yml`
 
 
-4) Post-setup, configures existing AWX system and adds community packages if 'configure-awx' tag set, also configures the AWX systems backup if 'setup-backup' and 'enable-backup' tag is included. Note that the backup machine will need SSH access to root.
+3) Post-setup, configures existing AWX system and adds community packages if 'configure-awx' tag set, also configures the AWX systems backup if 'setup-backup' and 'enable-backup' tag is included. Note that the backup machine will need SSH access to root.
 
 Install prerequisite packages for ansible on the controller:
 
@@ -116,7 +115,7 @@ Run the script:
 `$ ansible-playbook -v -i ./inventory/hosts -t "configure-awx" post-setup.yml`
 
 
-5) Perform initial SSH handshake from AWX to backup server.
+4) Optionally, perform initial SSH handshake from AWX to backup server.
 
 Manually SSH into the AWX tower, then manually SSH into the backup server:
 `$ ssh {{ backup_server_hostname }}`
@@ -124,7 +123,7 @@ Manually SSH into the AWX tower, then manually SSH into the backup server:
 Note the command-line here is restricted, so you won't be able to do anything besides connnect.
 
 
-6) Set base URL in AWX
+5) Set base URL in AWX
 
 Settings > Miscellaneous System Settings > Edit
 
