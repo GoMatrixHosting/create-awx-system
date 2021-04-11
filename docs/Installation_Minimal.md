@@ -17,7 +17,7 @@ Map an A record for panel.example.org to the servers IP.
 
 # Installation
 
-Installation is broken up into 6 stages:
+Installation is broken up into 5 stages:
 
 1) Pre-setup, setup before the awx playbook is run, installs Docker and sets up TLS proxy for AWX, optionally website hooks and grafana are also setup.
 
