@@ -635,7 +635,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(synapse_admin_mau_current{instance=\"$instance\",job=~\"$job\",index=~\"$index\"}[$bucket_size])",
+          "expr": "max_over_time(synapse_admin_mau_current{instance=\"$instance\",job=~\"$job\",index=~\"$index\"}[$bucket_size])",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "{{job}}-{{index}} ",
@@ -664,7 +664,6 @@
         {
           "format": "short",
           "label": null,
-          "logBase": 1,
           "max": null,
           "min": "0",
           "show": true
@@ -672,7 +671,6 @@
         {
           "format": "short",
           "label": null,
-          "logBase": 1,
           "max": null,
           "min": null,
           "show": true
