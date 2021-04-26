@@ -1,6 +1,12 @@
 
 # GoMatrixHosting v0.4.4
 
+Create new 'Access Export' playbook for subscriptions that aren't hosting the base domain through AWX.
+Allow metrics ports in firewall.
+Update postgresql tuning and change default cache factor.
+Added swappiness settings.
+User manual updates.
+Added a changelog with upgrade notes for AWX.
 
 # Upgrade notes for v0.4.4
 
@@ -78,7 +84,7 @@ Added ma1sd LDAP/AD and Matrix Corporal sections.
 Secure SSH credentials with vault.
 
 
-# GoMatrixHosting v0.1.0
+# GoMatrixHosting v0.1.0 - The initial release.
 
 Initial version of the GoMatrixHosting system, allows for seamless login integration with a commercial WordPress site. On-premise plans enabled.
 Radius system connects AWX to WordPress, Swatchdog monitors logins to assign a 'enterprise user' to the necessary team when they first login.
