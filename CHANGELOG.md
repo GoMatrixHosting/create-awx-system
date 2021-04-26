@@ -10,9 +10,9 @@ Added a changelog with upgrade notes for AWX.
 
 # Upgrade notes for v0.4.4
 
-- Delete '{{ matrix_domain }} - 1 - Configure Website + Access Export from on-premises servers, re-provision.
-- Delete 'customise_base_domain_website' variable in every on-premises subscribers matrix_vars.yml in AWX
-- Set 'matrix_synapse_caches_global_factor' to '4.0' in every subscribers matrix_vars.yml in AWX
+- Delete '{{ matrix_domain }} - 1 - Configure Website + Access Export from every 'base_domain_used=true' server, re-provision.
+- Delete 'customise_base_domain_website' variable in every 'base_domain_used=true' servers matrix_vars.yml in AWX
+- Set 'matrix_synapse_caches_global_factor' to '4.0' in every servers matrix_vars.yml in AWX
 
 
 # GoMatrixHosting v0.4.3
