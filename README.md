@@ -17,17 +17,22 @@ Warning: This project is currently alpha quality and should only be run by the b
 
 To configure and install this AWX setup on your own server, follow the [Installation.md in the docs/ directory](docs/Installation.md).
 
+For a simpler installation guide that's perfect for first time users see [Installation_Minimal.md in the docs/ directory](docs/Installation_Minimal.md).
+
 
 ## Deficiencies
 
 This Ansible playbook can be improved in the following ways:
 
+- Can be expanded to include other sections of the original playbook, like bridges.
 - Someone should fork it! :)
 
 
-## Support
+## Contact Us
 
-- Matrix room: [#gomatrixhosting:perthchat.org](https://matrix.to/#/#gomatrixhosting:perthchat.org)
+- General room: [#general:gomatrixhosting.com](https://matrix.to/#/#general:gomatrixhosting.com)
+- Support room: [#support:gomatrixhosting.com](https://matrix.to/#/#support:gomatrixhosting.com)
+
 
 ## License
 
