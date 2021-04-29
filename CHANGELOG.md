@@ -1,4 +1,12 @@
 
+# GoMatrixHosting v0.4.5
+
+Fix remote and local media purge
+base_domain_used can now be seamlessly changed after initial provision
+Jitsi now disabled for Micro to Medium sized droplets
+Minor fixes
+
+
 # GoMatrixHosting v0.4.4
 
 Create new 'Access Export' playbook for subscriptions that aren't hosting the base domain through AWX.
