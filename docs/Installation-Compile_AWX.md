@@ -13,7 +13,7 @@ Generate and record 3 strong passwords for the:
 - pg_password
 - admin_password (from step 2)
 
-^ Edit these into ./installer/inventory, also uncomment the project_data_dir line and change the host_port and host_port_ssl values:
+^ Edit these into ./awx/installer/inventory, also uncomment the project_data_dir line and change the host_port and host_port_ssl values:
 ```
 host_port=8080
 #host_port_ssl=443
@@ -33,7 +33,46 @@ $ cp ./create-awx-system/media/logo-header.svg ./awx/awx/ui_next/public/static/m
 $ cp ./create-awx-system/media/logo-login.svg ./awx/awx/ui_next/public/static/media/logo-login.svg
 ```
 
-4)
+4) #Copy in the custom pyrad package that increases timeout length:
+#```
+#$ curl https://gitlab.com/GoMatrixHosting/create-awx-system/-/raw/testing/awx-custom/pyrad-2.3-#custom.tar.gz --output ./awx/requirements/pyrad-2.3-custom.tar.gz
+#```
+
+Edit ./awx/requirements/requirements.txt, editing out the pyrad dependancy:
+```
+#pyrad==2.3                # via django-radius
+```
+
+Edit ./awx/installer/roles/image_build/templates/Dockerfile.j2 add at line 74:
+```
+RUN echo XXXDEBUGXXX START GoMatrixHosting custom
+RUN hostname
+RUN pwd
+RUN find . -name ".tar.gz" -ls
+ADD https://gitlab.com/GoMatrixHosting/create-awx-system/-/raw/testing/awx-custom/pyrad-2.3-custom.tar.gz /tmp/pyrad-2.3-custom.tar.gz
+RUN OFFICIAL=yes /var/lib/awx/venv/awx/bin/pip3 install /tmp/pyrad-2.3-custom.tar.gz
+RUN echo XXXDEBUGXXX END GoMatrixHosting custom
+```
+
+requirements_local.txt
+./requirements/requirements_local.txt
+```
+https://gitlab.com/GoMatrixHosting/create-awx-system/-/raw/testing/awx-custom/pyrad-2.3-custom.tar.gz
+```
+
+Dockerfile.j2:
+```
+    requirements/requirements_local.txt \
+```
+
+bottom in dockerfile ?
+top in dockerfile ?
+replace in requirements.txt? errors out
+comment out in requirements.txt, put behind pyrad in requirements_local.txt? errors out
+
+
+
+
 
 5) Copy the playbook files to the target server:
 ```
