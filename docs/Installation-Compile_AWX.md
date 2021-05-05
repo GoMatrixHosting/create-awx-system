@@ -33,59 +33,31 @@ $ cp ./create-awx-system/media/logo-header.svg ./awx/awx/ui_next/public/static/m
 $ cp ./create-awx-system/media/logo-login.svg ./awx/awx/ui_next/public/static/media/logo-login.svg
 ```
 
-4) #Copy in the custom pyrad package that increases timeout length:
-#```
-#$ curl https://gitlab.com/GoMatrixHosting/create-awx-system/-/raw/testing/awx-custom/pyrad-2.3-#custom.tar.gz --output ./awx/requirements/pyrad-2.3-custom.tar.gz
-#```
-
-Edit ./awx/requirements/requirements.txt, editing out the pyrad dependancy:
-```
-#pyrad==2.3                # via django-radius
-```
-
-Edit ./awx/installer/roles/image_build/templates/Dockerfile.j2 add at line 74:
-```
-RUN echo XXXDEBUGXXX START GoMatrixHosting custom
-RUN hostname
-RUN pwd
-RUN find . -name ".tar.gz" -ls
-ADD https://gitlab.com/GoMatrixHosting/create-awx-system/-/raw/testing/awx-custom/pyrad-2.3-custom.tar.gz /tmp/pyrad-2.3-custom.tar.gz
-RUN OFFICIAL=yes /var/lib/awx/venv/awx/bin/pip3 install /tmp/pyrad-2.3-custom.tar.gz
-RUN echo XXXDEBUGXXX END GoMatrixHosting custom
-```
-
-requirements_local.txt
-./requirements/requirements_local.txt
-```
-https://gitlab.com/GoMatrixHosting/create-awx-system/-/raw/testing/awx-custom/pyrad-2.3-custom.tar.gz
-```
-
-Dockerfile.j2:
-```
-    requirements/requirements_local.txt \
-```
-
-bottom in dockerfile ?
-top in dockerfile ?
-replace in requirements.txt? errors out
-comment out in requirements.txt, put behind pyrad in requirements_local.txt? errors out
-
-
-
-
-
-5) Copy the playbook files to the target server:
+4) Copy the playbook files to the target server:
 ```
 $ rsync -av ./awx panel.example.org:/root/
 ```
 
-6) Next, connect to your AWX server and run the playbook to install the AWX:
+5) Next, connect to your AWX server and run the playbook to install the AWX:
 ```
 # echo 'deb http://deb.debian.org/debian buster-backports main' >> /etc/apt/sources.list
 # sudo apt update && sudo apt -t buster-backports install ansible
 # ansible-galaxy collection install community.docker
 # cd /root/awx
 # ansible-playbook -i ./installer/inventory ./installer/install.yml
+```
+
+6) Modify the python package Radius uses, and increase its timeout value:
+```
+# docker exec -it awx_web /bin/bash
+bash-4.4# . ./var/lib/awx/venv/awx/bin/activate
+(awx) bash-4.4# rm -r /var/lib/awx/venv/awx/lib/python3.6/site-packages/pyrad/__pycache__
+(awx) bash-4.4# vi /var/lib/awx/venv/awx/lib/python3.6/site-packages/pyrad/client.py
+```
+
+Change timeout value to 20:
+```
+        self.timeout = 20
 ```
 
 7) Continue from step 4 of /docs/Installation.md.
