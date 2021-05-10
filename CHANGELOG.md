@@ -1,4 +1,16 @@
 
+# GoMatrixHosting v0.4.6
+
+- Add database purge section.
+- Add markdown copy of User manual.
+- Tweak compress state find rooms timeout.
+- Update compile AWX instructions for custom branding and radius fix.
+
+# Upgrade notes for v0.4.6
+
+- Re-provision all servers.
+
+
 # GoMatrixHosting v0.4.5
 
 Fix remote and local media purge
