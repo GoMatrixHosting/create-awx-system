@@ -9,6 +9,11 @@
 # Upgrade notes for v0.4.6
 
 - Re-provision all servers.
+- Add these variables to each matrix_vars.yml:
+```
+matrix_awx_mjolnir-bot_user_password: << strong-password >> 
+matrix_awx_mjolnir-bot_user_created: false
+```
 
 
 # GoMatrixHosting v0.4.5
