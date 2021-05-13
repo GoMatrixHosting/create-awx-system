@@ -322,10 +322,12 @@ Purge Database (Advanced)
 
 This template allows you to shrink your Synapse database, it should be used when purging local/remote media doesn’t reclaim enough disk space. Be aware that using this tool can cause cause performance issues and will also cause your server to experience downtime.
 
-Purge Rooms		Choose if you would also like to purge rooms. WARNING: This makes the process significantly longer and can slow down your server in the meantime. 
-			But it will increase the amount of disk space saved.
-
-Purge Metric		If purging rooms this decides whether you'll be purging rooms based on the number of users, or the number of events.
+Purge Mode		5 modes are available:
+			1) No local users [recommended] - Purge rooms with no local users, if you're not sure what mode to use pick this one.
+			2) Number of users [slower] - Purge rooms with no local users as well as rooms with more then N users.
+			3) Number of events [slower] - Purge rooms with no local users as well as rooms with more then N events.
+			4) Skip purging rooms [faster] - Skip purging rooms entirely and just compress other assets within the database.
+			5) Perform final shrink - After running one of the above modes, the tool needs to be run again in this mode for your diskspace to be reclaimed. WARNING: This will cause downtime for your Matrix service, it should only be run when you are prepared for that.
 
 Purge Metric Value	The number of users or events used to select rooms for purging, rooms with more users or events then this value will be purged.
 
