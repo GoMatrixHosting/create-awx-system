@@ -1,4 +1,11 @@
 
+# GoMatrixHosting v0.4.7
+
+- reinvented database purging section, separated final shrinking that causes downtime.
+- fixed AWX issue causing rust-synapse-compress-state section to not execute.
+- added more reliable script method of generating the total room list.
+
+
 # GoMatrixHosting v0.4.6
 
 - Add database purge section.
