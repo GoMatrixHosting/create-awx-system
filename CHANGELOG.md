@@ -1,9 +1,25 @@
 
+# GoMatrixHosting v0.4.8
+
+- fix AWX issue causing synapse registration secret to remain blank in homeserver.yaml.
+- added seperate job template for adjusting Element client subdomain.
+- adjusted firewall rules for matrix-mailer.
+- fix fault in 'backup-all' job template.
+
+# Upgrade notes for v0.4.8
+
+- Re-provision all servers
+
+
 # GoMatrixHosting v0.4.7
 
 - reinvented database purging section, separated final shrinking that causes downtime.
 - fixed AWX issue causing rust-synapse-compress-state section to not execute.
 - added more reliable script method of generating the total room list.
+
+# Upgrade notes for v0.4.7
+
+- Re-provision all servers
 
 
 # GoMatrixHosting v0.4.6
