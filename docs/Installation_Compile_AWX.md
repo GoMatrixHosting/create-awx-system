@@ -1,5 +1,5 @@
 
-1-2) Complete steps 1 and 2 from /docs/Installation.md.
+1-2) Complete steps 1 and 2 from /docs/Installation_AWX.md.
 
 3) Configure and run the AWX installation script.
 ```
@@ -60,5 +60,5 @@ Change timeout value to 20:
         self.timeout = 20
 ```
 
-7) Continue from step 4 of /docs/Installation.md.
+7) Continue from step 4 of /docs/Installation_AWX.md.
 
