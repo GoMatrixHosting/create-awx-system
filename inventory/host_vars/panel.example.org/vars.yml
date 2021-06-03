@@ -57,7 +57,9 @@ do_spaces_secret_key: << do_spaces_secret_key >>
 do_image_master: debian-10-x64
 
 # MailGun Settings
-mg_sender_address: "verify@mail.example.org"
+mg_sender_email_address: "verify@mail.example.org"
+mg_sender_domain: "mail.example.org"
 mg_relay_host_name: "smtp.mailgun.org"
+mg_api_url: "api.mailgun.net"
 mg_private_api_key: << from mailgun apikeys >>
 
