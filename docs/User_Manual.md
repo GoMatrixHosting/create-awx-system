@@ -14,6 +14,8 @@ Page	Content
 7	Start/Restart all Services 
 7	Stop all Services
 8	Configure Element
+8	Configure Element Subdomain
+8	Configure Email Relay
 8	Configure Jitsi
 9	Configure Synapse
 10	Setting up Googles ReCaptcha
@@ -183,8 +185,20 @@ Set Welcome Page Background	Set Welcome Page Background
 
 Show Registration Button	If you show the registration button on the welcome page.
 
+
+Configure Element Subdomain
+
+Configure Element clients subdomain location. (Eg: 'element' for element.example.org)
+
 Set Element Subdomain		Sets the subdomain of the Element web-client, you should only specify the subdomain, not the base domain you've already set. 
-				(Eg: 'element' for element.example.org) Note that if you change this value you'll need to reconfigure your DNS.
+				(Eg: 'element' for element.example.org) Note that to change this value you'll need to reconfigure your DNS first, adding the new CNAME record.
+
+
+Configure Email Relay
+
+Enable MailGun relay to increase verification email reliability.
+
+Enable Email Relay		Enables the MailGun email relay server, enabling this will increase the reliability of your email verification.
 
 
 Configure Jitsi

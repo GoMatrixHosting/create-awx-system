@@ -53,6 +53,13 @@ Record these variables to ./inventory/host_vars/panel.example.org/vars.yml:
 - vault_unlock_ssh_password:	(Strong password to vault the private_ssh_key_password.)
 - client_public_ssh_key 	(Location of public client key AWX will use.)
 
+If you will be using the Mailgun relay, also define:
+- mg_sender_email_address	(The Mailgun email address. eg: "user@mail.example.org")
+- mg_sender_domain		(The Mailgun email domain. eg: "mail.example.org"
+- mg_relay_host_name		(The Mailgun relay host name. eg: "smtp.mailgun.org")
+- mg_api_url			(The Mailgun API location. eg: "api.mailgun.net")
+- mg_private_api_key		(The Mailgun private API key.)
+
 If you will be using a backup server, also define:
 - backup_server_enabled		('true' if using a backup server, otherwise 'false')
 - backup_server_ip 		(IP address of the backup server.)
