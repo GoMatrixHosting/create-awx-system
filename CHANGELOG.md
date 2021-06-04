@@ -1,4 +1,26 @@
 
+# GoMatrixHosting v0.4.9
+
+- added new 'Configure Email Relay' section, which allows the user to easily enable a Mailgun relay for sending verification emails.
+
+# Upgrade notes for v0.4.9
+
+- Add Email section with a new password to each subscribers matrix_vars.yml:
+```
+# Email Settings Start
+matrix_mailer_sender_address: "verify@mail.example.org"
+matrix_mailer_relay_use: false
+matrix_mailer_relay_host_name: "smtp.mailgun.org"
+matrix_mailer_relay_host_port: 587
+matrix_mailer_relay_auth: true
+matrix_mailer_relay_auth_username: "user@mail.example.org"
+matrix_mailer_relay_auth_password: << strong-password >>
+# Email Settings End
+```
+- Add 'setup-mailgun' tag to every subscribers provision template.
+- Re-provision all servers
+
+
 # GoMatrixHosting v0.4.8
 
 - fix AWX issue causing synapse registration secret to remain blank in homeserver.yaml.

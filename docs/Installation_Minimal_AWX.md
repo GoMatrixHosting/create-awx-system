@@ -60,7 +60,14 @@ If 'false' you can skip these:
 - backup_public_ssh_key		(Location of public backup key AWX will use.)
 - vault_unlock_borg_passwords	(Strong password to vault the clients borg backup keys.)
 
-Add placeholder values to the following (eg: 1234), these won't be used:
+If using the Mailgun relay define these values, if not then enter placeholder values (eg: 1234): 
+- mg_sender_email_address	(The Mailgun email address. eg: "user@mail.example.org")
+- mg_sender_domain		(The Mailgun email domain. eg: "mail.example.org"
+- mg_relay_host_name		(The Mailgun relay host name. eg: "smtp.mailgun.org")
+- mg_api_url			(The Mailgun API location. eg: "api.mailgun.net")
+- mg_private_api_key		(The Mailgun private API key.)
+
+Also add placeholder values to the following (eg: 1234), these won't be used:
 - do_api_token 			(Your DigitalOcean API token/)
 - do_spaces_access_key 		(Your DigitalOcean Spaces Access Key.)
 - do_spaces_secret_key 		(Your DigitalOcean Spaces Secret Key.)
