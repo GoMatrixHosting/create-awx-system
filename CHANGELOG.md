@@ -5,6 +5,7 @@
 
 # Upgrade notes for v0.4.9
 
+- Reinstall AWX with new inventory settings.
 - Add Email section with a new password to each subscribers matrix_vars.yml:
 ```
 # Email Settings Start
@@ -18,7 +19,7 @@ matrix_mailer_relay_auth_password: << strong-password >>
 # Email Settings End
 ```
 - Add 'setup-mailgun' tag to every subscribers provision template.
-- Re-provision all servers
+- Re-provision all servers.
 
 
 # GoMatrixHosting v0.4.8
@@ -30,7 +31,7 @@ matrix_mailer_relay_auth_password: << strong-password >>
 
 # Upgrade notes for v0.4.8
 
-- Re-provision all servers
+- Re-provision all servers.
 
 
 # GoMatrixHosting v0.4.7
@@ -41,7 +42,7 @@ matrix_mailer_relay_auth_password: << strong-password >>
 
 # Upgrade notes for v0.4.7
 
-- Re-provision all servers
+- Re-provision all servers.
 
 
 # GoMatrixHosting v0.4.6
