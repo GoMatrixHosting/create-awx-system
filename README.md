@@ -10,14 +10,14 @@ The AWX system is arranged into 'members' each with their own 'subscriptions'. A
 
 Ideally this system can manage the updates, configuration, backups and monitoring on it's own. It is an extension of the popular deploy script [spantaleev/matrix-docker-ansible-deploy](https://github.com/spantaleev/matrix-docker-ansible-deploy).
 
-Warning: This project is currently alpha quality and should only be run by the brave.
+This project is currently beta quality and we encourage you to try it.
 
 
 ## Installation
 
-To configure and install this AWX setup on your own server, follow the [Installation.md in the docs/ directory](docs/Installation.md).
+To configure and install this AWX setup on your own server, follow the [Installation_AWX.md in the docs/ directory](docs/Installation_AWX.md).
 
-For a simpler installation guide that's perfect for first time users see [Installation_Minimal.md in the docs/ directory](docs/Installation_Minimal.md).
+For a simpler installation guide that's perfect for first time users see [Installation_Minimal_AWX.md in the docs/ directory](docs/Installation_Minimal_AWX.md).
 
 
 ## Deficiencies
