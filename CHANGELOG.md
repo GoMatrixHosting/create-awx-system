@@ -1,4 +1,15 @@
 
+# GoMatrixHosting v0.5.0
+
+- Avoid keeping a copy of the media repository locally, saves space in /chroot/export.
+- Improve synchronization with backups and exports between the copying the configs and media repository, and the database snapshot.
+
+# Upgrade notes for v0.5.0
+
+- Move/Delete previous borg backup files from backup server.
+- Re-provision all servers.
+
+
 # GoMatrixHosting v0.4.9
 
 - added new 'Configure Email Relay' section, which allows the user to easily enable a Mailgun relay for sending verification emails.
