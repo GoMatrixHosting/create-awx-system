@@ -7,6 +7,7 @@
 # Upgrade notes for v0.5.0
 
 - Move/Delete previous borg backup files from backup server.
+`root@backup-server:~# mv /backup_directory/Clients/ /backup_directory/Clients-old/`
 - Re-provision all servers.
 
 

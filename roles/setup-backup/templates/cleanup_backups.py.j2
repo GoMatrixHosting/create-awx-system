@@ -10,8 +10,8 @@ print(backup_dirs)
 
 for directory in backup_dirs:
     print(directory)
-    mod_date = datetime.fromtimestamp(path.getmtime(client_backup_dir + directory))
-    del_date = datetime.fromtimestamp(path.getmtime(client_backup_dir + directory)) + timedelta(days={{ backup_server_days_retention }})
+    mod_date = datetime.fromtimestamp(path.getmtime(client_backup_dir + directory + '/matrix'))
+    del_date = datetime.fromtimestamp(path.getmtime(client_backup_dir + directory + '/matrix')) + timedelta(days={{ backup_server_days_retention }})
     print("Modification time: " + str(mod_date))
     print("Deletion time: " + str(del_date))
     today = datetime.now()
