@@ -41,9 +41,9 @@
 - name: Creates a crontab entry to renew certbot"
   cron:
     name: "Renew letsencrypt certificate"
-    special_time: daily
+    special_time: weekly
     user: root
-    job: '/bin/sh /usr/bin/certbot renew --quiet --no-self-upgrade'
+    job: 'certbot renew --quiet --no-self-upgrade --pre-hook "service nginx stop" --post-hook "service nginx restart"'
 
 - name: Ensure default nginx config is deleted
   file:
