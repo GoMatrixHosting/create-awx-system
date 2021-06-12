@@ -43,7 +43,7 @@
     name: "Renew letsencrypt certificate"
     special_time: weekly
     user: root
-    job: 'certbot renew --quiet --no-self-upgrade --pre-hook "service nginx stop" --post-hook "service nginx restart"'
+    job: '/usr/bin/certbot renew --quiet --no-self-upgrade --pre-hook "service nginx stop" --post-hook "service nginx restart"'
 
 - name: Ensure default nginx config is deleted
   file:
