@@ -11,6 +11,7 @@ Page	Content
 7	Deploy/Update a Server
 7	Self-Check
 7	Backup Server
+7	Export Server
 7	Start/Restart all Services 
 7	Stop all Services
 8	Configure Element
@@ -159,6 +160,11 @@ The ‘Self-Check’ playbook allows you to diagnose your server and see metrics
 Backup Server
 
 The ‘Backup Server’ playbook allows you to opt-into an offsite backup. For HIPPA compliance this will need to be enabled. Backups will be run routinely by the AWX administrator.
+
+
+Export Server
+
+Export a copy of the server. This copy is available by SFTP and will be deleted 24 hours after being generated.
 
 
 Start/Restart all Services

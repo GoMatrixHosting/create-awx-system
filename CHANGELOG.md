@@ -1,4 +1,22 @@
 
+# GoMatrixHosting v0.5.0
+
+- Avoid keeping a copy of the media repository locally, saves space in /chroot/export.
+- Improve synchronization with backups and exports between the copying the configs + media repository and the database snapshot.
+- Add 'Export Server' job template for generating SFTP export.
+- Fix for broken SSL renewal on AWX.
+- Fixed a bug with deleting subscriptions.
+
+# Upgrade notes for v0.5.0
+
+- Move/Delete previous borg backup files from backup server.
+```
+root@backup-server:~# cp -R /backup_directory/Clients /backup_directory/Clients-old
+root@backup-server:~# rm -r /backup_directory/Clients/* 
+```
+- Re-provision all servers.
+
+
 # GoMatrixHosting v0.4.9
 
 - added new 'Configure Email Relay' section, which allows the user to easily enable a Mailgun relay for sending verification emails.
