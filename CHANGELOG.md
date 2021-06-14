@@ -3,6 +3,7 @@
 
 - Avoid keeping a copy of the media repository locally, saves space in /chroot/export.
 - Improve synchronization with backups and exports between the copying the configs + media repository and the database snapshot.
+- Improve recovery process to ensure downtime only during DNS changes.
 - Add 'Export Server' job template for generating SFTP export.
 - Fix for broken SSL renewal on AWX.
 - Fixed a bug with deleting subscriptions.
