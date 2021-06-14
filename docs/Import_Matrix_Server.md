@@ -1,9 +1,8 @@
-
 ~~ Import Matrix Server ~~
 
 1) Extract variables needed to re-create subscription:
 
-On controller, extract matrix.tar.gz, examine /matrix/awx/organisation.yml and /matrix/awx/matrix_awx.yml and /matrix/awx/server_vars.yml and /matrix/awx/extra_vars.json, copy:
+On controller, extract the matrix tar file (eg: matrix_2021-03-02.tar.gz), examine /matrix/awx/organisation.yml and /matrix/awx/matrix_awx.yml and /matrix/awx/server_vars.yml and /matrix/awx/extra_vars.json, copy:
 
 - client_email: "bobfett@protonmail.com"		[/matrix/awx/organisation.yml]
 - client_first_name: "Bob"				[/matrix/awx/organisation.yml]
@@ -29,7 +28,7 @@ OR
 
 3) Ensure the previous backup has been moved:
 
-backup_user@backup_server:~$ mv /mnt/backup-dir/Clients/farmloop.xyz/ /mnt/backup-dir/Clients/farmloop.xyz-old/
+backup_user@backup_server:~$ mv /mnt/backup-dir/Clients/fishbole.xyz/ /mnt/backup-dir/Clients/fishbole.xyz-old/
 
 
 4) Provision with these survey answers:
@@ -46,7 +45,20 @@ SELECT REGION - Figure it out from the do_droplet_region. (Or a different one if
 5) Edit Deploy/Update a Server to not include the 'start' tag.
 
 
-6) Copy the DNS information and send it to the customer so they can configure DNS again. For Example:
+6) Load matrix_vars.yml from the restored backup into AWX:
+
+~/Documents$ tar -xf ./chroot/export/matrix.tar.gz
+~/Documents$ scp ./awx/matrix_vars.yml panel.topgunmatrix.com:/var/lib/awx/projects/clients/31/T-FKFAMCCR7CHX/
+matrix_vars.yml                               100% 3840    13.1KB/s   00:00 
+
+
+7) Clear known_hosts entry in AWX for that particular server:
+
+root@AWX-panel:~# docker exec -i -t awx_task bash
+bash-4.4# sed '/^matrix.fishbole.xyz/d' -i /root/.ssh/known_hosts
+
+
+8) Copy the DNS information and send it to the customer so they can configure DNS again. For Example:
 
         "Your server has been created! You now need to configure your DNS to have the",
         "following records:",
@@ -62,63 +74,39 @@ SELECT REGION - Figure it out from the do_droplet_region. (Or a different one if
         "Setting the IPv6 record is optional. If you need help doing this please contact us."
 
 
-7) Login to the new server and comment out the export.sh in root users crontab.
+9) As admin user, after the DNS is updated, run 'Deploy/Update a Server' without the 'start' tag. This is needed to initialise docker for the 'setup-nginx' tag we use in the next step.
 
 
-8) Load matrix_vars.yml from the restored backup into AWX:
+10) As admin user, run 'Configure Website + Access Export' without the 'start' tag.
 
-~/Documents$ tar -xf ./chroot/export/matrix.tar.gz
-~/Documents$ scp ./awx/matrix_vars.yml panel.topgunmatrix.com:/var/lib/awx/projects/clients/billy.bob/T-FKFAMCCR7CHX/
-matrix_vars.yml                               100% 3840    13.1KB/s   00:00 
+Then prompt the user to SFTP in and import the backup data you previously exported.
 
-
-9) Clear known_hosts entry in AWX for that particular server:
-
-root@AWX-5-panel:~# docker exec -i -t awx_task bash
-bash-4.4# sed '/^matrix.fishbole.xyz/d' -i /root/.ssh/known_hosts
-
-
-10) As admin user, after the DNS is updated, run 'Deploy/Update a Server' without the 'start' tag. This is needed to initialise docker for the 'setup-nginx' tag we use in the next step.
-
-
-11A - (Admin Upload) Copy backup into /chroot/export/ with SCP:
-
-~/Documents$ scp ./chroot/export/* root@matrix.fishbole.xyz:/chroot/export/
-matrix.tar.gz                                                       100% 6139KB 738.3KB/s   00:08
-postgres_2021-03-02.sql.gz                                          100% 7496KB 796.3KB/s   00:09 
-
-
-
-11B - (User Upload) As admin user, run 'Configure Website + Access Export' without the 'start' tag.
-
-Then SFTP in and import the backup data you previously exported.
-
-sftp> put -r /home/chatoasis/Documents/chroot/export/* ./export/
-Uploading /home/chatoasis/Documents/export/matrix.tar.gz to /./export/matrix.tar.gz
-/home/chatoasis/Documents/export/matrix.tar.gz                        100% 8288KB 779.4KB/s   00:10
+sftp> put -r /user_directory/chroot/export/* ./export/
+Uploading /home/chatoasis/Documents/export/matrix_2021-03-02.tar.gz to /./export/matrix_2021-03-02.tar.gz
+/home/chatoasis/Documents/export/matrix_2021-03-02.tar.gz             100% 8288KB 779.4KB/s   00:10
 Uploading /home/chatoasis/Documents/chroot/export/postgres_2021-03-02.sql.gz to /./export/postgres_2021-03-02.sql.gz
 /home/chatoasis/Documents/chroot/export/postgres_2021-03-02.sql.gz    100%   35KB 153.0KB/s   00:00
 
 
-12) Import the database dump:
+11) Import the database dump:
 
 Run the '00 - Restore and Import Postgresql Dump' job template, 
 with 'import-postgres' and 'import-awx' tags, 
 with specific members deploy project, inventory and ssh credential,
-include all the extra variables found in /matrix/awx/extra_vars.yml and the {{ server_path_postgres_dump }}, for example:
+include all the extra variables found in /matrix/awx/extra_vars.json and the {{ server_path_postgres_dump }}, for example:
 
 ---
-server_path_postgres_dump: /chroot/export/postgres_2020-12-20.sql.gz
-subscription_id: I-CREUS74S6969
+server_path_postgres_dump: /chroot/export/postgres_2021-03-02.sql.gz
+subscription_id: T-FKFAMCCR7CHX
 member_id: 31
 target: "matrix.fishbole.xyz"
 matrix_domain: "fishbole.xyz"
 matrix_awx_enabled: true
 
 
-13) Run 'Provision a New Server' again to load up the surveys from matrix_vars.yml
+12) Run 'Provision a New Server' again to load up the surveys from matrix_vars.yml
 
 
-14) Run 'Start/Restart all Services' job template, then try and login.
+13) Run 'Start/Restart all Services' job template, then try and login.
 
 

@@ -2,12 +2,18 @@
 # GoMatrixHosting v0.5.0
 
 - Avoid keeping a copy of the media repository locally, saves space in /chroot/export.
-- Improve synchronization with backups and exports between the copying the configs and media repository, and the database snapshot.
+- Improve synchronization with backups and exports between the copying the configs + media repository and the database snapshot.
+- Add 'Export Server' job template for generating SFTP export.
+- Fix for broken SSL renewal on AWX.
+- Fixed a bug with deleting subscriptions.
 
 # Upgrade notes for v0.5.0
 
 - Move/Delete previous borg backup files from backup server.
-`root@backup-server:~# mv /backup_directory/Clients/ /backup_directory/Clients-old/`
+```
+root@backup-server:~# cp -R /backup_directory/Clients /backup_directory/Clients-old
+root@backup-server:~# rm -r /backup_directory/Clients/* 
+```
 - Re-provision all servers.
 
 
