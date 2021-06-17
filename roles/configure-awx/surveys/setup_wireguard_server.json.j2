@@ -1,0 +1,18 @@
+{
+  "name": "Setup Wireguard Server",
+  "description": "Configures a wireguard server AWX can use to SSH into an on-premises server.",
+  "spec": [
+    {
+      "question_name": "Wireguard Server Region",
+      "question_description": "Select the location of the wireguard proxy, a DigitalOcean droplet will be reserved in this location.",
+      "required": true,
+      "min": null,
+      "max": null,
+      "default": "New York City (USA)",
+      "choices": "New York City (USA)\nSan Francisco (USA)\nAmsterdam (NLD)\nFrankfurt (DEU)\nSingapore (SGP)\nLondon (GBR)\nToronto (CAN)\nBalgalore (IND)",
+      "new_question": true,
+      "variable": "wireguard_droplet_region_long",
+      "type": "multiplechoice"
+    }
+  ]
+}
