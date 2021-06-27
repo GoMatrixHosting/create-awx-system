@@ -34,10 +34,10 @@ $ ssh example2.org mkdir /etc/wireguard/wg0/
 $ scp ./client-* example2.org:/etc/wireguard/wg0/
 client-private.key                                                                            100%   45    47.6KB/s   00:00
 client-public.key                                                                             100%   45    46.8KB/s   00:00
-$ ssh example2.org chown 600 /etc/wireguard/wg0/client-private.key
+$ ssh example2.org chmod 600 /etc/wireguard/wg0/client-private.key
 
 
-6) On Wireguard CLIENT adjust '/etc/network/interfaces.d/wg0.conf' file:
+6) On Wireguard CLIENT adjust '/etc/network/interfaces.d/wg0' file:
 
 ```
 auto wg0
