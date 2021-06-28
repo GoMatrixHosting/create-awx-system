@@ -3,6 +3,18 @@
   "description": "Configures a wireguard server AWX can use to SSH into an on-premises server.",
   "spec": [
     {
+      "question_name": "Set Base Domain",
+      "question_description": "The base domain of their website (Eg: example.org).",
+      "required": true,
+      "min": 0,
+      "max": 2048,
+      "default": "example.org",
+      "choices": "",
+      "new_question": true,
+      "variable": "matrix_domain",
+      "type": "text"
+    },
+    {
       "question_name": "Server IPv4/IPv6",
       "question_description": "The IP address of the wireguard server. You must already have the AWX hosters public SSH key loaded into it.",
       "required": false,
