@@ -340,6 +340,8 @@ Administrator Access	Sets whether this user account will be a server admin. Serv
 
 Purge Database (Advanced)
 
+Warning: This tool may cause irreversible damage to your database.
+
 This template allows you to shrink your Synapse database, it should be used when purging local/remote media doesn’t reclaim enough disk space. Be aware that using this tool can cause cause performance issues and will also cause your server to experience downtime.
 
 Purge Mode		5 modes are available:
