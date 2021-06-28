@@ -13,6 +13,30 @@
       "new_question": true,
       "variable": "server_ip",
       "type": "text"
+    },
+    {
+      "question_name": "Server Size",
+      "question_description": "Selects the size of the server that will be connected.",
+      "required": true,
+      "min": null,
+      "max": null,
+      "default": "normal",
+      "choices": "normal\njumbo",
+      "new_question": true,
+      "variable": "plan_size",
+      "type": "multiplechoice"
+    },
+    {
+      "question_name": "Member ID",
+      "question_description": "A unique string to represent this user.",
+      "required": true,
+      "min": 0,
+      "max": 64,
+      "default": "billy.bob",
+      "choices": "",
+      "new_question": true,
+      "variable": "member_id",
+      "type": "text"
     }
   ]
 }

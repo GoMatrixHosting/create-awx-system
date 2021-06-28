@@ -43,7 +43,7 @@ $ ssh example2.org chmod 600 /etc/wireguard/wg0/client-private.key
 auto wg0
 iface wg0 inet static
 #    maybe? # pre-up /sbin/modprobe wireguard
-#    wg-private-key /etc/wireguard/wg0/private.key
+    wg-private-key /etc/wireguard/wg0/client-private.key
     wg-listen-port 51820
     wg-fwmark 42
     address 192.168.99.2/24
@@ -79,11 +79,11 @@ PersistentKeepalive = 25
 8) Install Linux headers for wireguard module on CLIENT machine:
 
 # uname -r
-4.19.0-14-amd64
-# apt install linux-headers-4.19.0-14-amd64
+4.19.0-17-amd64
+# apt install linux-headers-4.19.0-17-amd64
 
 
-8) CHECK IF IT'S WORKING!
+9) CHECK IF IT'S WORKING!
 
 root@wireguard-client:/etc/wireguard/wg0# modprobe wireguard
 
