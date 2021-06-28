@@ -274,7 +274,7 @@
 - name: Create '00 - Ansible Delete Membership' job template
   awx.awx.tower_job_template:
     name: "00 - Ansible Delete Membership"
-    description: "Playbook to remove clients AWX Organisation and local files on the AWX server."
+    description: "Playbook to remove clients AWX organisation and local files on the AWX server."
     job_type: run
     inventory: "{{ org_name }} Inventory"
     project: "Ansible Create Delete Subscription Membership"
