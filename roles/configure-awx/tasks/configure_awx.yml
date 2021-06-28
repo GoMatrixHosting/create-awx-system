@@ -263,7 +263,6 @@
     inventory: "{{ org_name }} Inventory"
     project: "Ansible Create Delete Subscription Membership"
     playbook: setup_wireguard_server.yml
-    credentials: "Unlock SSH Password"
     survey_enabled: true
     survey_spec: "{{ lookup('file', '{{ role_path }}/surveys/setup_wireguard_server.json.j2') }}"
     state: present
