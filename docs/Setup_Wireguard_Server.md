@@ -6,6 +6,9 @@ A guide for configuring a wireguard proxy for a Matrix server with networking/fi
 1) Create a Debian 10 machine for the wireguard server, it only needs 1GB of RAM. Add the AWX hosts public SSH key to it.
 
 
+2) Create a Debian 10 machine for the wireguard client. Add the AWX hosts public SSH key to it.
+
+
 2) Ensure that the 'On-Premises' subscription is already created so you have the subscription_id.
 
 
@@ -17,30 +20,30 @@ A guide for configuring a wireguard proxy for a Matrix server with networking/fi
 
 4) Install wireguard on CLIENT machine:
 
-# apt update
-# apt install git
-# git clone https://github.com/voidstarzero/wg-ifupdown
-# cd wg-ifupdown
-# ./install.sh
+root@wg-client:# apt update
+root@wg-client:# apt install git
+root@wg-client:# git clone https://github.com/voidstarzero/wg-ifupdown
+root@wg-client:# cd wg-ifupdown
+root@wg-client:# ./install.sh
 
-# echo 'deb http://deb.debian.org/debian buster-backports main' >> /etc/apt/sources.list
-# apt update
-# apt install wireguard/buster-backports
+root@wg-client:# echo 'deb http://deb.debian.org/debian buster-backports main' >> /etc/apt/sources.list
+root@wg-client:# apt update
+root@wg-client:# apt install wireguard/buster-backports
 
 
-5) Copy wireguard keys over to CLIENT machine.
+5) Copy wireguard keys over to client machine.
 
-$ scp wireguard.example.org:/etc/wireguard/wg0/client-* ./
+$ scp wireguard.mantismedical.xyz:/etc/wireguard/wg0/client-* ./
 client-private.key                                                                            100%   45     0.8KB/s   00:00
-client-public.key                                                                             100%   45     0.8KB/s   00:00
-$ ssh example.org mkdir /etc/wireguard/wg0/
-$ scp ./client-* example.org:/etc/wireguard/wg0/
-client-private.key                                                                            100%   45    47.6KB/s   00:00
-client-public.key                                                                             100%   45    46.8KB/s   00:00
-$ ssh example.org chmod 600 /etc/wireguard/wg0/client-private.key
+client-public.key                                                                             100%   45     0.7KB/s   00:00
+$ ssh matrix.mantismedical.xyz mkdir /etc/wireguard/wg0/
+$ scp ./client-* matrix.mantismedical.xyz:/etc/wireguard/wg0/
+client-private.key                                                                            100%   45    43.8KB/s   00:00
+client-public.key                                                                             100%   45    43.0KB/s   00:00
+$ ssh matrix.mantismedical.xyz chmod 600 /etc/wireguard/wg0/client-private.key
 
 
-6) On Wireguard CLIENT adjust '/etc/network/interfaces.d/wg0' file:
+6) On the wireguard client adjust '/etc/network/interfaces.d/wg0' file:
 
 ```
 auto wg0
@@ -62,9 +65,9 @@ iface wg0 inet static
 ```
 
 
-7) On Wireguard CLIENT adjust '/etc/wireguard/wg0/config' file, include content of the servers public key as well as the public IP:
+7) On the wireguard client adjust '/etc/wireguard/wg0/config' file, include content of the servers public key as well as the public IP:
 
-$ ssh wireguard.example.org cat /etc/wireguard/wg0/server-public.key
+$ ssh wireguard.mantismedical.xyz cat /etc/wireguard/wg0/server-public.key
 JWFWfaUESFw5KDbwFzPTESiUIfall6n8wciluxJaI0o=
 
 ``` 
@@ -79,20 +82,20 @@ PersistentKeepalive = 25
 ```
 
 
-8) Install Linux headers for wireguard module on CLIENT machine:
+8) Install Linux headers for wireguard module on the client machine:
 
-# uname -r
+root@wg-client:# uname -r
 4.19.0-17-amd64
-# apt install linux-headers-4.19.0-17-amd64
+root@wg-client:# apt install linux-headers-4.19.0-17-amd64
 
 
 9) CHECK IF IT'S WORKING!
 
-root@wireguard-client:/etc/wireguard/wg0# modprobe wireguard
+root@wg-client:# modprobe wireguard
 
-root@wireguard-client:/etc/wireguard/wg0# ifdown wg0;ifup wg0
+root@wg-client:# ifdown wg0;ifup wg0
 
-root@wireguard-client:/etc/wireguard/wg0# wg show
+root@wg-client:# wg show
 interface: wg0
   public key: bAsgRIuBJXXVlQfu3c8NNMtlWtsZQOVSH0xtQw58Znk=
   private key: (hidden)
@@ -103,4 +106,9 @@ peer: Bw1E9jTMv5c5HlEqTFm3EIdn+Fh5MmQYa7yXI2pv2H4=
   allowed ips: 0.0.0.0/0, ::/0
   latest handshake: 5 seconds ago
   transfer: 732 B received, 788 B sent
+
+root@matrix:~# ping 192.168.99.1
+PING 192.168.99.1 (192.168.99.1) 56(84) bytes of data.
+64 bytes from 192.168.99.1: icmp_seq=1 ttl=64 time=54.0 ms
+64 bytes from 192.168.99.1: icmp_seq=2 ttl=64 time=54.7 ms
 
