@@ -112,3 +112,15 @@ PING 192.168.99.1 (192.168.99.1) 56(84) bytes of data.
 64 bytes from 192.168.99.1: icmp_seq=1 ttl=64 time=54.0 ms
 64 bytes from 192.168.99.1: icmp_seq=2 ttl=64 time=54.7 ms
 
+
+10) Run provision but first edit in new ssh port:
+```
+subscription_id: T-FJGCJCADM3J1
+member_id: billy.bob
+ansible_ssh_port: 2222
+```
+
+remove the setup-firewall tag? sure!
+
+
+
