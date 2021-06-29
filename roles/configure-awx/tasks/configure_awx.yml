@@ -264,7 +264,7 @@
     project: "Ansible Create Delete Subscription Membership"
     playbook: setup_wireguard_server.yml
     survey_enabled: true
-    survey_spec: "{{ lookup('file', '{{ role_path }}/surveys/setup_wireguard_server.json.j2') }}"
+    survey_spec: "{{ lookup('file', '{{ role_path }}/surveys/setup_wireguard_server.json') }}"
     state: present
     verbosity: 1
     tower_host: "https://{{ awx_url }}"

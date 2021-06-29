@@ -27,14 +27,14 @@ A guide for configuring a wireguard proxy for a Matrix server with networking/fi
 
 5) Copy wireguard keys over to CLIENT machine.
 
-$ scp wireguard.example2.org:/etc/wireguard/wg0/client-* ./
+$ scp wireguard.example.org:/etc/wireguard/wg0/client-* ./
 client-private.key                                                                            100%   45     0.8KB/s   00:00
 client-public.key                                                                             100%   45     0.8KB/s   00:00
-$ ssh example2.org mkdir /etc/wireguard/wg0/
-$ scp ./client-* example2.org:/etc/wireguard/wg0/
+$ ssh example.org mkdir /etc/wireguard/wg0/
+$ scp ./client-* example.org:/etc/wireguard/wg0/
 client-private.key                                                                            100%   45    47.6KB/s   00:00
 client-public.key                                                                             100%   45    46.8KB/s   00:00
-$ ssh example2.org chmod 600 /etc/wireguard/wg0/client-private.key
+$ ssh example.org chmod 600 /etc/wireguard/wg0/client-private.key
 
 
 6) On Wireguard CLIENT adjust '/etc/network/interfaces.d/wg0' file:
@@ -61,7 +61,7 @@ iface wg0 inet static
 
 7) On Wireguard CLIENT adjust '/etc/wireguard/wg0/config' file, include content of the servers public key as well as the public IP:
 
-$ ssh wireguard.example2.org cat /etc/wireguard/wg0/server-public.key
+$ ssh wireguard.example.org cat /etc/wireguard/wg0/server-public.key
 JWFWfaUESFw5KDbwFzPTESiUIfall6n8wciluxJaI0o=
 
 ``` 
