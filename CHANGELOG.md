@@ -5,6 +5,7 @@
 - Subscription involved can view an additional '0 - {{ subscription_id }} - Provision Wireguard Server' template.
 - Add /docs/Setup_Wireguard_Server.md guide.
 - Add onboarding script for Windows 10 users.
+- Raise maximum download size to 200MB.
 
 
 # GoMatrixHosting v0.5.0
