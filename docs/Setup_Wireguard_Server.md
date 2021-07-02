@@ -15,7 +15,12 @@ A guide for configuring a wireguard proxy for a Matrix server with networking/fi
 2) Edit users SSH key credential into '00 - Create Wireguard Server' template'. 
 
 
-3) Run '00 - Create Wireguard Server' template, enter the matrix_domain into the survey.
+3) Run '00 - Create Wireguard Server' template, enter these details into the survey:
+matrix_domain
+server_ip
+server_size
+member_id
+subscription_id
 
 
 4) Install wireguard on CLIENT machine:
@@ -82,30 +87,23 @@ PersistentKeepalive = 25
 ```
 
 
-8) Install Linux headers for wireguard module on the client machine:
+8) CHECK IF IT'S WORKING!
 
-root@wg-client:# uname -r
-4.19.0-17-amd64
-root@wg-client:# apt install linux-headers-4.19.0-17-amd64
-
-
-9) CHECK IF IT'S WORKING!
-
-root@wg-client:# modprobe wireguard
-
-root@wg-client:# ifdown wg0;ifup wg0
+root@wg-client:# ifup wg0
 
 root@wg-client:# wg show
 interface: wg0
-  public key: bAsgRIuBJXXVlQfu3c8NNMtlWtsZQOVSH0xtQw58Znk=
+  public key: hF3p/hI1vMmE7QX+d1IqgzLp/eqimrhIQCcuATXKJTc=
   private key: (hidden)
   listening port: 51820
+  fwmark: 0x2a
 
-peer: Bw1E9jTMv5c5HlEqTFm3EIdn+Fh5MmQYa7yXI2pv2H4=
-  endpoint: 128.199.193.165:51820
+peer: 0chY4Rel4oCcrQSIPckJQ01q8Ah8GNSGL5zBftaFy2I=
+  endpoint: 165.22.245.207:51820
   allowed ips: 0.0.0.0/0, ::/0
-  latest handshake: 5 seconds ago
-  transfer: 732 B received, 788 B sent
+  latest handshake: 25 seconds ago
+  transfer: 92 B received, 180 B sent
+  persistent keepalive: every 25 seconds
 
 root@matrix:~# ping 192.168.99.1
 PING 192.168.99.1 (192.168.99.1) 56(84) bytes of data.
@@ -113,14 +111,6 @@ PING 192.168.99.1 (192.168.99.1) 56(84) bytes of data.
 64 bytes from 192.168.99.1: icmp_seq=2 ttl=64 time=54.7 ms
 
 
-10) Run provision but first edit in new ssh port:
-```
-subscription_id: T-FJGCJCADM3J1
-member_id: billy.bob
-ansible_ssh_port: 2222
-```
-
-remove the setup-firewall tag? sure!
-
+10) Remove the 'setup-firewall' tag then run 'Provision a New Server', enter the external IP of the wireguard server into the survey. 
 
 

@@ -1,4 +1,12 @@
 
+# GoMatrixHosting v0.5.1
+
+- Add '00 - Create Wireguard Server' template for AWX admin to provision Wireguard servers that on-premises servers can use to connect.
+- Subscription involved can view an additional '0 - {{ subscription_id }} - Provision Wireguard Server' template.
+- Add /docs/Setup_Wireguard_Server.md guide.
+- Add onboarding script for Windows 10 users.
+
+
 # GoMatrixHosting v0.5.0
 
 - Avoid keeping a copy of the media repository locally, saves space in /chroot/export.
