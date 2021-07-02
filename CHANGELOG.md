@@ -1,8 +1,18 @@
 
+# GoMatrixHosting v0.5.1
+
+- Add '00 - Create Wireguard Server' template for AWX admin to provision Wireguard servers that on-premises servers can use to connect.
+- Subscription involved can view an additional '0 - {{ subscription_id }} - Provision Wireguard Server' template.
+- Add /docs/Setup_Wireguard_Server.md guide.
+- Add onboarding script for Windows 10 users.
+- Raise maximum download size to 200MB.
+
+
 # GoMatrixHosting v0.5.0
 
 - Avoid keeping a copy of the media repository locally, saves space in /chroot/export.
 - Improve synchronization with backups and exports between the copying the configs + media repository and the database snapshot.
+- Improve recovery process to ensure downtime only during DNS changes.
 - Add 'Export Server' job template for generating SFTP export.
 - Fix for broken SSL renewal on AWX.
 - Fixed a bug with deleting subscriptions.

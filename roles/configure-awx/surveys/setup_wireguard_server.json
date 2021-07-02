@@ -1,0 +1,66 @@
+{
+  "name": "Setup Wireguard Server",
+  "description": "Configures a wireguard server AWX can use to SSH into an on-premises server.",
+  "spec": [
+    {
+      "question_name": "Set Base Domain",
+      "question_description": "The base domain of their website (Eg: example.org).",
+      "required": true,
+      "min": 0,
+      "max": 2048,
+      "default": "example.org",
+      "choices": "",
+      "new_question": true,
+      "variable": "matrix_domain",
+      "type": "text"
+    },
+    {
+      "question_name": "Server IPv4/IPv6",
+      "question_description": "The IP address of the wireguard server. You must already have the AWX hosters public SSH key loaded into it.",
+      "required": false,
+      "min": 0,
+      "max": 64,
+      "default": "",
+      "choices": "",
+      "new_question": true,
+      "variable": "server_ip",
+      "type": "text"
+    },
+    {
+      "question_name": "Server Size",
+      "question_description": "Selects the size of the server that will be connected.",
+      "required": true,
+      "min": null,
+      "max": null,
+      "default": "normal",
+      "choices": "normal\njumbo",
+      "new_question": true,
+      "variable": "plan_size",
+      "type": "multiplechoice"
+    },
+    {
+      "question_name": "Member ID",
+      "question_description": "A unique string to represent this user.",
+      "required": true,
+      "min": 0,
+      "max": 64,
+      "default": "billy.bob",
+      "choices": "",
+      "new_question": true,
+      "variable": "member_id",
+      "type": "text"
+    },
+    {
+      "question_name": "Subscriber ID",
+      "question_description": "The subscription_id value for the subscription using this wireguard server.",
+      "required": true,
+      "min": 0,
+      "max": 64,
+      "default": "T-FJGCJCADM3J1",
+      "choices": "",
+      "new_question": true,
+      "variable": "subscription_id",
+      "type": "text"
+    },
+  ]
+}

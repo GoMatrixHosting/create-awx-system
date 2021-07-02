@@ -52,6 +52,7 @@ matrix.cheesedomain.xyz
 A Jitsi service will also be erected at the ‘jitsi’ subdomain, for example: 
 jisti.cheesedomain.xyz
 
+
 DigitalOcean Servers
 
 If you’re using a DigitalOcean server the following locations will be available to you:
@@ -73,8 +74,10 @@ If you plan to bring your own server it needs to have the following properties:
     • Debian 10 as the operating system.
     • SSD storage (Preferably NVMe).
     • Public SSH key added to /root/.ssh/authorized_keys
-    • A public Ipv4 or Ipv6 address.
+    • A public IPv4 or IPv6 address.
     • ~0.5mbps upload per user.
+
+If your server doesn't have a static or public IP address, or has some other local routing/firewall issue, a wireguard server can be configured to connect your server to the world. If you think you need this service talk to your AWX administrator before provisioning.
 
 
 Provision Stage With ‘DigitalOcean’ Server.
@@ -89,7 +92,7 @@ If you had your heart set on a specific location contact us and we might be able
 
 Provision Stage With ‘On-Premises’ Server.
 
-Just enter the values you’ve defined after reading the previous page and enter the Ipv4 and/or Ipv6 address for your server. The on-premises server will be provisioned for you, the job_templates you need to configure it will become available, and DNS advice will be printed for you at the end of the playbook run.
+Just enter the values you’ve defined after reading the previous page and enter the IPv4 and/or IPv6 address for your server. The on-premises server will be provisioned for you, the job_templates you need to configure it will become available, and DNS advice will be printed for you at the end of the playbook run.
 
 
 Configuring Your DNS
@@ -339,6 +342,8 @@ Administrator Access	Sets whether this user account will be a server admin. Serv
 
 
 Purge Database (Advanced)
+
+Warning: This tool may cause irreversible damage to your database.
 
 This template allows you to shrink your Synapse database, it should be used when purging local/remote media doesn’t reclaim enough disk space. Be aware that using this tool can cause cause performance issues and will also cause your server to experience downtime.
 

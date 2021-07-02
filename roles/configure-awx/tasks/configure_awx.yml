@@ -254,11 +254,27 @@
     tower_host: "https://{{ awx_url }}"
     tower_oauthtoken: "{{ tower_token.stdout }}"
     validate_certs: yes
+    
+- name: Create '00 - Create Wireguard Server' job template
+  awx.awx.tower_job_template:
+    name: "00 - Create Wireguard Server"
+    description: "Configures a wireguard server AWX can use to SSH into an on-premises server."
+    job_type: run
+    inventory: "{{ org_name }} Inventory"
+    project: "Ansible Create Delete Subscription Membership"
+    playbook: setup_wireguard_server.yml
+    survey_enabled: true
+    survey_spec: "{{ lookup('file', '{{ role_path }}/surveys/setup_wireguard_server.json') }}"
+    state: present
+    verbosity: 1
+    tower_host: "https://{{ awx_url }}"
+    tower_oauthtoken: "{{ tower_token.stdout }}"
+    validate_certs: yes
 
 - name: Create '00 - Ansible Delete Membership' job template
   awx.awx.tower_job_template:
     name: "00 - Ansible Delete Membership"
-    description: "Playbook to remove clients AWX Organisation and local files on the AWX server."
+    description: "Playbook to remove clients AWX organisation and local files on the AWX server."
     job_type: run
     inventory: "{{ org_name }} Inventory"
     project: "Ansible Create Delete Subscription Membership"
