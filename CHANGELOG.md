@@ -3,6 +3,7 @@
 
 - Replaced poorly designed method for assigning hosts to groups in AWX with a URI module call.
 - Make '00 - Ansible Delete Membership' more reliable, ensure client-list entry is deleted
+- Update notes on setting up Google ReCaptcha for registration.
 
 
 # GoMatrixHosting v0.5.1
