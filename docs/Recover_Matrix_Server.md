@@ -129,9 +129,11 @@ root@fishbole.xyz:~# tar -xvzf /chroot/export/matrix_2021-06-12.tar.gz -C /matri
 
 14) Import the database dump:
 
-Run the '00 - Restore and Import Postgresql Dump' job template,
-with specific members deploy project, inventory and ssh credential,
-include all the extra variables found in /matrix/awx/extra_vars.json and the {{ server_path_postgres_dump }}, for example:
+Run the '00 - Restore and Import Postgresql Dump' job template with:
+- member's Inventory
+- member's deploy Project with setup.yml Playbook
+- member's SSH Credential
+- include all the extra variables found in /matrix/awx/extra_vars.json and the {{ server_path_postgres_dump }}, for example:
 
 ---
 server_path_postgres_dump: /chroot/export/postgres_2021-06-12.sql.gz
@@ -142,7 +144,7 @@ matrix_domain: "fishbole.xyz"
 matrix_awx_enabled: true
 
 
-15) Run 'Provision a New Server' again to load up the surveys from matrix_vars.yml
+15) Remove the 'imposter-check' tag again and run 'Provision a New Server' again to load up the surveys from matrix_vars.yml
 
 
 16) Copy the DNS information and send it to the customer so they can configure DNS again. For Example:
@@ -161,7 +163,10 @@ matrix_awx_enabled: true
         "Setting the IPv6 record is optional. If you need help doing this please contact us."
 
 
-17) Run '0 - Stop all Services' job template on old subscription to shut down previous server.
+17) SSH into the old server and shut down the previous service:
+
+`# systemctl stop matrix-synapse matrix-postgres matrix-ma1sd`
+
 
 18) Wait for the DNS to propagate.
 
