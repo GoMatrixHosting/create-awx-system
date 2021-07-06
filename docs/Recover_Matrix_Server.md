@@ -1,7 +1,7 @@
 
 ~~ Recover Matrix Server ~~
 
-A guide on how to recover 
+A guide on how to recover a client's server.
 
 1) Locate the borg backups password.
 
@@ -70,7 +70,7 @@ OR
 backup_user@backup_server:~$ mv /mnt/backup-dir/Clients/fishbole.xyz/ /mnt/backup-dir/Clients/fishbole.xyz-old/
 
 
-8) Provision with these survey answers:
+8) Remove the 'imposter-check' tag from 'Provision a New Server', then run the template with these survey answers:
 
 SET BASE DOMAIN - matrix_domain
 
@@ -137,6 +137,8 @@ target: "matrix.fishbole.xyz"
 matrix_domain: "fishbole.xyz"
 matrix_awx_enabled: true
 
+
+# COPY DNS INFORMATION OVER!!
 
 15) Run 'Provision a New Server' again to load up the surveys from matrix_vars.yml
 

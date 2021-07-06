@@ -1,4 +1,10 @@
 
+# GoMatrixHosting v0.5.2
+
+- Replaced poorly designed method for assigning hosts to groups in AWX with a URI module call.
+- Make '00 - Ansible Delete Membership' more reliable, ensure client-list entry is deleted
+
+
 # GoMatrixHosting v0.5.1
 
 - Add '00 - Create Wireguard Server' template for AWX admin to provision Wireguard servers that on-premises servers can use to connect.
@@ -6,6 +12,13 @@
 - Add /docs/Setup_Wireguard_Server.md guide.
 - Add onboarding script for Windows 10 users.
 - Raise maximum download size to 200MB.
+
+# Upgrade notes for v0.5.1
+
+- Re-configure awx with 'create-awx-system' script:
+```
+$ ansible-playbook -v -i ./inventory/hosts -t "configure-awx" post-setup.yml
+```
 
 
 # GoMatrixHosting v0.5.0
