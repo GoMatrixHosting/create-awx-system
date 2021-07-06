@@ -1,7 +1,7 @@
 
 ~~ Recover Matrix Server ~~
 
-A guide on how to recover 
+A guide on how to recover a client's server.
 
 1) Locate the borg backups password.
 
@@ -70,7 +70,7 @@ OR
 backup_user@backup_server:~$ mv /mnt/backup-dir/Clients/fishbole.xyz/ /mnt/backup-dir/Clients/fishbole.xyz-old/
 
 
-8) Provision with these survey answers:
+8) Remove the 'imposter-check' tag from 'Provision a New Server', then run the template with these survey answers:
 
 SET BASE DOMAIN - matrix_domain
 
@@ -99,7 +99,7 @@ root@AWX-panel:~# docker exec -i -t awx_task bash
 bash-4.4# echo -e '# Custom DNS records for matrix.fishbole.xyz\n165.22.255.141 fishbole.xyz\n165.22.255.141 matrix.fishbole.xyz\n165.22.255.141 element.fishbole.xyz\n165.22.255.141 jitsi.fishbole.xyz' >> /etc/hosts
 
 
-12) Remove the 'start' tag from 'Deploy/Update a Server'. As admin user, run 'Deploy/Update a Server' with the following extra variable added:
+12) Remove the 'start' tag from the new '0 - Deploy/Update a Server'. As admin user, run that template with the following extra variable added:
 
 `matrix_ssl_retrieval_method: none`
 
@@ -157,8 +157,11 @@ matrix_awx_enabled: true
         "Setting the IPv6 record is optional. If you need help doing this please contact us."
 
 
-17) Wait for the DNS to propagate.
+17) Run '0 - Stop all Services' job template on old subscription to shut down previous server.
 
-18) Run 'Deploy/Update a Server' job template again, then try and login.
+18) Wait for the DNS to propagate.
 
+19) Run the new '0 - Deploy/Update a Server' job template again, then try and login.
+
+20) If the new Matrix server works delete the old subscription with '00 - Ansible Delete Subscription', then re-provision the new subscription using 'Provision a New Server'.
 

@@ -264,19 +264,15 @@ Recaptcha Private Key			Sets the Google ReCaptcha private key for this website.
 
 Setting up Googles ReCaptcha
 
-Navigate to: https://console.cloud.google.com/security/recaptcha/sign-up
+Navigate to: https://www.google.com/recaptcha/admin/create
 
-Create a Google account, if you haven’t.
+or open 'v3 Admin Console' on: https://www.google.com/recaptcha/about/
 
-Click ‘ENABLE RECAPTCHA ENTERPRISE API’
+Add a label for your site, check 'reCAPTCHA v2' and '"I'm not a robot" tickbox', add your base domain to 'Domains' (Eg: example.org)
 
-Click ‘ENABLE’
+Accept the Terms of Service and click 'SUBMIT'.
 
-Click ‘CREATE CREDENTIALS’
-
-From the ‘What API are you using?’ dropdown select ‘reCAPTCHA Enterprise API’
-
-????
+Copy the public (site key) and private keys into the 'Configure Synapse' job template survey, also set 'Enable ReCaptcha on Registration' to true, then launch it.
 
 
 Configure Synapse Admin
