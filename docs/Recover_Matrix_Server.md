@@ -99,7 +99,7 @@ root@AWX-panel:~# docker exec -i -t awx_task bash
 bash-4.4# echo -e '# Custom DNS records for matrix.fishbole.xyz\n165.22.255.141 fishbole.xyz\n165.22.255.141 matrix.fishbole.xyz\n165.22.255.141 element.fishbole.xyz\n165.22.255.141 jitsi.fishbole.xyz' >> /etc/hosts
 
 
-12) Remove the 'start' tag from 'Deploy/Update a Server'. As admin user, run 'Deploy/Update a Server' with the following extra variable added:
+12) Remove the 'start' tag from the new '0 - Deploy/Update a Server'. As admin user, run that template with the following extra variable added:
 
 `matrix_ssl_retrieval_method: none`
 
@@ -138,8 +138,6 @@ matrix_domain: "fishbole.xyz"
 matrix_awx_enabled: true
 
 
-# COPY DNS INFORMATION OVER!!
-
 15) Run 'Provision a New Server' again to load up the surveys from matrix_vars.yml
 
 
@@ -159,8 +157,11 @@ matrix_awx_enabled: true
         "Setting the IPv6 record is optional. If you need help doing this please contact us."
 
 
-17) Wait for the DNS to propagate.
+17) Run '0 - Stop all Services' job template on old subscription to shut down previous server.
 
-18) Run 'Deploy/Update a Server' job template again, then try and login.
+18) Wait for the DNS to propagate.
 
+19) Run the new '0 - Deploy/Update a Server' job template again, then try and login.
+
+20) If the new Matrix server works delete the old subscription with '00 - Ansible Delete Subscription', then re-provision the new subscription using 'Provision a New Server'.
 
