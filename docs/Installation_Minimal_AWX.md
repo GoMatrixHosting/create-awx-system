@@ -33,6 +33,7 @@ Create folder for host at: ./inventory/host_vars/panel.example.org/
 
 Record these variables to ./inventory/host_vars/panel.example.org/vars.yml:
 - org_name 			(The name of your organisation.)
+- hosting_url			(The URL of your organisation.)
 - awx_url 			(The URL for AWX.)
 - certbot_email 		(The organisations email.)
 - admin_password 		(Strong password for the AWX admin user.)

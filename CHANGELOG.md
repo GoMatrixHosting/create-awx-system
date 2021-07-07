@@ -1,4 +1,22 @@
 
+# GoMatrixHosting v0.5.3
+
+- Add DNS advice to Wireguard provision
+- Add node exporter with custom port to Wireguard servers
+
+
+# Upgrade notes for v0.5.3
+
+- Add new hosting_url variable to hosting_vars.yml as well as your 'create-awx-system' vars.yml file:
+`hosting_url: example.org`
+- Manually add 'backup.{{ hosting_url }}' host to existing inventories, with the following variables:
+```
+ansible_host: '{{ backup_server_ip }}'
+ansible_port: '{{ backup_server_ssh_port }}'
+```
+- Manually remove 'Backup Server' host from existing inventories.
+
+
 # GoMatrixHosting v0.5.2
 
 - Replaced poorly designed method for assigning hosts to groups in AWX with a URI module call.
