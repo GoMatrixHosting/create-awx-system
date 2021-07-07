@@ -12,6 +12,7 @@
 - Add new hosting_url variable to hosting_vars.yml as well as your 'create-awx-system' vars.yml file:
 `hosting_url: example.org`
 - Re-install AWX.
+- Remove /root/bin folder from AWX system.
 - Manually add 'backup.{{ hosting_url }}' host to all existing inventories, with the following variables:
 ```
 ansible_host: '{{ backup_server_ip }}'
