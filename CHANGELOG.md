@@ -20,6 +20,7 @@ ansible_host: '{{ backup_server_ip }}'
 ansible_port: '{{ backup_server_ssh_port }}'
 ```
 - Manually remove 'Backup Server' host from all existing client inventories.
+- Re-provision all existing Wireguard servers.
 
 
 # GoMatrixHosting v0.5.2
