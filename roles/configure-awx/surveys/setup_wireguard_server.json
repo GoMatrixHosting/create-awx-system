@@ -17,7 +17,7 @@
     {
       "question_name": "Server IPv4/IPv6",
       "question_description": "The IP address of the wireguard server. You must already have the AWX hosters public SSH key loaded into it.",
-      "required": false,
+      "required": true,
       "min": 0,
       "max": 64,
       "default": "",

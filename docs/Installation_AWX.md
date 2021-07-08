@@ -11,7 +11,7 @@ $ exit
 
 # Setup DNS entry for it:
 
-Map 2 A records for panel.example.org and monitor.example.org to the servers IP.
+Create 2 A/AAAA records for panel.example.org and monitor.example.org pointing to the AWX servers IP.
 
 
 # Installation
@@ -22,6 +22,10 @@ Installation is broken up into 8 stages:
 
 $ ssh-keyscan -t ed25519 {{ backup_server_ip }} 2>/dev/null
 255.150.40.99 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOdNgn7zqlpWIsiTV91QLEtRnXH18uMC27zVJYHsql/D
+
+Create a A/AAAA record for backup.example.org pointing to the backup servers IP.
+
+Install prometheus-node-exporter and export port 9100 on the backup server.
 
 
 2) Pre-setup, setup before the awx playbook is run, installs Docker and sets up TLS proxy for AWX, optionally website hooks and grafana are also setup.
@@ -38,6 +42,7 @@ Create folder for host at: ./inventory/host_vars/panel.example.org/
 
 Record these variables to ./inventory/host_vars/panel.example.org/vars.yml:
 - org_name 			(The name of your organisation.)
+- hosting_url			(The URL of your organisation.)
 - awx_url 			(The URL for AWX.)
 - grafana_url 			(The URL for Grafana.)
 - certbot_email 		(The organisations email.)

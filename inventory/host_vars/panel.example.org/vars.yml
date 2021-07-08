@@ -3,6 +3,7 @@
 org_name: ExampleOrg
 
 # URL Settings
+hosting_url: example.org
 awx_url: panel.example.org
 grafana_url: monitor.example.org
 certbot_email: myemail@protonmail.com

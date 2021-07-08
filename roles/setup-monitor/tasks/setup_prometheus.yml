@@ -1,5 +1,5 @@
 
-- name: Install Nginx and Certbot for AWX reverse proxy
+- name: Install Prometheus and Node-Exporter
   apt:
     pkg:
     - prometheus
@@ -14,9 +14,9 @@
     mode: '0644'
     state: touch
 
-- name: Ensure /root/bin exists
+- name: Ensure /usr/local/bin/prometheus exists
   file:
-    path: /root/bin
+    path: /usr/local/bin/prometheus
     owner: root
     group: root
     mode: '0744'
@@ -25,7 +25,7 @@
 - name: Save new generate_config.sh script, template
   template:
     src: '{{ role_path }}/generate_config.sh.j2'
-    dest: '/root/bin/generate_config.sh'
+    dest: '/usr/local/bin/prometheus/generate_config.sh'
     owner: root
     group: root
     mode: '0744'
@@ -33,7 +33,7 @@
 - name: Install config_piece_1 file for generating Prometheus config
   copy:
     src: "{{ role_path }}/config_piece_1"
-    dest: "/root/bin/config_piece_1"
+    dest: "/usr/local/bin/prometheus/config_piece_1"
     owner: root
     group: root
     mode: '0644'
@@ -41,7 +41,7 @@
 - name: Install config_piece_2 file for generating Prometheus config
   copy:
     src: "{{ role_path }}/config_piece_2"
-    dest: "/root/bin/config_piece_2"
+    dest: "/usr/local/bin/prometheus/config_piece_2"
     owner: root
     group: root
     mode: '0644'
@@ -59,9 +59,9 @@
 - name: Creates a crontab entry to generate Prometheus config every 5 minutes
   cron:
     name: "Regenerate Prometheus config"
-    minute: "*/2"
+    minute: "*/5"
     user: root
-    job: "/bin/sh /root/bin/generate_config.sh"
+    job: "/bin/sh /usr/local/bin/prometheus/generate_config.sh"
 
 - name: Ensure service prometheus is started
   service:

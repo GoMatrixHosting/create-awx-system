@@ -46,6 +46,7 @@ On controller, extract matrix.tar.gz, examine /matrix/awx/organisation.yml and /
 - client_email: "bobfett@protonmail.com"		[/matrix/awx/organisation.yml]
 - client_first_name: "Bob"				[/matrix/awx/organisation.yml]
 - client_last_name: "Fett"				[/matrix/awx/organisation.yml]
+- matrix_domain: fishbole.xyz				[/matrix/awx/matrix_vars.yml]
 - matrix_server_fqn_element: element.fishbole.xyz	[/matrix/awx/matrix_vars.yml]
 - matrix_nginx_proxy_base_domain_serving_enabled: true	[/matrix/awx/matrix_vars.yml]
 - plan_title: Small DigitalOcean Server			[/matrix/awx/server_vars.yml]
@@ -81,7 +82,7 @@ SET ELEMENT SUBDOMAIN - Copy only the subdomain from matrix_server_fqn_element, 
 SELECT REGION - Figure it out from the do_droplet_region. (Or a different one if you're trying to migrate it)
 
 
-9) Note the new subscription_id. Load matrix_vars.yml from the restored backup into the new AWX subsciption folder:
+9) Note the new subscription_id and member_id. Load matrix_vars.yml from the restored backup into the new AWX subsciption folder:
 
 ~/Documents$ scp ./awx/matrix_vars.yml panel.topgunmatrix.com:/var/lib/awx/projects/clients/31/T-FKFAMCCR7CHX/
 matrix_vars.yml                               100% 3840    13.1KB/s   00:00 
@@ -90,7 +91,10 @@ matrix_vars.yml                               100% 3840    13.1KB/s   00:00
 10) Clear known_hosts entry in AWX for that particular server:
 
 root@AWX-panel:~# docker exec -i -t awx_task bash
-bash-4.4# sed '/^matrix.fishbole.xyz/d' -i /root/.ssh/known_hosts
+bash-4.4# ssh-keygen -R matrix.fishbole.xyz
+# Host matrix.fishbole.xyz found: line 25
+/root/.ssh/known_hosts updated.
+Original contents retained as /root/.ssh/known_hosts.old
 
 
 11) Note the IP address generated during provision. Add new known_hosts record for the homeserver address:
@@ -125,9 +129,11 @@ root@fishbole.xyz:~# tar -xvzf /chroot/export/matrix_2021-06-12.tar.gz -C /matri
 
 14) Import the database dump:
 
-Run the '00 - Restore and Import Postgresql Dump' job template,
-with specific members deploy project, inventory and ssh credential,
-include all the extra variables found in /matrix/awx/extra_vars.json and the {{ server_path_postgres_dump }}, for example:
+Run the '00 - Restore and Import Postgresql Dump' job template with:
+- member's Inventory
+- member's deploy Project with setup.yml Playbook
+- member's SSH Credential
+- include all the extra variables found in /matrix/awx/extra_vars.json and the {{ server_path_postgres_dump }}, for example:
 
 ---
 server_path_postgres_dump: /chroot/export/postgres_2021-06-12.sql.gz
@@ -138,7 +144,7 @@ matrix_domain: "fishbole.xyz"
 matrix_awx_enabled: true
 
 
-15) Run 'Provision a New Server' again to load up the surveys from matrix_vars.yml
+15) Remove the 'imposter-check' tag again and run 'Provision a New Server' again to load up the surveys from matrix_vars.yml
 
 
 16) Copy the DNS information and send it to the customer so they can configure DNS again. For Example:
@@ -157,7 +163,10 @@ matrix_awx_enabled: true
         "Setting the IPv6 record is optional. If you need help doing this please contact us."
 
 
-17) Run '0 - Stop all Services' job template on old subscription to shut down previous server.
+17) SSH into the old server and shut down the previous service:
+
+`# systemctl stop matrix-synapse matrix-postgres matrix-ma1sd`
+
 
 18) Wait for the DNS to propagate.
 
