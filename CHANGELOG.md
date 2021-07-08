@@ -1,24 +1,24 @@
 
 # GoMatrixHosting v0.5.3
 
-- Add DNS advice to Wireguard provision
+- Add DNS advice to Wireguard provision.
 - Add node-exporter with custom port to Wireguard servers.
-- Add node-exporter to backup servers.
+- Add node-exporter to backup server.
 - Update generate_config.sh which generates Prometheus configuration.
 
 
 # Upgrade notes for v0.5.3
 
-- Add new hosting_url variable to hosting_vars.yml as well as your 'create-awx-system' vars.yml file:
-`hosting_url: example.org`
-- Re-install AWX.
+- Add new hosting_url variable to your 'create-awx-system' vars.yml file, set it as the domain of your front-end site:
+`hosting_url: gomatrixhosting.com`
+- Re-install AWX, observe the new instructions in /doc/Installation_AWX.md.
 - Remove /root/bin folder from AWX system.
-- Manually add 'backup.{{ hosting_url }}' host to all existing inventories, with the following variables:
+- Manually add 'backup.{{ hosting_url }}' host to all existing client inventories, with the following variables:
 ```
 ansible_host: '{{ backup_server_ip }}'
 ansible_port: '{{ backup_server_ssh_port }}'
 ```
-- Manually remove 'Backup Server' host from all existing inventories.
+- Manually remove 'Backup Server' host from all existing client inventories.
 
 
 # GoMatrixHosting v0.5.2

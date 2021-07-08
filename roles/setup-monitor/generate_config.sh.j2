@@ -14,22 +14,22 @@ truncate -s 0 $CONFIG
 
 cat /usr/local/bin/prometheus/config_piece_1 >> $CONFIG
 
-# append matrix and backup servers for node-exporter metrics
+# append localhost, matrix and backup servers for node-exporter metrics
 
 curl --silent --user admin:{{ admin_password }} https://{{ awx_url }}/api/v2/hosts/ |
 	jq .results[].name |
 	sort -u |
 	tr -d '"\\' |
-	egrep -v "dummyvalue.com|wireguard.|localhost" |
+	egrep -v "dummyvalue.com|^wireguard\." |
         while read line; do echo "      - '$line:9100'"; done >> $CONFIG
-        
+
 # append wireguard servers for node-exporter metrics
 
 curl --silent --user admin:{{ admin_password }} https://{{ awx_url }}/api/v2/hosts/ |
 	jq .results[].name |
 	sort -u |
 	tr -d '"\\' |
-	grep "wireguard." |
+	grep -G "^wireguard\." |
         while read line; do echo "      - '$line:9200'"; done >> $CONFIG
 
 # append second block
@@ -42,7 +42,7 @@ curl --silent --user admin:{{ admin_password }} https://{{ awx_url }}/api/v2/hos
         jq .results[].name |
         sort -u |
         tr -d '"\\' |
-        grep "matrix." |
+        grep -G "^matrix\." |
         while read line; do echo "      - '$line:9000'"; done >> $CONFIG
 
 after_sum=$(sha256sum $CONFIG)
