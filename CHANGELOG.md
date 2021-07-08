@@ -5,6 +5,7 @@
 - Add node-exporter with custom port to Wireguard servers.
 - Add node-exporter to backup server.
 - Update generate_config.sh which generates Prometheus configuration.
+- Update Recover_AWX_Server.md notes.
 
 
 # Upgrade notes for v0.5.3
