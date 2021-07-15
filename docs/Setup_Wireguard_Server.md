@@ -9,13 +9,13 @@ A guide for configuring a wireguard proxy for a Matrix server with networking/fi
 2) Create a Debian 10 machine for the wireguard client. Add the AWX hosts public SSH key to it.
 
 
-2) Ensure that the 'On-Premises' subscription is already created so you have the subscription_id.
+3) Ensure that the 'On-Premises' subscription is already created so you have the subscription_id.
 
 
-2) Edit users SSH key credential into '00 - Create Wireguard Server' template'. 
+4) Edit users SSH key credential into '00 - Create Wireguard Server' template'. 
 
 
-3) Run '00 - Create Wireguard Server' template, enter these details into the survey:
+5) Run '00 - Create Wireguard Server' template, enter these details into the survey:
 matrix_domain
 server_ip
 server_size
@@ -23,7 +23,7 @@ member_id
 subscription_id
 
 
-4) Install wireguard on CLIENT machine:
+6) Install wireguard on CLIENT machine:
 
 root@wg-client:# apt update
 root@wg-client:# apt install git
@@ -36,7 +36,7 @@ root@wg-client:# apt update
 root@wg-client:# apt install wireguard/buster-backports
 
 
-5) Copy wireguard keys over to client machine.
+7) Copy wireguard keys over to client machine.
 
 $ scp wireguard.mantismedical.xyz:/etc/wireguard/wg0/client-* ./
 client-private.key                                                                            100%   45     0.8KB/s   00:00
@@ -48,7 +48,7 @@ client-public.key                                                               
 $ ssh matrix.mantismedical.xyz chmod 600 /etc/wireguard/wg0/client-private.key
 
 
-6) On the wireguard client adjust '/etc/network/interfaces.d/wg0' file:
+8) On the wireguard client adjust '/etc/network/interfaces.d/wg0' file:
 
 ```
 auto wg0
@@ -70,7 +70,7 @@ iface wg0 inet static
 ```
 
 
-7) On the wireguard client adjust '/etc/wireguard/wg0/config' file, include content of the servers public key as well as the public IP:
+9) On the wireguard client adjust '/etc/wireguard/wg0/config' file, include content of the servers public key as well as the public IP:
 
 $ ssh wireguard.mantismedical.xyz cat /etc/wireguard/wg0/server-public.key
 JWFWfaUESFw5KDbwFzPTESiUIfall6n8wciluxJaI0o=
@@ -87,7 +87,7 @@ PersistentKeepalive = 25
 ```
 
 
-8) CHECK IF IT'S WORKING!
+10) CHECK IF IT'S WORKING!
 
 root@wg-client:# ifup wg0
 
@@ -111,6 +111,6 @@ PING 192.168.99.1 (192.168.99.1) 56(84) bytes of data.
 64 bytes from 192.168.99.1: icmp_seq=2 ttl=64 time=54.7 ms
 
 
-10) Remove the 'setup-firewall' tag then run 'Provision a New Server', enter the external IP of the wireguard server into the survey. 
+11) Remove the 'setup-firewall' tag then run 'Provision a New Server', enter the external IP of the wireguard server into the survey. 
 
 

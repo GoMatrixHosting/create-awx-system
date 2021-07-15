@@ -51,7 +51,6 @@ On controller, extract matrix.tar.gz, examine /matrix/awx/organisation.yml and /
 - matrix_nginx_proxy_base_domain_serving_enabled: true	[/matrix/awx/matrix_vars.yml]
 - plan_title: Small DigitalOcean Server			[/matrix/awx/server_vars.yml]
 - subscription_type: digitalocean			[/matrix/awx/server_vars.yml]
-- matrix_domain: fishbole.xyz				[/matrix/awx/extra_vars.json]
 - subscription_id: I-CREUS74S6969			[/matrix/awx/extra_vars.json]
 - member_id: 31						[/matrix/awx/extra_vars.json]
 
@@ -81,6 +80,10 @@ SET ELEMENT SUBDOMAIN - Copy only the subdomain from matrix_server_fqn_element, 
 
 SELECT REGION - Figure it out from the do_droplet_region. (Or a different one if you're trying to migrate it)
 
+OR
+
+SERVER IPV4/SERVER IPV6 - Enter the IPs for the new on-premises server. 
+
 
 9) Note the new subscription_id and member_id. Load matrix_vars.yml from the restored backup into the new AWX subsciption folder:
 
@@ -108,23 +111,24 @@ bash-4.4# echo -e '# Custom DNS records for matrix.fishbole.xyz\n165.22.255.141 
 `matrix_ssl_retrieval_method: none`
 
 
-13A - (Admin Restore) Rsync /matrix and database into the server:
+13A - (Admin Restore) Rsync /matrix, /chroot/website and the database into the server:
 
 $ ssh matrix.fishbole.xyz
 root@fishbole.xyz:~# sudo apt install rsync
 root@fishbole.xyz:~# exit
 
 $ rsync -av ./matrix/ matrix.fishbole.xyz:/matrix/
+$ rsync -av ./chroot/website/ matrix.fishbole.xyz:/chroot/website/
 $ rsync -av ./chroot/export/postgres_2021-06-12.sql.gz  matrix.fishbole.xyz:/chroot/export/
 
 
-13B - (Admin Import) Copy backup into /chroot/export/ with SCP, extract /matrix:
+13B - (Admin Import) Copy export into /chroot/export/ with SCP, extract /matrix:
 
 ~/Documents$ scp ./chroot/export/* root@matrix.fishbole.xyz:/chroot/export/
 matrix_2021-03-02.tar.gz                                            100% 6139KB 738.3KB/s   00:08
 postgres_2021-03-02.sql.gz                                          100% 7496KB 796.3KB/s   00:09 
 
-root@fishbole.xyz:~# tar -xvzf /chroot/export/matrix_2021-06-12.tar.gz -C /matrix/
+root@fishbole.xyz:~# tar -xvzf /chroot/export/matrix_2021-06-12.tar.gz -C /
 
 
 14) Import the database dump:
@@ -173,4 +177,6 @@ matrix_awx_enabled: true
 19) Run the new '0 - Deploy/Update a Server' job template again, then try and login.
 
 20) If the new Matrix server works delete the old subscription with '00 - Ansible Delete Subscription', then re-provision the new subscription using 'Provision a New Server'.
+
+21) If base domain isn't used (if matrix_nginx_proxy_base_domain_serving_enabled: true) then run the 'Configure Website + Access Export' job template again to enable the base domain site.
 
