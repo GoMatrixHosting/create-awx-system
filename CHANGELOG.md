@@ -1,3 +1,18 @@
+# GoMatrixHosting v0.5.4
+
+- Install and configure unattended-upgrades on all servers.
+- Fix bug with 'Purge Media' template and wireguarded servers.
+- Fix bug where 'Configure Website + Access Export' breaks the SSH config.
+- Update backup/restore and export process to include client website /chroot/website.
+- Fixed bug where 'purge media' uses seconds timestamp and not milliseconds.
+
+
+# Upgrade notes for v0.5.4
+
+- Re-provision all servers.
+- Run pre-setup.yml again on AWX:
+`$ ansible-playbook -v -i ./inventory/hosts -t "setup" pre-setup.yml`
+
 
 # GoMatrixHosting v0.5.3
 
