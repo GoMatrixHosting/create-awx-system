@@ -46,6 +46,15 @@
     group: root
     mode: '0644'
 
+- name: Set Prometheus retention period to desired amount of days
+  lineinfile:
+    path: /etc/default/prometheus
+    regexp: '^ARGS=.*$'
+    line: 'ARGS="--storage.tsdb.retention={{ prometheus_retention_period }}d"'
+    owner: root
+    group: root
+    mode: '0644'
+
 - name: Install synapse-v2.rules file for Prometheus
   copy:
     src: "{{ item.src }}"

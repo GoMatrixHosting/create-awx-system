@@ -1,3 +1,17 @@
+
+# GoMatrixHosting v0.5.5
+
+- Set prometheus retention period in create-awx-system.
+
+
+# Upgrade notes for v0.5.5
+
+- Add new prometheus_retention_period variable to create-awx-system inventory:
+`prometheus_retention_period: 90`
+- Reconfigure the monitor section of AWX:
+`$ ansible-playbook -v -i ./inventory/hosts -t "setup,setup-monitor,setup-webhooks" pre-setup.yml`
+
+
 # GoMatrixHosting v0.5.4
 
 - Install and configure unattended-upgrades on all servers.

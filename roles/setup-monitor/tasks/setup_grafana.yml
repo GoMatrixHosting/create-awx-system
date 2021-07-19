@@ -43,13 +43,16 @@
   pause:
     minutes: 1
 
+# configure grafana
+# $ grafana-cli admin reset-admin-password <new password>
+# or can just do it graphically, default password for admin is 'admin'
+
 - name: Set admin password for Grafana
   command: 'grafana-cli admin reset-admin-password {{ grafana_admin_password }}'
 
-# handle secure data - workflow example
 # this will create/update the datasource but dont update the secure data on updates
 # so you can assert if all tasks are changed
-- name: create prometheus datasource
+- name: Create prometheus datasource
   community.grafana.grafana_datasource:
     name: local_prometheus
     # In the web interface direct access is named 'Server'. (trying instead of 'proxy')
@@ -60,15 +63,4 @@
     url: "https://{{ grafana_url }}"
     grafana_user: "admin"
     grafana_password: "{{ grafana_admin_password }}"
-
-
-# configure grafana
-# $ grafana-cli admin reset-admin-password <new password>
-# or can just do it graphically, default password for admin is 'admin'
-
-#- debug:
-#    msg: If this is your first time setting up Grafana please login with username 'admin' and password 'admin' and set a strong unique administrator password.
-
-
-
 

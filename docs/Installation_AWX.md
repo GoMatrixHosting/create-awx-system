@@ -46,6 +46,8 @@ Record these variables to ./inventory/host_vars/panel.example.org/vars.yml:
 - awx_url 			(The URL for AWX.)
 - grafana_url 			(The URL for Grafana.)
 - certbot_email 		(The organisations email.)
+- grafana_admin_password	(Graphana admin users password.)
+- prometheus_retention_period	(Number of days to retain the monitoring data.)
 - admin_password 		(Strong password for the AWX admin user.)
 - create_delete_source		(Repository URL for 'Ansible Create Delete Subscription Membership'.)
 - create_delete_branch		(Branch of this repository to use.)
