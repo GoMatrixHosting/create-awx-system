@@ -7,7 +7,7 @@
 # Upgrade notes for v0.5.5
 
 - Add new prometheus_retention_period variable to create-awx-system inventory:
-`prometheus_retention_period: 90`
+`prometheus_retention_period: 28`
 - Reconfigure the monitor section of AWX:
 `$ ansible-playbook -v -i ./inventory/hosts -t "setup,setup-monitor,setup-webhooks" pre-setup.yml`
 
