@@ -2,6 +2,8 @@
 # GoMatrixHosting v0.5.5
 
 - Set prometheus retention period in create-awx-system.
+- Fixed minor bugs relating to ma1sd/LDAP.
+- Update the borg backup config to include the rest of /matrix.
 
 
 # Upgrade notes for v0.5.5
@@ -10,6 +12,7 @@
 `prometheus_retention_period: 28`
 - Reconfigure the monitor section of AWX:
 `$ ansible-playbook -v -i ./inventory/hosts -t "setup,setup-monitor,setup-webhooks" pre-setup.yml`
+- Re-provision all servers.
 
 
 # GoMatrixHosting v0.5.4
