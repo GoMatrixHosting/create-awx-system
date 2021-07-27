@@ -1,3 +1,21 @@
+
+# GoMatrixHosting v0.5.5
+
+- Set prometheus retention period as variable in create-awx-system.
+- Fixed minor bugs relating to ma1sd/LDAP.
+- Update the borg backup config to include the rest of /matrix and custom website folder, also fixed issue where re-provisioning blanks the recaptcha section of the 'Configure Synapse' survey, solves 'Create AWX System' issue [#16](https://gitlab.com/GoMatrixHosting/create-awx-system/-/issues/16).
+- Set locale of all client servers to en_US to avoid 'Ansible Provision Server' issue [#11](https://gitlab.com/GoMatrixHosting/ansible-provision-server/-/issues/11).
+ 
+
+# Upgrade notes for v0.5.5
+
+- Add new prometheus_retention_period variable to create-awx-system inventory:
+`prometheus_retention_period: 28`
+- Reconfigure the monitor section of AWX:
+`$ ansible-playbook -v -i ./inventory/hosts -t "setup,setup-monitor,setup-webhooks" pre-setup.yml`
+- Re-provision all servers.
+
+
 # GoMatrixHosting v0.5.4
 
 - Install and configure unattended-upgrades on all servers.

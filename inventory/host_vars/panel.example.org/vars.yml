@@ -10,6 +10,7 @@ certbot_email: myemail@protonmail.com
 
 # Grafana Settings
 grafana_admin_password: << strong-password >>
+prometheus_retention_period: 28
 
 # AWX Settings
 admin_username: admin
