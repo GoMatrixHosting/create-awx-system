@@ -390,7 +390,7 @@
   command: docker exec awx_task /bin/bash -l -c "ansible-galaxy collection install --force awx.awx:17.1.0"
 
 - name: Install community.digitalocean collection in AWX docker
-  command: docker exec awx_task /bin/bash -l -c "ansible-galaxy collection install community.digitalocean"
+  command: docker exec awx_task /bin/bash -l -c "ansible-galaxy collection install --force community.digitalocean"
 
 
 
