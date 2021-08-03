@@ -1,0 +1,26 @@
+
+~~ Upgrade/Downgrade Subscription ~~
+
+1) First edit the existing subscription in MemberPress:
+
+MemberPress > Subscriptions > 'Edit' the subscription in question.
+
+Update the 'Membership' and 'Sub-Total' values to the desired plan/cost.
+
+
+2A) Perform DigitalOcean Upgrade in AWX:
+
+Edit the provision job template, updating the 'plan_title' extra variable to the new value.
+
+As it's executing, watch the DigitalOcean interface, turn it back on then it's off, or you see "Wait for ssh connection to become available, with 5 seconds between checks" in the job output.
+
+
+2B) Perform DigitalOcean Downgrade in AWX:
+
+Perform a full backup and recovery, creating a new smaller subscription.
+
+
+2C) Perform On-Premises Upgrade/Downgrade in AWX:
+
+Edit the provision job template, updating the 'plan_title' extra variable to the new value. Execute it.
+
