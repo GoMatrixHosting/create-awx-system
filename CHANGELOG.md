@@ -1,4 +1,19 @@
 
+# GoMatrixHosting v0.5.6
+
+- Document and test upgrades/downgrades of subscriptions. See [#10](https://gitlab.com/GoMatrixHosting/ansible-provision-server/-/issues/10).
+
+
+# Upgrade notes for v0.5.6
+
+- Add 'plan_title' to the extra_vars.json file of all existing subscriptions.
+`plan_title: "Small DigitalOcean Server"`
+- Add 'plan_title' to the extra variables GUI for every provision job_template.
+- Remove plan_title from the server_vars.yml file of all existing subscriptions.
+`sed -i '/plan_title/d' /var/lib/awx/projects/clients/*/*/server_vars.yml`
+- Re-provision all servers.
+
+
 # GoMatrixHosting v0.5.5
 
 - Set prometheus retention period as variable in create-awx-system.
