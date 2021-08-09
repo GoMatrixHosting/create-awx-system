@@ -7,7 +7,7 @@
 # Upgrade notes for v0.5.6
 
 - Add 'plan_title' to the extra_vars.json file of all existing subscriptions.
-`plan_title: "Small DigitalOcean Server"`
+`  "plan_title": "Small DigitalOcean Server",`
 - Add 'plan_title' to the extra variables GUI for every provision job_template.
 - Remove plan_title from the server_vars.yml file of all existing subscriptions.
 `sed -i '/plan_title/d' /var/lib/awx/projects/clients/*/*/server_vars.yml`
