@@ -305,6 +305,20 @@
     tower_oauthtoken: "{{ tower_token.stdout }}"
     validate_certs: yes
 
+- name: Create '00 - Deploy All Servers' job template
+  awx.awx.tower_job_template:
+    name: "00 - Deploy All Servers"
+    description: "Checks for updates hourly, if ones available it applies it to every Matrix server connected to AWX."
+    job_type: run
+    inventory: "{{ org_name }} Inventory"
+    project: "Ansible Create Delete Subscription Membership"
+    playbook: deploy-all.yml
+    state: present
+    verbosity: 1
+    tower_host: "https://{{ awx_url }}"
+    tower_oauthtoken: "{{ tower_token.stdout }}"
+    validate_certs: yes
+
 - name: Create '00 - Backup All Servers' job template
   awx.awx.tower_job_template:
     name: "00 - Backup All Servers"
