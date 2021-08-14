@@ -4,6 +4,8 @@
 
 # Upgrade notes for v0.5.8
 
+- In AWX, delete the 'Ansible Create Delete Subscription Membership' project.
+- In AWX, delete the 'Unlock SSH Password' credential.
 - Run configure-awx role again on the AWX tower:
 `$ ansible-playbook -v -i ./inventory/hosts -t "configure-awx" post-setup.yml`
 - In AWX, delete the "{{ org_name }} Inventory" inventory.

@@ -336,7 +336,7 @@
     job_type: run
     inventory: "{{ org_name }} [Admin]"
     project: "Ansible Create Delete Subscription Membership"
-    playbook: deploy-all.yml
+    playbook: deploy_all.yml
     state: present
     verbosity: 1
     tower_host: "https://{{ awx_url }}"
