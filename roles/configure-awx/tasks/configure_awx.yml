@@ -305,9 +305,9 @@
     tower_oauthtoken: "{{ tower_token.stdout }}"
     validate_certs: yes
 
-- name: Create '00 - Deploy All Servers' job template
+- name: Create '00 - Deploy/Update All Servers' job template
   awx.awx.tower_job_template:
-    name: "00 - Deploy All Servers"
+    name: "00 - Deploy/Update All Servers"
     description: "Checks for updates hourly, if ones available it applies it to every Matrix server connected to AWX."
     job_type: run
     inventory: "{{ org_name }} Inventory"
@@ -352,9 +352,9 @@
   command: cat /etc/timezone
   register: timezone_output
 
-- name: Create an rrule string for a schedule for everyday
+- name: Create an rrule string for a daily schedule
   set_fact:
-    rrule_line: "DTSTART;TZID={{ timezone_output.stdout }}:20200101T000000 RRULE:FREQ=WEEKLY;INTERVAL=1;BYDAY=SU,MO,TU,WE,TH,FR,SA"
+    rrule_line_daily: "DTSTART;TZID={{ timezone_output.stdout }}:20200101T000000 RRULE:FREQ=WEEKLY;INTERVAL=1;BYDAY=SU,MO,TU,WE,TH,FR,SA"
 
 - name: Build a schedule for '00 - Backup All Servers' job template
   awx.awx.tower_schedule:
@@ -362,7 +362,22 @@
     enabled: yes
     state: present
     unified_job_template: "00 - Backup All Servers"
-    rrule: "{{ rrule_line }}"
+    rrule: "{{ rrule_line_daily }}"
+    tower_host: "https://{{ awx_url }}"
+    tower_oauthtoken: "{{ tower_token.stdout }}"
+    validate_certs: yes
+
+- name: Create an rrule string for a hourly schedule
+  set_fact:
+    rrule_line_hourly: "DTSTART;TZID={{ timezone_output.stdout }}:20200101T000000 RRULE:FREQ=HOURLY;INTERVAL=1"
+
+- name: Build a schedule for '00 - Deploy/Update All Servers' job template
+  awx.awx.tower_schedule:
+    name: "00 - Deploy/Update All Servers Schedule"
+    enabled: yes
+    state: present
+    unified_job_template: "00 - Deploy/Update All Servers"
+    rrule: "{{ rrule_line_hourly }}"
     tower_host: "https://{{ awx_url }}"
     tower_oauthtoken: "{{ tower_token.stdout }}"
     validate_certs: yes
