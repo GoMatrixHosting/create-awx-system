@@ -90,7 +90,7 @@
 
 - name: Add tower inventory
   awx.awx.tower_inventory:
-    name: "{{ org_name }} Inventory"
+    name: "{{ org_name }} [Admin]"
     description: "{{ org_name }} inventory"
     organization: "{{ org_name }}"
     state: present
@@ -101,7 +101,7 @@
 - name: Allow user account to administrate/use this inventory
   awx.awx.tower_role:
     user: "admin"
-    inventory: "{{ org_name }} Inventory"
+    inventory: "{{ org_name }}"
     role: use
     state: present
     tower_host: "https://{{ awx_url }}"
@@ -112,7 +112,7 @@
   awx.awx.tower_host:
     name: "localhost"
     description: "The AWX server itself."
-    inventory: "{{ org_name }} Inventory"
+    inventory: "{{ org_name }} [Admin]"
     state: present
     tower_host: "https://{{ awx_url }}"
     tower_oauthtoken: "{{ tower_token.stdout }}"
@@ -179,7 +179,7 @@
     tower_oauthtoken: "{{ tower_token.stdout }}"
     validate_certs: yes
 
-- name: Add 'Ansible Create Delete Subscription Membership' project to users organisation
+- name: Add 'Ansible Create Delete Subscription Membership' project to AWX admins organisation
   awx.awx.tower_project:
     name: "Ansible Create Delete Subscription Membership"
     description: "The script is run after a memberpress subscription is created, a 'plan_title' is specified, this causes a digitalocean or on-premises provision stage to be setup. Or it deletes a single subscription, and/or an entire membership/organisation from the AWX setup."
@@ -201,13 +201,35 @@
     tower_host: "https://{{ awx_url }}"
     tower_oauthtoken: "{{ tower_token.stdout }}"
     validate_certs: yes
+    
+- name: Add 'Matrix Docker Ansible Deploy' project to AWX admins organisation
+  awx.awx.tower_project:
+    name: "Matrix Docker Ansible Deploy"
+    description: "A copy of the deploy script that the AWX admin uses to check for updates."
+    organization: "{{ org_name }}"
+    scm_type: git
+    scm_url: "{{ deploy_source }}"
+    scm_branch: "{{ deploy_branch }}"
+    scm_delete_on_update: yes
+    state: present
+    tower_host: "https://{{ awx_url }}"
+    tower_oauthtoken: "{{ tower_token.stdout }}"
+    validate_certs: yes
+
+- name: Update 'Matrix Docker Ansible Deploy' project
+  awx.awx.tower_project_update:
+    project: "Matrix Docker Ansible Deploy"
+    timeout: 300
+    tower_host: "https://{{ awx_url }}"
+    tower_oauthtoken: "{{ tower_token.stdout }}"
+    validate_certs: yes
 
 - name: Create '00 - Ansible Create Account' job template
   awx.awx.tower_job_template:
     name: "00 - Ansible Create Account"
     description: "Performs initial organisation/team creation before subscription is confirmed."
     job_type: run
-    inventory: "{{ org_name }} Inventory"
+    inventory: "{{ org_name }} [Admin]"
     project: "Ansible Create Delete Subscription Membership"
     playbook: pre-create.yml
     extra_vars: "{{ lookup('file', '{{ role_path }}/extra-vars/create-account.json') }}"
@@ -223,7 +245,7 @@
     name: "00 - Ansible Create Manual Subscription"
     description: "Creates AWX Account for user, append random string to 'byo', creates initial organisation.yml and server_vars.yml file. Also creates a '[subscription_id] Provision Server' playbook in users account, where they will instead be prompted to connect their own server."
     job_type: run
-    inventory: "{{ org_name }} Inventory"
+    inventory: "{{ org_name }} [Admin]"
     project: "Ansible Create Delete Subscription Membership"
     playbook: create.yml
     credentials: "Unlock SSH Password"
@@ -242,7 +264,7 @@
     name: "00 - Ansible Create MP Subscription"
     description: "Creates AWX Account for user, creates initial organisation.yml and server_vars.yml file. Creates a DigitalOcean droplet and space. Also creates initial '[subscription_id] Provision Server' playbook in users account."
     job_type: run
-    inventory: "{{ org_name }} Inventory"
+    inventory: "{{ org_name }} [Admin]"
     project: "Ansible Create Delete Subscription Membership"
     playbook: create.yml
     credentials: "Unlock SSH Password"
@@ -260,7 +282,7 @@
     name: "00 - Create Wireguard Server"
     description: "Configures a wireguard server AWX can use to SSH into an on-premises server."
     job_type: run
-    inventory: "{{ org_name }} Inventory"
+    inventory: "{{ org_name }} [Admin]"
     project: "Ansible Create Delete Subscription Membership"
     playbook: setup_wireguard_server.yml
     survey_enabled: true
@@ -276,7 +298,7 @@
     name: "00 - Ansible Delete Membership"
     description: "Playbook to remove clients AWX organisation and local files on the AWX server."
     job_type: run
-    inventory: "{{ org_name }} Inventory"
+    inventory: "{{ org_name }} [Admin]"
     project: "Ansible Create Delete Subscription Membership"
     playbook: delete_member.yml
     extra_vars: "{{ lookup('file', '{{ role_path }}/extra-vars/delete-member.json') }}"
@@ -293,7 +315,7 @@
     name: "00 - Ansible Delete Subscription"
     description: "Removes job templates, digitalocean resources, and files/folders associated with a subscription."
     job_type: run
-    inventory: "{{ org_name }} Inventory"
+    inventory: "{{ org_name }} [Admin]"
     project: "Ansible Create Delete Subscription Membership"
     playbook: delete_subscription.yml
     extra_vars: "{{ lookup('file', '{{ role_path }}/extra-vars/delete-subscription.json') }}"
@@ -310,7 +332,7 @@
     name: "00 - Deploy/Update All Servers"
     description: "Checks for updates hourly, if ones available it applies it to every Matrix server connected to AWX."
     job_type: run
-    inventory: "{{ org_name }} Inventory"
+    inventory: "{{ org_name }} [Admin]"
     project: "Ansible Create Delete Subscription Membership"
     playbook: deploy-all.yml
     state: present
@@ -324,7 +346,7 @@
     name: "00 - Backup All Servers"
     description: "Performs a sequential backup of every server connected to AWX."
     job_type: run
-    inventory: "{{ org_name }} Inventory"
+    inventory: "{{ org_name }} [Admin]"
     project: "Ansible Create Delete Subscription Membership"
     playbook: backup-all.yml
     state: present
@@ -339,7 +361,7 @@
     name: "00 - Reprovision All Servers"
     description: "Re-provisions every Matrix server connected to AWX."
     job_type: run
-    inventory: "{{ org_name }} Inventory"
+    inventory: "{{ org_name }} [Admin]"
     project: "Ansible Create Delete Subscription Membership"
     playbook: reprovision-all.yml
     state: present
@@ -387,7 +409,7 @@
     name: "00 - Restore and Import Postgresql Dump"
     description: "Restores a servers configs, media repo and postgresql database from /chroot/backup/."
     job_type: run
-    inventory: "{{ org_name }} Inventory"
+    inventory: "{{ org_name }} [Admin]"
     project: "Ansible Create Delete Subscription Membership"
     playbook: create.yml
     extra_vars: "{{ lookup('file', '{{ role_path }}/extra-vars/restore-and-import-postgresql-dump.json') }}"
@@ -404,7 +426,7 @@
     name: "00 - Bind User Account"
     description: "Binds an enterprise user account to the correct team."
     job_type: run
-    inventory: "{{ org_name }} Inventory"
+    inventory: "{{ org_name }} [Admin]"
     project: "Ansible Create Delete Subscription Membership"
     playbook: bind-user-account.yml
     extra_vars: "{{ lookup('file', '{{ role_path }}/extra-vars/bind-user-account.json') }}"

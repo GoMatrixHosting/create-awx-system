@@ -1,4 +1,14 @@
 
+# GoMatrixHosting v0.5.8
+
+
+# Upgrade notes for v0.5.8
+
+- Run configure-awx role again on the AWX tower:
+`$ ansible-playbook -v -i ./inventory/hosts -t "configure-awx" post-setup.yml`
+
+
+
 # GoMatrixHosting v0.5.7
 
 - Prevent Provision stage re-writing variables it should only write on the first run, see [#12](https://gitlab.com/GoMatrixHosting/ansible-provision-server/-/issues/12).
