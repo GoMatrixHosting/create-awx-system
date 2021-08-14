@@ -195,13 +195,15 @@
     validate_certs: yes
 
 - name: Update 'Ansible Create Delete Subscription Membership' project
-  awx.awx.inventory_source_update:
+  awx.awx.tower_inventory_source_update:
     project: "Ansible Create Delete Subscription Membership"
     timeout: 300
     tower_host: "https://{{ awx_url }}"
     tower_oauthtoken: "{{ tower_token.stdout }}"
     validate_certs: yes
-    
+
+# This module is renamed to awx.awx.inventory_source_update in AWX v19
+
 - name: Add 'Matrix Docker Ansible Deploy' project to AWX admins organisation
   awx.awx.tower_project:
     name: "Matrix Docker Ansible Deploy"
@@ -217,7 +219,7 @@
     validate_certs: yes
 
 - name: Update 'Matrix Docker Ansible Deploy' project
-  awx.awx.inventory_source_update:
+  awx.awx.tower_inventory_source_update:
     project: "Matrix Docker Ansible Deploy"
     timeout: 300
     tower_host: "https://{{ awx_url }}"
