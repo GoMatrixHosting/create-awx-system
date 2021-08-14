@@ -195,7 +195,7 @@
     validate_certs: yes
 
 - name: Update 'Ansible Create Delete Subscription Membership' project
-  awx.awx.tower_project_update:
+  awx.awx.inventory_source_update:
     project: "Ansible Create Delete Subscription Membership"
     timeout: 300
     tower_host: "https://{{ awx_url }}"
@@ -217,7 +217,7 @@
     validate_certs: yes
 
 - name: Update 'Matrix Docker Ansible Deploy' project
-  awx.awx.tower_project_update:
+  awx.awx.inventory_source_update:
     project: "Matrix Docker Ansible Deploy"
     timeout: 300
     tower_host: "https://{{ awx_url }}"
