@@ -197,6 +197,7 @@
 - name: Update 'Ansible Create Delete Subscription Membership' project
   awx.awx.tower_inventory_source_update:
     name: "Ansible Create Delete Subscription Membership"
+    inventory: "{{ org_name }} [Admin]"
     timeout: 300
     tower_host: "https://{{ awx_url }}"
     tower_oauthtoken: "{{ tower_token.stdout }}"
@@ -221,6 +222,7 @@
 - name: Update 'Matrix Docker Ansible Deploy' project
   awx.awx.tower_inventory_source_update:
     name: "Matrix Docker Ansible Deploy"
+    inventory: "{{ org_name }} [Admin]"
     timeout: 300
     tower_host: "https://{{ awx_url }}"
     tower_oauthtoken: "{{ tower_token.stdout }}"
