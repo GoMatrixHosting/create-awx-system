@@ -70,45 +70,45 @@
     validate_certs: yes
   ignore_errors: yes
 
-- name: Create main organisation
+- name: Create the admin organisation
   awx.awx.tower_organization:
-    name: "{{ org_name }}"
+    name: "{{ org_name }} [Admin]"
     description: "The main organisation that is used to manage other organisations."
     state: present
     tower_host: "https://{{ awx_url }}"
     tower_oauthtoken: "{{ tower_token.stdout }}"
     validate_certs: yes
 
-- name: Add admin to main organisation
+- name: Add admin user to their organisation
   awx.awx.tower_role:
     user: "admin"
-    organization: "{{ org_name }}"
+    organization: "{{ org_name }} [Admin]"
     role: member
     tower_host: "https://{{ awx_url }}"
     tower_oauthtoken: "{{ tower_token.stdout }}"
     validate_certs: yes
 
-- name: Add tower inventory
+- name: Add inventory to the admins organisation
   awx.awx.tower_inventory:
     name: "{{ org_name }} [Admin]"
     description: "{{ org_name }} inventory"
-    organization: "{{ org_name }}"
+    organization: "{{ org_name }} [Admin]"
     state: present
     tower_host: "https://{{ awx_url }}"
     tower_oauthtoken: "{{ tower_token.stdout }}"
     validate_certs: yes
 
-- name: Allow user account to administrate/use this inventory
+- name: Allow admin account to administrate/use this inventory
   awx.awx.tower_role:
     user: "admin"
-    inventory: "{{ org_name }}"
+    inventory: "{{ org_name }} [Admin]"
     role: use
     state: present
     tower_host: "https://{{ awx_url }}"
     tower_oauthtoken: "{{ tower_token.stdout }}"
     validate_certs: yes
 
-- name: Add localhost to admin organisations inventory
+- name: Add localhost to the admins inventory
   awx.awx.tower_host:
     name: "localhost"
     description: "The AWX server itself."
@@ -171,7 +171,7 @@
     name: "Unlock SSH Password"
     description: "The password to unlock the variable file containing the client systems SSH key password."
     credential_type: Vault
-    organization: "{{ org_name }}"
+    organization: "{{ org_name }} [Admin]"
     inputs: 
       vault_id: unlock_ssh_password
       vault_password: "{{ vault_unlock_ssh_password }}"
@@ -183,7 +183,7 @@
   awx.awx.tower_project:
     name: "Ansible Create Delete Subscription Membership"
     description: "The script is run after a memberpress subscription is created, a 'plan_title' is specified, this causes a digitalocean or on-premises provision stage to be setup. Or it deletes a single subscription, and/or an entire membership/organisation from the AWX setup."
-    organization: "{{ org_name }}"
+    organization: "{{ org_name }} [Admin]"
     scm_type: git
     scm_url: "{{ create_delete_source }}"
     scm_branch: "{{ create_delete_branch }}"
@@ -196,7 +196,7 @@
 
 - name: Update 'Ansible Create Delete Subscription Membership' project
   awx.awx.tower_inventory_source_update:
-    project: "Ansible Create Delete Subscription Membership"
+    name: "Ansible Create Delete Subscription Membership"
     timeout: 300
     tower_host: "https://{{ awx_url }}"
     tower_oauthtoken: "{{ tower_token.stdout }}"
@@ -208,7 +208,7 @@
   awx.awx.tower_project:
     name: "Matrix Docker Ansible Deploy"
     description: "A copy of the deploy script that the AWX admin uses to check for updates."
-    organization: "{{ org_name }}"
+    organization: "{{ org_name }} [Admin]"
     scm_type: git
     scm_url: "{{ deploy_source }}"
     scm_branch: "{{ deploy_branch }}"
@@ -220,7 +220,7 @@
 
 - name: Update 'Matrix Docker Ansible Deploy' project
   awx.awx.tower_inventory_source_update:
-    project: "Matrix Docker Ansible Deploy"
+    name: "Matrix Docker Ansible Deploy"
     timeout: 300
     tower_host: "https://{{ awx_url }}"
     tower_oauthtoken: "{{ tower_token.stdout }}"

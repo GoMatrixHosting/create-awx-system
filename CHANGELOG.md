@@ -6,7 +6,8 @@
 
 - Run configure-awx role again on the AWX tower:
 `$ ansible-playbook -v -i ./inventory/hosts -t "configure-awx" post-setup.yml`
-
+- In AWX, delete the "{{ org_name }} Inventory" inventory.
+- In AWX, delete the "{{ org_name }}" organisation.
 
 
 # GoMatrixHosting v0.5.7
