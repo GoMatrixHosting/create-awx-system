@@ -1,4 +1,10 @@
 
+# GoMatrixHosting v0.5.7
+
+- Prevent Provision stage re-writing variables it should only write on the first run, see [#12](https://gitlab.com/GoMatrixHosting/ansible-provision-server/-/issues/12).
+- Fix SFTP website upload, see [#10](https://gitlab.com/GoMatrixHosting/gomatrixhosting-matrix-docker-ansible-deploy/-/issues/10).
+
+
 # GoMatrixHosting v0.5.6
 
 - Document and test upgrades/downgrades of subscriptions. See [#10](https://gitlab.com/GoMatrixHosting/ansible-provision-server/-/issues/10).
