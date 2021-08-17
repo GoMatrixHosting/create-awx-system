@@ -70,49 +70,49 @@
     validate_certs: yes
   ignore_errors: yes
 
-- name: Create main organisation
+- name: Create the admin organisation
   awx.awx.tower_organization:
-    name: "{{ org_name }}"
+    name: "{{ org_name }} [Admin]"
     description: "The main organisation that is used to manage other organisations."
     state: present
     tower_host: "https://{{ awx_url }}"
     tower_oauthtoken: "{{ tower_token.stdout }}"
     validate_certs: yes
 
-- name: Add admin to main organisation
+- name: Add admin user to their organisation
   awx.awx.tower_role:
     user: "admin"
-    organization: "{{ org_name }}"
+    organization: "{{ org_name }} [Admin]"
     role: member
     tower_host: "https://{{ awx_url }}"
     tower_oauthtoken: "{{ tower_token.stdout }}"
     validate_certs: yes
 
-- name: Add tower inventory
+- name: Add inventory to the admins organisation
   awx.awx.tower_inventory:
-    name: "{{ org_name }} Inventory"
+    name: "{{ org_name }} [Admin]"
     description: "{{ org_name }} inventory"
-    organization: "{{ org_name }}"
+    organization: "{{ org_name }} [Admin]"
     state: present
     tower_host: "https://{{ awx_url }}"
     tower_oauthtoken: "{{ tower_token.stdout }}"
     validate_certs: yes
 
-- name: Allow user account to administrate/use this inventory
+- name: Allow admin account to administrate/use this inventory
   awx.awx.tower_role:
     user: "admin"
-    inventory: "{{ org_name }} Inventory"
+    inventory: "{{ org_name }} [Admin]"
     role: use
     state: present
     tower_host: "https://{{ awx_url }}"
     tower_oauthtoken: "{{ tower_token.stdout }}"
     validate_certs: yes
 
-- name: Add localhost to admin organisations inventory
+- name: Add localhost to the admins inventory
   awx.awx.tower_host:
     name: "localhost"
     description: "The AWX server itself."
-    inventory: "{{ org_name }} Inventory"
+    inventory: "{{ org_name }} [Admin]"
     state: present
     tower_host: "https://{{ awx_url }}"
     tower_oauthtoken: "{{ tower_token.stdout }}"
@@ -171,7 +171,7 @@
     name: "Unlock SSH Password"
     description: "The password to unlock the variable file containing the client systems SSH key password."
     credential_type: Vault
-    organization: "{{ org_name }}"
+    organization: "{{ org_name }} [Admin]"
     inputs: 
       vault_id: unlock_ssh_password
       vault_password: "{{ vault_unlock_ssh_password }}"
@@ -179,11 +179,11 @@
     tower_oauthtoken: "{{ tower_token.stdout }}"
     validate_certs: yes
 
-- name: Add 'Ansible Create Delete Subscription Membership' project to users organisation
+- name: Add 'Ansible Create Delete Subscription Membership' project to AWX admins organisation
   awx.awx.tower_project:
     name: "Ansible Create Delete Subscription Membership"
     description: "The script is run after a memberpress subscription is created, a 'plan_title' is specified, this causes a digitalocean or on-premises provision stage to be setup. Or it deletes a single subscription, and/or an entire membership/organisation from the AWX setup."
-    organization: "{{ org_name }}"
+    organization: "{{ org_name }} [Admin]"
     scm_type: git
     scm_url: "{{ create_delete_source }}"
     scm_branch: "{{ create_delete_branch }}"
@@ -196,18 +196,20 @@
 
 - name: Update 'Ansible Create Delete Subscription Membership' project
   awx.awx.tower_project_update:
-    project: "Ansible Create Delete Subscription Membership"
+    name: "Ansible Create Delete Subscription Membership"
     timeout: 300
     tower_host: "https://{{ awx_url }}"
     tower_oauthtoken: "{{ tower_token.stdout }}"
     validate_certs: yes
+
+# This module is renamed to awx.awx.inventory_source_update in AWX v19
 
 - name: Create '00 - Ansible Create Account' job template
   awx.awx.tower_job_template:
     name: "00 - Ansible Create Account"
     description: "Performs initial organisation/team creation before subscription is confirmed."
     job_type: run
-    inventory: "{{ org_name }} Inventory"
+    inventory: "{{ org_name }} [Admin]"
     project: "Ansible Create Delete Subscription Membership"
     playbook: pre-create.yml
     extra_vars: "{{ lookup('file', '{{ role_path }}/extra-vars/create-account.json') }}"
@@ -223,7 +225,7 @@
     name: "00 - Ansible Create Manual Subscription"
     description: "Creates AWX Account for user, append random string to 'byo', creates initial organisation.yml and server_vars.yml file. Also creates a '[subscription_id] Provision Server' playbook in users account, where they will instead be prompted to connect their own server."
     job_type: run
-    inventory: "{{ org_name }} Inventory"
+    inventory: "{{ org_name }} [Admin]"
     project: "Ansible Create Delete Subscription Membership"
     playbook: create.yml
     credentials: "Unlock SSH Password"
@@ -242,7 +244,7 @@
     name: "00 - Ansible Create MP Subscription"
     description: "Creates AWX Account for user, creates initial organisation.yml and server_vars.yml file. Creates a DigitalOcean droplet and space. Also creates initial '[subscription_id] Provision Server' playbook in users account."
     job_type: run
-    inventory: "{{ org_name }} Inventory"
+    inventory: "{{ org_name }} [Admin]"
     project: "Ansible Create Delete Subscription Membership"
     playbook: create.yml
     credentials: "Unlock SSH Password"
@@ -260,7 +262,7 @@
     name: "00 - Create Wireguard Server"
     description: "Configures a wireguard server AWX can use to SSH into an on-premises server."
     job_type: run
-    inventory: "{{ org_name }} Inventory"
+    inventory: "{{ org_name }} [Admin]"
     project: "Ansible Create Delete Subscription Membership"
     playbook: setup_wireguard_server.yml
     survey_enabled: true
@@ -276,7 +278,7 @@
     name: "00 - Ansible Delete Membership"
     description: "Playbook to remove clients AWX organisation and local files on the AWX server."
     job_type: run
-    inventory: "{{ org_name }} Inventory"
+    inventory: "{{ org_name }} [Admin]"
     project: "Ansible Create Delete Subscription Membership"
     playbook: delete_member.yml
     extra_vars: "{{ lookup('file', '{{ role_path }}/extra-vars/delete-member.json') }}"
@@ -293,7 +295,7 @@
     name: "00 - Ansible Delete Subscription"
     description: "Removes job templates, digitalocean resources, and files/folders associated with a subscription."
     job_type: run
-    inventory: "{{ org_name }} Inventory"
+    inventory: "{{ org_name }} [Admin]"
     project: "Ansible Create Delete Subscription Membership"
     playbook: delete_subscription.yml
     extra_vars: "{{ lookup('file', '{{ role_path }}/extra-vars/delete-subscription.json') }}"
@@ -305,12 +307,26 @@
     tower_oauthtoken: "{{ tower_token.stdout }}"
     validate_certs: yes
 
+- name: Create '00 - Deploy/Update All Servers' job template
+  awx.awx.tower_job_template:
+    name: "00 - Deploy/Update All Servers"
+    description: "Checks for updates hourly, if ones available it applies it to every Matrix server connected to AWX."
+    job_type: run
+    inventory: "{{ org_name }} [Admin]"
+    project: "Ansible Create Delete Subscription Membership"
+    playbook: deploy_all.yml
+    state: present
+    verbosity: 1
+    tower_host: "https://{{ awx_url }}"
+    tower_oauthtoken: "{{ tower_token.stdout }}"
+    validate_certs: yes
+
 - name: Create '00 - Backup All Servers' job template
   awx.awx.tower_job_template:
     name: "00 - Backup All Servers"
     description: "Performs a sequential backup of every server connected to AWX."
     job_type: run
-    inventory: "{{ org_name }} Inventory"
+    inventory: "{{ org_name }} [Admin]"
     project: "Ansible Create Delete Subscription Membership"
     playbook: backup-all.yml
     state: present
@@ -325,7 +341,7 @@
     name: "00 - Reprovision All Servers"
     description: "Re-provisions every Matrix server connected to AWX."
     job_type: run
-    inventory: "{{ org_name }} Inventory"
+    inventory: "{{ org_name }} [Admin]"
     project: "Ansible Create Delete Subscription Membership"
     playbook: reprovision-all.yml
     state: present
@@ -338,9 +354,9 @@
   command: cat /etc/timezone
   register: timezone_output
 
-- name: Create an rrule string for a schedule for everyday
+- name: Create an rrule string for a daily schedule
   set_fact:
-    rrule_line: "DTSTART;TZID={{ timezone_output.stdout }}:20200101T000000 RRULE:FREQ=WEEKLY;INTERVAL=1;BYDAY=SU,MO,TU,WE,TH,FR,SA"
+    rrule_line_daily: "DTSTART;TZID={{ timezone_output.stdout }}:20200101T000000 RRULE:FREQ=WEEKLY;INTERVAL=1;BYDAY=SU,MO,TU,WE,TH,FR,SA"
 
 - name: Build a schedule for '00 - Backup All Servers' job template
   awx.awx.tower_schedule:
@@ -348,7 +364,22 @@
     enabled: yes
     state: present
     unified_job_template: "00 - Backup All Servers"
-    rrule: "{{ rrule_line }}"
+    rrule: "{{ rrule_line_daily }}"
+    tower_host: "https://{{ awx_url }}"
+    tower_oauthtoken: "{{ tower_token.stdout }}"
+    validate_certs: yes
+
+- name: Create an rrule string for a hourly schedule
+  set_fact:
+    rrule_line_hourly: "DTSTART;TZID={{ timezone_output.stdout }}:20200101T000000 RRULE:FREQ=HOURLY;INTERVAL=1"
+
+- name: Build a schedule for '00 - Deploy/Update All Servers' job template
+  awx.awx.tower_schedule:
+    name: "00 - Deploy/Update All Servers Schedule"
+    enabled: yes
+    state: present
+    unified_job_template: "00 - Deploy/Update All Servers"
+    rrule: "{{ rrule_line_hourly }}"
     tower_host: "https://{{ awx_url }}"
     tower_oauthtoken: "{{ tower_token.stdout }}"
     validate_certs: yes
@@ -358,7 +389,7 @@
     name: "00 - Restore and Import Postgresql Dump"
     description: "Restores a servers configs, media repo and postgresql database from /chroot/backup/."
     job_type: run
-    inventory: "{{ org_name }} Inventory"
+    inventory: "{{ org_name }} [Admin]"
     project: "Ansible Create Delete Subscription Membership"
     playbook: create.yml
     extra_vars: "{{ lookup('file', '{{ role_path }}/extra-vars/restore-and-import-postgresql-dump.json') }}"
@@ -375,7 +406,7 @@
     name: "00 - Bind User Account"
     description: "Binds an enterprise user account to the correct team."
     job_type: run
-    inventory: "{{ org_name }} Inventory"
+    inventory: "{{ org_name }} [Admin]"
     project: "Ansible Create Delete Subscription Membership"
     playbook: bind-user-account.yml
     extra_vars: "{{ lookup('file', '{{ role_path }}/extra-vars/bind-user-account.json') }}"

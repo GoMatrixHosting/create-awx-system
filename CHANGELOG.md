@@ -1,4 +1,20 @@
 
+# GoMatrixHosting v0.5.8
+
+- Add automated 'Deploy/Update All Servers' job to apply updated within the hour. See [#18](https://gitlab.com/GoMatrixHosting/gomatrixhosting-matrix-docker-ansible-deploy/-/issues/18).
+
+
+# Upgrade notes for v0.5.8
+
+- In AWX, delete the 'Ansible Create Delete Subscription Membership' project.
+- In AWX, delete the 'Unlock SSH Password' credential.
+- Run configure-awx role again on the AWX tower:
+`$ ansible-playbook -v -i ./inventory/hosts -t "configure-awx" post-setup.yml`
+- In AWX, delete the "{{ org_name }} Inventory" inventory.
+- In AWX, delete the "{{ org_name }}" organisation.
+- In AWX delete the deploy/update schedule of all existing subscriptions.
+
+
 # GoMatrixHosting v0.5.7
 
 - Prevent Provision stage re-writing variables it should only write on the first run, see [#12](https://gitlab.com/GoMatrixHosting/ansible-provision-server/-/issues/12).
