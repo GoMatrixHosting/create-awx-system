@@ -36,7 +36,10 @@ Record these variables to ./inventory/host_vars/panel.example.org/vars.yml:
 - hosting_url			(The URL of your organisation.)
 - awx_url 			(The URL for AWX.)
 - certbot_email 		(The organisations email.)
+- secret_key			(Strong password for the AWX secrets.)
+- pg_password			(Strong password for the AWX database.)
 - admin_password 		(Strong password for the AWX admin user.)
+- delete_subscription_hours_delay	(The number of hours to delay the subscription deletion.)
 - create_delete_source		(Repository URL for 'Ansible Create Delete Subscription Membership'.)
 - create_delete_branch		(Branch of this repository to use.)
 - provision_source		(Repository URL for 'Ansible Provision'.)
@@ -87,10 +90,10 @@ $ tar -xf 17.1.0.tar.gz
 $ cd ./awx-17.1.0/
 ```
 
-Generate and record 3 strong passwords for the:
+From the above variables, copy the following:
 - secret_key
 - pg_password
-- admin_password (from above)
+- admin_password
 
 ^ Edit these into ./installer/inventory, also add project_data_dir line and change host_port:
 ```

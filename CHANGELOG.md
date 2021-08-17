@@ -1,6 +1,16 @@
 
 # GoMatrixHosting v0.5.9
 
+- Use underscores instead of dashes for task lists.
+
+
+# Upgrade notes for v0.5.9
+
+- Rename `prometheus_retention_period` variable in create-awx-system vars.yml to `prometheus_days_retention`.
+- Add new `delete_subscription_hours_delay: 48` value to create-awx-system vars.yml.
+- Run configure-awx role again on the AWX tower:
+`$ ansible-playbook -v -i ./inventory/hosts -t "configure-awx" post_setup.yml`
+
 
 # GoMatrixHosting v0.5.8
 
