@@ -204,28 +204,6 @@
 
 # This module is renamed to awx.awx.inventory_source_update in AWX v19
 
-- name: Add 'Matrix Docker Ansible Deploy' project to AWX admins organisation
-  awx.awx.tower_project:
-    name: "Matrix Docker Ansible Deploy"
-    description: "A copy of the deploy script that the AWX admin uses to check for updates."
-    organization: "{{ org_name }} [Admin]"
-    scm_type: git
-    scm_url: "{{ deploy_source }}"
-    scm_branch: "{{ deploy_branch }}"
-    scm_delete_on_update: yes
-    state: present
-    tower_host: "https://{{ awx_url }}"
-    tower_oauthtoken: "{{ tower_token.stdout }}"
-    validate_certs: yes
-
-- name: Update 'Matrix Docker Ansible Deploy' project
-  awx.awx.tower_project_update:
-    name: "Matrix Docker Ansible Deploy"
-    timeout: 300
-    tower_host: "https://{{ awx_url }}"
-    tower_oauthtoken: "{{ tower_token.stdout }}"
-    validate_certs: yes
-
 - name: Create '00 - Ansible Create Account' job template
   awx.awx.tower_job_template:
     name: "00 - Ansible Create Account"
