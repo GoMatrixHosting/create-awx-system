@@ -1,6 +1,8 @@
 
 # GoMatrixHosting v0.5.8
 
+- Add automated 'Deploy/Update All Servers' job to apply updated within the hour. See [#18](https://gitlab.com/GoMatrixHosting/gomatrixhosting-matrix-docker-ansible-deploy/-/issues/18).
+
 
 # Upgrade notes for v0.5.8
 
@@ -10,6 +12,7 @@
 `$ ansible-playbook -v -i ./inventory/hosts -t "configure-awx" post-setup.yml`
 - In AWX, delete the "{{ org_name }} Inventory" inventory.
 - In AWX, delete the "{{ org_name }}" organisation.
+- In AWX delete the deploy/update schedule of all existing subscriptions.
 
 
 # GoMatrixHosting v0.5.7
