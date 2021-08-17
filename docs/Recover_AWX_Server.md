@@ -36,9 +36,9 @@ pcadmin@backup-server:/mnt/backup-dir/AWX$ mv ./panel.example.org ./panel.exampl
 6) Check that AWX system is up and running.
 
 
-7) Run post-setup.yml while skipping the 'enable-backup' and 'configure-awx' tag:
+7) Run post_setup.yml while skipping the 'enable-backup' and 'configure-awx' tag:
 
-$ ansible-playbook -v -i ./inventory/hosts -t "setup-radius,setup-swatchdog,setup-backup" post-setup.yml
+$ ansible-playbook -v -i ./inventory/hosts -t "setup-radius,setup-swatchdog,setup-backup" post_setup.yml
 
 
 8) Restore /var/lib/awx/projects to new AWX system with correct permissions:
@@ -89,7 +89,7 @@ Try login as a user account, looks good? :)
 
 11) Activate backup and complete installation:
 
-$ ansible-playbook -v -i ./inventory/hosts -t "enable-backup" post-setup.yml
+$ ansible-playbook -v -i ./inventory/hosts -t "enable-backup" post_setup.yml
 
 *Follow the rest of Installation.md from step 5.
 

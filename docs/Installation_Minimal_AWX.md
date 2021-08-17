@@ -76,7 +76,7 @@ Also add placeholder values to the following (eg: 1234), these won't be used:
 
 Run the script:
 
-`$ ansible-playbook -v -i ./inventory/hosts -t "setup" pre-setup.yml`
+`$ ansible-playbook -v -i ./inventory/hosts -t "setup" pre_setup.yml`
 
 
 2) Run the AWX deployment script.
@@ -120,7 +120,7 @@ Install prerequisite packages for ansible on the controller:
 
 Run the script:
 
-`$ ansible-playbook -v -i ./inventory/hosts -t "configure-awx" post-setup.yml`
+`$ ansible-playbook -v -i ./inventory/hosts -t "configure-awx" post_setup.yml`
 
 
 4) Optionally, perform initial SSH handshake from AWX to backup server.

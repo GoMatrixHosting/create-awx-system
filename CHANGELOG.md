@@ -1,7 +1,10 @@
 
+# GoMatrixHosting v0.5.9
+
+
 # GoMatrixHosting v0.5.8
 
-- Add automated 'Deploy/Update All Servers' job to apply updated within the hour. See [#18](https://gitlab.com/GoMatrixHosting/gomatrixhosting-matrix-docker-ansible-deploy/-/issues/18).
+- Add automated 'Deploy/Update All Servers' job to apply updates within the hour. See [#18](https://gitlab.com/GoMatrixHosting/gomatrixhosting-matrix-docker-ansible-deploy/-/issues/18).
 
 
 # Upgrade notes for v0.5.8
