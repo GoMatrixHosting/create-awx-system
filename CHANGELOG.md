@@ -2,7 +2,7 @@
 # GoMatrixHosting v0.5.9
 
 - Use underscores instead of dashes for task lists.
-
+- Alter end-subscription logic, schedule deletion after N hours.
 
 # Upgrade notes for v0.5.9
 
