@@ -50,7 +50,7 @@
   lineinfile:
     path: /etc/default/prometheus
     regexp: '^ARGS=.*$'
-    line: 'ARGS="--storage.tsdb.retention={{ prometheus_retention_period }}d"'
+    line: 'ARGS="--storage.tsdb.retention={{ prometheus_days_retention }}d"'
     owner: root
     group: root
     mode: '0644'
