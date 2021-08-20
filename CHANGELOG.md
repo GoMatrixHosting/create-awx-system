@@ -9,6 +9,14 @@
 - Rename `prometheus_retention_period` variable in create-awx-system vars.yml to `prometheus_days_retention`.
 - Add new `delete_subscription_hours_delay: 48` value to create-awx-system vars.yml.
 - Do a complete re-install of AWX.
+- Delete the following administrator job templates:
+```
+00 - Ansible Create Account
+00 - Ansible Create Manual Subscription
+00 - Ansible Create MP Subscription
+00 - Ansible Delete Membership
+00 - Ansible Delete Subscription
+```
 
 
 # GoMatrixHosting v0.5.8
