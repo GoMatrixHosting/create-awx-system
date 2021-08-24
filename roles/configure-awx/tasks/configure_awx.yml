@@ -231,7 +231,7 @@
     credentials: "Unlock SSH Password"
     ask_extra_vars: yes
     survey_enabled: true
-    survey_spec: "{{ lookup('file', '{{ role_path }}/surveys/manual_subsription.json.j2') }}"
+    survey_spec: "{{ lookup('file', '{{ role_path }}/surveys/manual_subscription.json.j2') }}"
     state: present
     verbosity: 1
     job_tags: manual-subscription
