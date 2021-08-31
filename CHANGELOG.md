@@ -2,7 +2,8 @@
 # GoMatrixHosting v0.5.9
 
 - Use underscores instead of dashes for playbooks/task lists.
-- Alter end-subscription logic, schedules deletion after 0 (immediate) to N hours and stops the matrix services. Data export is still possible before deletion. The deletion can be cancelled by the administrator, removing the schedule and starting the Matrix services again.
+- Alter end-subscription logic, schedules deletion after 0 (immediate) to N hours and stops the matrix services. Data export is still possible before deletion. The deletion can be cancelled by the administrator, removing the schedule and starting the Matrix services again. See [#5](https://gitlab.com/GoMatrixHosting/ansible-create-delete-subscription-membership/-/issues/5).
+
 
 
 # Upgrade notes for v0.5.9
