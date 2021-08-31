@@ -1,8 +1,9 @@
 
 # GoMatrixHosting v0.5.9
 
-- Use underscores instead of dashes for task lists.
-- Alter end-subscription logic, schedule deletion after N hours.
+- Use underscores instead of dashes for playbooks/task lists.
+- Alter end-subscription logic, schedules deletion after 0 (immediate) to N hours and stops the matrix services. Data export is still possible before deletion. The deletion can be cancelled by the administrator, removing the schedule and starting the Matrix services again.
+
 
 # Upgrade notes for v0.5.9
 
