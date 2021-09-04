@@ -10,13 +10,14 @@ certbot_email: myemail@protonmail.com
 
 # Grafana Settings
 grafana_admin_password: << strong-password >>
-prometheus_retention_period: 28
+prometheus_days_retention: 28
 
 # AWX Settings
 admin_username: admin
 secret_key: << strong-password >>
 pg_password: << strong-password >>
 admin_password: << strong-password >>
+delete_subscription_hours_delay: 48
 
 # Repository Settings
 create_delete_source: https://gitlab.com/GoMatrixHosting/ansible-create-delete-subscription-membership.git

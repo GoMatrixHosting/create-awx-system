@@ -17,8 +17,8 @@ backup_user@backup_server:~$ borg list /mnt/backup-dir/Clients/stevesubway.xyz/m
 Enter passphrase for key /mnt/mfs/GMH-Backups/Clients/stevesubway.xyz/matrix: 
 ...
 stevesubway-2021-06-12T06:32:44      Sat, 2021-06-12 14:32:45 [500b3fdee79eeb7b6c087c062335260496ca83e2eb5b2d84854892b399263d54]
-backup_user@backup_server:~$ mkdir /mnt/backup-dir/extracted/
-backup_user@backup_server:~$ cd /mnt/backup-dir/extracted/
+backup_user@backup_server:~$ mkdir /mnt/backup-dir/Extracted/
+backup_user@backup_server:~$ cd /mnt/backup-dir/Extracted/
 backup_user@backup_server:/mnt/backup-dir/extracted$ borg extract /mnt/backup-dir/Clients/stevesubway.xyz/matrix/::stevesubway-2021-06-12T06:32:44
 
 
@@ -36,7 +36,7 @@ backup_user@backup_server:/mnt/backup-dir/extracted$ borg extract /mnt/backup-di
 
 4) Download extracted export to controller:
 
-user@localhost:~/Documents$ rsync -av backup_server:/mnt/backup-dir/extracted/ ./
+user@localhost:~/Documents$ rsync -av backup_server:/mnt/backup-dir/Extracted/ ./
 
 
 5) Extract variables needed to re-create subscription:
@@ -49,8 +49,8 @@ On controller, extract matrix.tar.gz, examine /matrix/awx/organisation.yml and /
 - matrix_domain: fishbole.xyz				[/matrix/awx/matrix_vars.yml]
 - matrix_server_fqn_element: element.fishbole.xyz	[/matrix/awx/matrix_vars.yml]
 - matrix_nginx_proxy_base_domain_serving_enabled: true	[/matrix/awx/matrix_vars.yml]
-- plan_title: Small DigitalOcean Server			[/matrix/awx/server_vars.yml]
 - subscription_type: digitalocean			[/matrix/awx/server_vars.yml]
+- plan_title: Medium DigitalOcean Server		[/matrix/awx/extra_vars.json]
 - subscription_id: I-CREUS74S6969			[/matrix/awx/extra_vars.json]
 - member_id: 31						[/matrix/awx/extra_vars.json]
 
@@ -87,7 +87,7 @@ SERVER IPV4/SERVER IPV6 - Enter the IPs for the new on-premises server.
 
 9) Note the new subscription_id and member_id. Load matrix_vars.yml from the restored backup into the new AWX subsciption folder:
 
-~/Documents$ scp ./awx/matrix_vars.yml panel.topgunmatrix.com:/var/lib/awx/projects/clients/31/T-FKFAMCCR7CHX/
+~/Documents$ scp ./matrix/awx/matrix_vars.yml panel.topgunmatrix.com:/var/lib/awx/projects/clients/31/T-FKFAMCCR7CHX/
 matrix_vars.yml                               100% 3840    13.1KB/s   00:00 
 
 
@@ -121,7 +121,6 @@ $ rsync -av ./matrix/ matrix.fishbole.xyz:/matrix/
 $ rsync -av ./chroot/website/ matrix.fishbole.xyz:/chroot/website/
 $ rsync -av ./chroot/export/postgres_2021-06-12.sql.gz  matrix.fishbole.xyz:/chroot/export/
 
-
 13B - (Admin Import) Copy export into /chroot/export/ with SCP, extract /matrix:
 
 ~/Documents$ scp ./chroot/export/* root@matrix.fishbole.xyz:/chroot/export/
@@ -131,7 +130,18 @@ postgres_2021-03-02.sql.gz                                          100% 7496KB 
 root@fishbole.xyz:~# tar -xvzf /chroot/export/matrix_2021-06-12.tar.gz -C /
 
 
-14) Import the database dump:
+14) Delete and re-create existing databases:
+
+root@fishbole.xyz:~# docker exec -it matrix-postgres /bin/bash -c 'dropdb matrix'
+root@fishbole.xyz:~# docker exec -it matrix-postgres /bin/bash -c 'dropdb matrix_ma1sd'
+root@fishbole.xyz:~# docker exec -it matrix-postgres /bin/bash -c 'dropdb -f synapse'
+
+bash-5.1$ createdb --template=template0 --encoding=UTF8 --locale=C matrix
+bash-5.1$ createdb --template=template0 --encoding=UTF8 --locale=C matrix_ma1sd
+bash-5.1$ createdb --template=template0 --encoding=UTF8 --locale=C synapse
+
+
+15) Import the database dump:
 
 Run the '00 - Restore and Import Postgresql Dump' job template with:
 - member's Inventory
@@ -141,6 +151,7 @@ Run the '00 - Restore and Import Postgresql Dump' job template with:
 
 ---
 server_path_postgres_dump: /chroot/export/postgres_2021-06-12.sql.gz
+plan_title: 'Micro DigitalOcean Server'
 subscription_id: T-FKFAMCCR7CHX
 member_id: 31
 target: "matrix.fishbole.xyz"
@@ -148,10 +159,10 @@ matrix_domain: "fishbole.xyz"
 matrix_awx_enabled: true
 
 
-15) Remove the 'imposter-check' tag again and run 'Provision a New Server' again to load up the surveys from matrix_vars.yml
+16) Remove the 'imposter-check' tag again and run 'Provision a New Server' again to load up the surveys from matrix_vars.yml
 
 
-16) Copy the DNS information and send it to the customer so they can configure DNS again. For Example:
+17) Copy the DNS information and send it to the customer so they can configure DNS again. For Example:
 
         "Your server has been created! You now need to configure your DNS to have the",
         "following records:",
@@ -167,16 +178,18 @@ matrix_awx_enabled: true
         "Setting the IPv6 record is optional. If you need help doing this please contact us."
 
 
-17) SSH into the old server and shut down the previous service:
+18) SSH into the old server and shut down the previous service:
 
 `# systemctl stop matrix-synapse matrix-postgres matrix-ma1sd`
 
 
-18) Wait for the DNS to propagate.
+19) Wait for the DNS to propagate.
 
-19) Run the new '0 - Deploy/Update a Server' job template again, then try and login.
 
-20) If the new Matrix server works delete the old subscription with '00 - Ansible Delete Subscription', then re-provision the new subscription using 'Provision a New Server'.
+20) Run the new '0 - Deploy/Update a Server' job template again, then try and login.
 
-21) If base domain isn't used (if matrix_nginx_proxy_base_domain_serving_enabled: true) then run the 'Configure Website + Access Export' job template again to enable the base domain site.
 
+21) If the new Matrix server works delete the old subscription with '00 - Ansible Delete Subscription', then re-provision the new subscription using 'Provision a New Server'.
+
+
+22) If base domain isn't used (if matrix_nginx_proxy_base_domain_serving_enabled: true) then run the 'Configure Website + Access Export' job template again to enable the base domain site.

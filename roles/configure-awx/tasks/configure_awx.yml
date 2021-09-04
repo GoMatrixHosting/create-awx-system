@@ -204,14 +204,14 @@
 
 # This module is renamed to awx.awx.inventory_source_update in AWX v19
 
-- name: Create '00 - Ansible Create Account' job template
+- name: Create '00 - Create Account' job template
   awx.awx.tower_job_template:
-    name: "00 - Ansible Create Account"
+    name: "00 - Create Account"
     description: "Performs initial organisation/team creation before subscription is confirmed."
     job_type: run
     inventory: "{{ org_name }} [Admin]"
     project: "Ansible Create Delete Subscription Membership"
-    playbook: pre-create.yml
+    playbook: pre_create.yml
     extra_vars: "{{ lookup('file', '{{ role_path }}/extra-vars/create-account.json') }}"
     ask_extra_vars: yes
     state: present
@@ -220,9 +220,9 @@
     tower_oauthtoken: "{{ tower_token.stdout }}"
     validate_certs: yes
 
-- name: Create '00 - Ansible Create Manual Subscription' job template
+- name: Create '00 - Create Manual Subscription' job template
   awx.awx.tower_job_template:
-    name: "00 - Ansible Create Manual Subscription"
+    name: "00 - Create Manual Subscription"
     description: "Creates AWX Account for user, append random string to 'byo', creates initial organisation.yml and server_vars.yml file. Also creates a '[subscription_id] Provision Server' playbook in users account, where they will instead be prompted to connect their own server."
     job_type: run
     inventory: "{{ org_name }} [Admin]"
@@ -231,7 +231,7 @@
     credentials: "Unlock SSH Password"
     ask_extra_vars: yes
     survey_enabled: true
-    survey_spec: "{{ lookup('file', '{{ role_path }}/surveys/manual_subsription.json.j2') }}"
+    survey_spec: "{{ lookup('file', '{{ role_path }}/surveys/manual_subscription.json.j2') }}"
     state: present
     verbosity: 1
     job_tags: manual-subscription
@@ -239,9 +239,9 @@
     tower_oauthtoken: "{{ tower_token.stdout }}"
     validate_certs: yes
 
-- name: Create '00 - Ansible Create MP Subscription' job template
+- name: Create '00 - Create MP Subscription' job template
   awx.awx.tower_job_template:
-    name: "00 - Ansible Create MP Subscription"
+    name: "00 - Create MP Subscription"
     description: "Creates AWX Account for user, creates initial organisation.yml and server_vars.yml file. Creates a DigitalOcean droplet and space. Also creates initial '[subscription_id] Provision Server' playbook in users account."
     job_type: run
     inventory: "{{ org_name }} [Admin]"
@@ -273,9 +273,9 @@
     tower_oauthtoken: "{{ tower_token.stdout }}"
     validate_certs: yes
 
-- name: Create '00 - Ansible Delete Membership' job template
+- name: Create '00 - Delete Membership' job template
   awx.awx.tower_job_template:
-    name: "00 - Ansible Delete Membership"
+    name: "00 - Delete Membership"
     description: "Playbook to remove clients AWX organisation and local files on the AWX server."
     job_type: run
     inventory: "{{ org_name }} [Admin]"
@@ -290,19 +290,33 @@
     tower_oauthtoken: "{{ tower_token.stdout }}"
     validate_certs: yes
 
-- name: Create '00 - Ansible Delete Subscription' job template
+- name: Create '00 - Delete Subscription' job template
   awx.awx.tower_job_template:
-    name: "00 - Ansible Delete Subscription"
+    name: "00 - Delete Subscription"
     description: "Removes job templates, digitalocean resources, and files/folders associated with a subscription."
     job_type: run
     inventory: "{{ org_name }} [Admin]"
     project: "Ansible Create Delete Subscription Membership"
-    playbook: delete_subscription.yml
+    playbook: schedule_delete_subscription.yml
     extra_vars: "{{ lookup('file', '{{ role_path }}/extra-vars/delete-subscription.json') }}"
     ask_extra_vars: yes
     state: present
     verbosity: 1
-    job_tags: delete-subscription
+    job_tags: schedule-delete-subscription
+    tower_host: "https://{{ awx_url }}"
+    tower_oauthtoken: "{{ tower_token.stdout }}"
+    validate_certs: yes
+
+- name: Create '00 - Cleanup Deletion Template' job template
+  awx.awx.tower_job_template:
+    name: "00 - Cleanup Deletion Template"
+    description: "Deletes the remaining '<< SUBSCRIPTION DELETION IN PROGRESS >>' template."
+    job_type: run
+    inventory: "{{ org_name }} [Admin]"
+    project: "Ansible Create Delete Subscription Membership"
+    playbook: cleanup_deletion_job_template.yml
+    state: present
+    verbosity: 1
     tower_host: "https://{{ awx_url }}"
     tower_oauthtoken: "{{ tower_token.stdout }}"
     validate_certs: yes
@@ -328,7 +342,7 @@
     job_type: run
     inventory: "{{ org_name }} [Admin]"
     project: "Ansible Create Delete Subscription Membership"
-    playbook: backup-all.yml
+    playbook: backup_all.yml
     state: present
     verbosity: 1
     tower_host: "https://{{ awx_url }}"
@@ -343,7 +357,7 @@
     job_type: run
     inventory: "{{ org_name }} [Admin]"
     project: "Ansible Create Delete Subscription Membership"
-    playbook: reprovision-all.yml
+    playbook: reprovision_all.yml
     state: present
     verbosity: 1
     tower_host: "https://{{ awx_url }}"
@@ -408,7 +422,7 @@
     job_type: run
     inventory: "{{ org_name }} [Admin]"
     project: "Ansible Create Delete Subscription Membership"
-    playbook: bind-user-account.yml
+    playbook: bind_user_account.yml
     extra_vars: "{{ lookup('file', '{{ role_path }}/extra-vars/bind-user-account.json') }}"
     ask_extra_vars: yes
     state: present

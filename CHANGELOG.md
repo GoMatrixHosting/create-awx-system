@@ -1,7 +1,28 @@
 
+# GoMatrixHosting v0.5.9
+
+- Use underscores instead of dashes for playbooks/task lists.
+- Alter end-subscription logic, schedules deletion after 0 (immediate) to N hours and stops the matrix services. Data export is still possible before deletion. The deletion can be cancelled by the administrator, removing the schedule and starting the Matrix services again. See [#5](https://gitlab.com/GoMatrixHosting/ansible-create-delete-subscription-membership/-/issues/5).
+
+
+# Upgrade notes for v0.5.9
+
+- Rename `prometheus_retention_period` variable in create-awx-system vars.yml to `prometheus_days_retention`.
+- Add new `delete_subscription_hours_delay: 48` value to create-awx-system vars.yml.
+- Do a complete re-install of AWX.
+- Delete the following administrator job templates:
+```
+00 - Ansible Create Account
+00 - Ansible Create Manual Subscription
+00 - Ansible Create MP Subscription
+00 - Ansible Delete Membership
+00 - Ansible Delete Subscription
+```
+
+
 # GoMatrixHosting v0.5.8
 
-- Add automated 'Deploy/Update All Servers' job to apply updated within the hour. See [#18](https://gitlab.com/GoMatrixHosting/gomatrixhosting-matrix-docker-ansible-deploy/-/issues/18).
+- Add automated 'Deploy/Update All Servers' job to apply updates within the hour. See [#18](https://gitlab.com/GoMatrixHosting/gomatrixhosting-matrix-docker-ansible-deploy/-/issues/18).
 
 
 # Upgrade notes for v0.5.8
