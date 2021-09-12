@@ -1,4 +1,18 @@
 
+# GoMatrixHosting v0.6.0
+
+- Fix previously added subscription deletion playbooks.
+- Update Readme.md files for each repository.
+- Document AWX password and SSH keys rotation, see [#17](https://gitlab.com/GoMatrixHosting/create-awx-system/-/issues/17).
+
+
+# Upgrade Notes v0.6.0
+
+Delete previous borg backup keys for AWX:
+`$ rm ~/.ssh/borg_{{ awx_url }}_ed25519`
+Reinstall AWX.
+
+
 # GoMatrixHosting v0.5.9
 
 - Use underscores instead of dashes for playbooks/task lists.
