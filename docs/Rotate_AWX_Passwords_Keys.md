@@ -125,6 +125,8 @@ backup_public_ssh_key: /key/location/backups3_ed25519.pub
 
 13) Re-provision all servers.
 
+We re-provision but the client SSH key for that subscription hasn't updated yet!
+- also needs to update authorized_keys of each client server
 
 CURRENT BACKUP SERVER KEYS:
 

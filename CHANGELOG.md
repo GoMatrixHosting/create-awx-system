@@ -10,6 +10,8 @@
 
 Delete previous borg backup keys for AWX:
 `$ rm ~/.ssh/borg_{{ awx_url }}_ed25519`
+Delete previous client backup keys:
+`$ rm /var/lib/awx/projects/hosting/client_*.key`
 Reinstall AWX.
 
 
