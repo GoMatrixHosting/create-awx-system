@@ -123,7 +123,10 @@ backup_public_ssh_key: /key/location/backups3_ed25519.pub
 12) Re-install the AWX system, see [Installation_AWX.md](https://gitlab.com/GoMatrixHosting/create-awx-system/-/blob/master/docs/Installation_AWX.md).
 
 
-13) Re-provision all servers.
+13) Run the '00 - Rotate SSH Keys' job as the AWX admin.
+
+
+14) Re-provision all servers.
 
 We re-provision but the client SSH key for that subscription hasn't updated yet!
 - also needs to update authorized_keys of each client server
