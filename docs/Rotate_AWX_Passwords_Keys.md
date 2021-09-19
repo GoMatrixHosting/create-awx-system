@@ -115,8 +115,8 @@ vault_unlock_ssh_password: << strong-password >>
 client_private_ssh_key: /key/location/matrixtesting3_ed25519
 client_public_ssh_key: /key/location/matrixtesting3_ed25519.pub
 client_private_ssh_key_password: << strong-password >>
-backup_private_ssh_key: /key/location/backups3_ed25519
-backup_public_ssh_key: /key/location/backups3_ed25519.pub
+#backup_private_ssh_key: /key/location/backups3_ed25519
+#backup_public_ssh_key: /key/location/backups3_ed25519.pub
 ```
 
 
@@ -128,8 +128,8 @@ backup_public_ssh_key: /key/location/backups3_ed25519.pub
 
 14) Re-provision all servers.
 
-We re-provision but the client SSH key for that subscription hasn't updated yet!
-- also needs to update authorized_keys of each client server
+
+
 
 CURRENT BACKUP SERVER KEYS:
 
