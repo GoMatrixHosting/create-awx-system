@@ -20,13 +20,15 @@
     mode: '0755'
     recurse: yes
 
-- name: Ensure ssh config location exists
+- name: Ensure ssh config location exists in AWX
   file:
     path: /root/.ssh/
     owner: root
     group: root
     state: directory
     mode: '0755'
+
+# need to make force-regenerate opt-in!
 
 - name: Generate OpenSSH key on AWX system
   community.crypto.openssh_keypair:

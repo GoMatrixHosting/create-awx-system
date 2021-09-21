@@ -50,21 +50,3 @@
     owner: root
     group: root
     mode: '0600'
-    
-#- name: Copy backup private SSH key to hosting directory for the AWX setup
-#  copy:
-#    src: '{{ backup_private_ssh_key }}'
-#    dest: /var/lib/awx/projects/hosting/backup_private.key
-#    owner: root
-#    group: root
-#    mode: '0600'
-#  when: backup_private_ssh_key is defined
-
-#- name: Copy backup public SSH key to hosting directory for the AWX setup
-#  copy:
-#    src: '{{ backup_public_ssh_key }}'
-#    dest: /var/lib/awx/projects/hosting/backup_public.key
-#    owner: root
-#    group: root
-#    mode: '0600'
-#  when: backup_public_ssh_key is defined

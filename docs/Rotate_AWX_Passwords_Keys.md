@@ -90,6 +90,8 @@ root@backup:~# cp /root/.ssh/authorized_keys /root/.ssh/authorized_keys.backup \
 && echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGaL/Kpvw/ItlSg1xqIZxeZiHoSn7tVkmQvI+MdL/+Ch AWX > Client SSH key" >> /root/.ssh/authorized_keys
 ```
 
+# The re-provision of all servers requires
+
 
 9) Update your local SSH config with the new backup server SSH key:
 ```
@@ -120,24 +122,14 @@ client_private_ssh_key_password: << strong-password >>
 ```
 
 
-12) Re-install the AWX system, see [Installation_AWX.md](https://gitlab.com/GoMatrixHosting/create-awx-system/-/blob/master/docs/Installation_AWX.md).
+12) Re-install the AWX system, see [Installation_AWX.md](https://gitlab.com/GoMatrixHosting/create-awx-system/-/blob/master/docs/Installation_AWX.md). Except for stage 4 add the following extra variable:
+
+`rotate_backup_ssh: True`
 
 
 13) Run the '00 - Rotate SSH Keys' job as the AWX admin.
 
 
 14) Re-provision all servers.
-
-
-
-
-CURRENT BACKUP SERVER KEYS:
-
-# AWX Backups
-command="borg serve --restrict-to-path /mnt/mfs/GMH-Backups/AWX/panel.topgunmatrix.com",restrict ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH6bo0LMgHt6ve36x/Pj8zk6RxKehD4bMbzcAmAYrARL Borg ssh key for panel.topgunmatrix.com
-
-# Client Backups
-command="borg serve --restrict-to-path /mnt/mfs/GMH-Backups/Clients",restrict ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILBy+dEoPat8OfK5X35SM355sa42zXkRuW1PRsW4iCNe michael@gomatrixhosting
-
 
 

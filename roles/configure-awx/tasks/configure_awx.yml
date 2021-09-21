@@ -452,8 +452,6 @@
     inventory: "{{ org_name }} [Admin]"
     project: "Ansible Create Delete Subscription Membership"
     playbook: rotate_ssh_all.yml
-#    extra_vars: "{{ lookup('file', '{{ role_path }}/extra-vars/bind-user-account.json') }}"
-    ask_extra_vars: yes
     credentials: "Unlock SSH Password"
     state: present
     verbosity: 1

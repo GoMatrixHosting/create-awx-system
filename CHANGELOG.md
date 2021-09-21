@@ -2,7 +2,7 @@
 # GoMatrixHosting v0.6.0
 
 - Fix previously added subscription deletion playbooks.
-- Update Readme.md files for each repository.
+- Update README.md files for each repository.
 - Document AWX password and SSH keys rotation, see [#17](https://gitlab.com/GoMatrixHosting/create-awx-system/-/issues/17).
 
 
