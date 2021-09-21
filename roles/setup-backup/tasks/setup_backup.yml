@@ -28,14 +28,11 @@
     state: directory
     mode: '0755'
 
-# need to make force-regenerate opt-in!
-
-- name: Generate OpenSSH key on AWX system
+- name: Generate OpenSSH key for AWX system backup
   community.crypto.openssh_keypair:
     path: '/root/.ssh/borg_backup_ed25519'
     comment: 'Borg ssh key for {{ awx_url }}'
     type: ed25519
-    regenerate: always
 
 - name: Collect SSH public key value
   shell: cat '/root/.ssh/borg_backup_ed25519.pub'

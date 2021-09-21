@@ -117,19 +117,28 @@ vault_unlock_ssh_password: << strong-password >>
 client_private_ssh_key: /key/location/matrixtesting3_ed25519
 client_public_ssh_key: /key/location/matrixtesting3_ed25519.pub
 client_private_ssh_key_password: << strong-password >>
-#backup_private_ssh_key: /key/location/backups3_ed25519
-#backup_public_ssh_key: /key/location/backups3_ed25519.pub
 ```
 
 
-12) Re-install the AWX system, see [Installation_AWX.md](https://gitlab.com/GoMatrixHosting/create-awx-system/-/blob/master/docs/Installation_AWX.md). Except for stage 4 add the following extra variable:
-
-`rotate_backup_ssh: True`
-
-
-13) Run the '00 - Rotate SSH Keys' job as the AWX admin.
+12) Delete the existing borg backup key from the AWX server:
+```
+$ rm /root/.ssh/borg_backup_ed25519
+```
 
 
-14) Re-provision all servers.
+13) Re-install the AWX system, see [Installation_AWX.md](https://gitlab.com/GoMatrixHosting/create-awx-system/-/blob/master/docs/Installation_AWX.md). 
 
 
+14) Run the '00 - Rotate SSH Keys' job as the AWX admin.
+
+
+15) Delete existing client backup ssh keys of every server from the AWX server:
+```
+$ rm /var/lib/awx/projects/clients/*/*/borg_backup_ed25519
+```
+
+
+16) Run the '00 - Reprovision All Servers' job template.
+
+
+17) Update the public SSH key on the front-end website for on-premises users.
