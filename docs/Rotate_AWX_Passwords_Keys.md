@@ -90,8 +90,6 @@ root@backup:~# cp /root/.ssh/authorized_keys /root/.ssh/authorized_keys.backup \
 && echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGaL/Kpvw/ItlSg1xqIZxeZiHoSn7tVkmQvI+MdL/+Ch AWX > Client SSH key" >> /root/.ssh/authorized_keys
 ```
 
-# The re-provision of all servers requires
-
 
 9) Update your local SSH config with the new backup server SSH key:
 ```
