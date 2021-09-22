@@ -129,4 +129,3 @@
     name: "Run cleanup_backups.py script"
     special_time: daily
     job: "python3 /root/cleanup_backups.py"
-    
