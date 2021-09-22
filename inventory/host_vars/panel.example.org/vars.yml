@@ -28,10 +28,10 @@ deploy_source: https://github.com/spantaleev/matrix-docker-ansible-deploy.git
 deploy_branch: master
 
 # SSH Keys
-vault_unlock_ssh_password: << strong-password >>
-client_private_ssh_key: /key/location/id_ed25519
 client_public_ssh_key: /key/location/id_ed25519.pub
+client_private_ssh_key: /key/location/id_ed25519
 client_private_ssh_key_password: << strong-password >>
+vault_unlock_ssh_password: << strong-password >>
 
 # MailGun Settings
 mg_sender_email_address: "verify@mail.example.org"
