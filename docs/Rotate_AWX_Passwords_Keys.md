@@ -115,6 +115,7 @@ vault_unlock_ssh_password: << strong-password >>
 12) Delete the existing borg backup key from the AWX server:
 ```
 $ rm /root/.ssh/borg_backup_ed25519
+$ rm /root/.ssh/borg_backup_ed25519.pub
 ```
 
 
@@ -127,6 +128,7 @@ $ rm /root/.ssh/borg_backup_ed25519
 15) Delete existing client backup ssh keys of every server from the AWX server:
 ```
 $ rm /var/lib/awx/projects/clients/*/*/borg_backup_ed25519
+$ rm /var/lib/awx/projects/clients/*/*/borg_backup_ed25519.pub
 ```
 
 
