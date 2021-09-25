@@ -122,17 +122,20 @@ $ rm /root/.ssh/borg_backup_ed25519.pub
 13) Re-install the AWX system, see [Installation_AWX.md](https://gitlab.com/GoMatrixHosting/create-awx-system/-/blob/master/docs/Installation_AWX.md). 
 
 
-14) Run the '00 - Rotate SSH Keys' job as the AWX admin.
+14) Add the new client public key to your [DigitalOcean account settings](https://cloud.digitalocean.com/account/security).
 
 
-15) Delete existing client backup ssh keys of every server from the AWX server:
+15) Run the '00 - Rotate SSH Keys' job as the AWX admin.
+
+
+16) Delete existing client backup ssh keys of every server from the AWX server:
 ```
 $ rm /var/lib/awx/projects/clients/*/*/borg_backup_ed25519
 $ rm /var/lib/awx/projects/clients/*/*/borg_backup_ed25519.pub
 ```
 
 
-16) Run the '00 - Reprovision All Servers' job template.
+17) Run the '00 - Reprovision All Servers' job template.
 
 
-17) Update the public SSH key on the front-end website for on-premises users.
+18) Update the public SSH key on the front-end website for on-premises users.
