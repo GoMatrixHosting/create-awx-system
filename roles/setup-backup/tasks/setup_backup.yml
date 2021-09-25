@@ -20,7 +20,7 @@
     mode: '0755'
     recurse: yes
 
-- name: Ensure ssh config location exists
+- name: Ensure ssh config location exists in AWX
   file:
     path: /root/.ssh/
     owner: root
@@ -28,14 +28,14 @@
     state: directory
     mode: '0755'
 
-- name: Generate OpenSSH key on AWX system
+- name: Generate OpenSSH key for AWX system backup
   community.crypto.openssh_keypair:
-    path: '/root/.ssh/borg_{{ awx_url }}_ed25519'
+    path: '/root/.ssh/borg_backup_ed25519'
     comment: 'Borg ssh key for {{ awx_url }}'
     type: ed25519
 
 - name: Collect SSH public key value
-  shell: cat '/root/.ssh/borg_{{ awx_url }}_ed25519.pub'
+  shell: cat '/root/.ssh/borg_backup_ed25519.pub'
   register: public_key
 
 - name: Ensure .ssh folder exists
@@ -69,6 +69,8 @@
   delegate_to: '{{ backup_server_hostname }}'
   lineinfile:
     path: '/home/{{ backup_server_user }}/.ssh/authorized_keys'
+    state: present
+    regexp: '^command="borg serve --restrict-to-path {{ backup_server_directory }}/AWX/{{ awx_url }}",restrict.*$'
     insertafter: '# AWX Backups'
     line: 'command="borg serve --restrict-to-path {{ backup_server_directory }}/AWX/{{ awx_url }}",restrict {{ public_key.stdout }}'
     owner: '{{ backup_server_user }}'
@@ -84,7 +86,7 @@
           HostName {{ backup_server_ip }}
           Port {{ backup_server_ssh_port }}
           User {{ backup_server_user }}
-          IdentityFile ~/.ssh/borg_{{ awx_url }}_ed25519
+          IdentityFile ~/.ssh/borg_backup_ed25519
 
 - name: Ensure borgmatic config location exists
   file:
@@ -127,4 +129,3 @@
     name: "Run cleanup_backups.py script"
     special_time: daily
     job: "python3 /root/cleanup_backups.py"
-    

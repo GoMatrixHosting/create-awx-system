@@ -6,7 +6,7 @@ This playbook spawns an AWX system that can create and manage multiple [Matrix](
 
 Members can be assigned a server from Digitalocean, or they can connect their own on-premises server. This script is free to use in a commercial context with the 'MemberPress Plus' and 'WP Oauth Sever' addons. It can also be run in a non-commercial context.
 
-The AWX system is arranged into 'members' each with their own 'subscriptions'. After creating a subscription the user enters the 'provision stage' where they defined the URLs they will use, the servers location and whether or not there's already a website at the base domain. They then proceed onto the 'deploy stage' where they can configure their Matrix server.
+The AWX system is arranged into 'members' each with their own 'subscriptions'. After creating a subscription the user enters the 'provision stage' where they defined the URLs they will use, the servers location and whether or not there's already a website at the base domain. They then proceed onto the 'deploy stage' where they can configure their Matrix/Jitsi/Dimension/Web service.
 
 Ideally this system can manage the updates, configuration, backups and monitoring on it's own. It is an extension of the popular deploy script [spantaleev/matrix-docker-ansible-deploy](https://github.com/spantaleev/matrix-docker-ansible-deploy).
 

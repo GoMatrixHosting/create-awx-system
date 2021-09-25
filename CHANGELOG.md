@@ -1,4 +1,28 @@
 
+# GoMatrixHosting v0.6.0
+
+- Fix previously added subscription deletion playbooks.
+- Update README.md files for each repository.
+- Document AWX password and SSH keys rotation, see [#17](https://gitlab.com/GoMatrixHosting/create-awx-system/-/issues/17).
+
+
+# Upgrade Notes v0.6.0
+
+Delete previous borg backup keys for AWX:
+`$ rm ~/.ssh/borg_{{ awx_url }}_ed25519`
+Delete previous client > backup keys:
+`$ rm /var/lib/awx/projects/hosting/backup_*.key`
+Remove old backup keys entry for clients from the backup server:
+`$ sed '/^command="borg serve --restrict-to-path {{ backup_server_directory }}/Clients",restrict ssh-ed25519/d' /home/{{ backup_server_user }}/.ssh/authorized_keys`
+Remove the following variables from the create-awx-system vars.yml:
+```
+backup_private_ssh_key: /home/user/.ssh/backups3_ed25519
+backup_public_ssh_key: /home/user/.ssh/backups3_ed25519.pub
+```
+Reinstall AWX.
+Re-provision all servers.
+
+
 # GoMatrixHosting v0.5.9
 
 - Use underscores instead of dashes for playbooks/task lists.

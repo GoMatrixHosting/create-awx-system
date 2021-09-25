@@ -431,8 +431,26 @@
     tower_oauthtoken: "{{ tower_token.stdout }}"
     validate_certs: yes
 
+- name: Create '00 - Rotate SSH Keys' job template
+  awx.awx.tower_job_template:
+    name: "00 - Rotate SSH Keys"
+    description: "Rotates the client servers SSH key for all subscriptions."
+    job_type: run
+    inventory: "{{ org_name }} [Admin]"
+    project: "Ansible Create Delete Subscription Membership"
+    playbook: rotate_ssh_all.yml
+    credentials: "Unlock SSH Password"
+    state: present
+    verbosity: 1
+    tower_host: "https://{{ awx_url }}"
+    tower_oauthtoken: "{{ tower_token.stdout }}"
+    validate_certs: yes
+
 - name: Install awx.awx collection in AWX docker
   command: docker exec awx_task /bin/bash -l -c "ansible-galaxy collection install --force awx.awx:17.1.0"
 
 - name: Install community.digitalocean collection in AWX docker
   command: docker exec awx_task /bin/bash -l -c "ansible-galaxy collection install --force community.digitalocean"
+  
+- name: Install community.crypto collection in AWX docker
+  command: docker exec awx_task /bin/bash -l -c "ansible-galaxy collection install --force community.crypto"
