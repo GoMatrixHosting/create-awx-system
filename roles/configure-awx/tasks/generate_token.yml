@@ -1,0 +1,79 @@
+
+- name: Ensure /projects/hosting/awx_tokens.yml file exists
+  file:
+    path: '/var/lib/awx/projects/hosting/awx_tokens.yml'
+    owner: root
+    group: root
+    mode: '0600'
+    state: touch
+
+- name: Insert '#AWX Token' spacer to awx_tokens.yml
+  lineinfile:
+    path: /var/lib/awx/projects/hosting/awx_tokens.yml
+    line: '#AWX Token'
+    owner: root
+    group: root
+    mode: '0600'
+
+- name: Fetch the awx_tokens.yml variable from AWX
+  fetch:
+    src: /var/lib/awx/projects/hosting/awx_tokens.yml
+    dest: /tmp/awx_tokens.yml
+    flat: yes
+
+- name: Include AWX tokens from awx_tokens.yml
+  include_vars:
+    file: /tmp/awx_tokens.yml
+  no_log: True
+
+- name: Delete the old master token by its id
+  awx.awx.tower_token:
+    existing_token_id: '{{ awx_master_token_id }}'
+    state: absent
+    tower_host: "{{ awx_url }}"
+    tower_username: "{{ admin_username }}"
+    tower_password: "{{ admin_password }}"
+  when: awx_master_token_id is defined
+
+- name: Create the master token using username/password
+  awx.awx.tower_token:
+    description: 'AWX Master Token'
+    scope: "write"
+    state: present
+    tower_host: "{{ awx_url }}"
+    tower_username: "{{ admin_username }}"
+    tower_password: "{{ admin_password }}"
+  register: awx_master_token_creation
+
+- name: Add awx_master_token line to awx_tokens.yml file on AWX
+  lineinfile:
+    path: '/var/lib/awx/projects/hosting/awx_tokens.yml'
+    insertafter: '# AWX Token'
+    regexp: "^#? *{{ item.key | regex_escape() }}:"
+    line: "{{ item.key }}: {{ item.value }}"
+    mode: '0600'
+    state: present
+  with_dict:
+    'awx_master_token': '{{ awx_master_token_creation.ansible_facts.tower_token.token }}'
+
+- name: Add awx_master_token_id line to awx_tokens.yml file on AWX
+  lineinfile:
+    path: '/var/lib/awx/projects/hosting/awx_tokens.yml'
+    insertafter: '# AWX Token'
+    regexp: "^#? *{{ item.key | regex_escape() }}:"
+    line: "{{ item.key }}: {{ item.value }}"
+    mode: '0600'
+    state: present
+  with_dict:
+    'awx_master_token_id': '{{ awx_master_token_creation.ansible_facts.tower_token.id }}'
+    
+- name: Fetch the awx_tokens.yml variable from AWX again
+  fetch:
+    src: /var/lib/awx/projects/hosting/awx_tokens.yml
+    dest: /tmp/awx_tokens.yml
+    flat: yes
+
+- name: Load the new AWX token from awx_tokens.yml
+  include_vars:
+    file: /tmp/awx_tokens.yml
+#  no_log: True

@@ -15,7 +15,7 @@
     mode: '0740'
     state: directory
 
-- name: Ensure /projects/hosting/ directory exists for the AWX setup
+- name: Ensure /projects/clients/ directory exists for the AWX setup
   file:
     path: '/var/lib/awx/projects/clients/'
     owner: root
@@ -27,12 +27,18 @@
   template:
     src: './roles/presetup-awx/templates/hosting_vars.yml.j2'
     dest: '/var/lib/awx/projects/hosting/hosting_vars.yml'
+    owner: root
+    group: root
+    mode: '0600'
   when: backup_server_enabled|bool
   
 - name: Save new 'hosting_vars.yml' config file if backup disabled, template
   template:
     src: './roles/presetup-awx/templates/hosting_vars_2.yml.j2'
     dest: '/var/lib/awx/projects/hosting/hosting_vars.yml'
+    owner: root
+    group: root
+    mode: '0600'
   when: not backup_server_enabled|bool
 
 - name: Copy private SSH key to hosting directory for the AWX setup

@@ -1,7 +1,7 @@
 
 # Rotating AWX passwords and SSH keys
 
-1) Update the admin_password variable in the create-awx-system vars.yml file.
+1) Update the admin_password and grafana_admin_password variables in the create-awx-system vars.yml file.
 ```
 $ nano ./inventory/host_vars/panel.example.org/vars.yml
 ```
