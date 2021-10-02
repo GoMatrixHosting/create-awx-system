@@ -121,7 +121,7 @@ Install prerequisite packages for ansible on the controller:
 
 Run the script:
 
-`$ ansible-playbook -v -i ./inventory/hosts -t "configure-awx" post_setup.yml`
+`$ ansible-playbook -v -i ./inventory/hosts -t "generate-token,configure-awx" post_setup.yml`
 
 
 4) Optionally, perform initial SSH handshake from AWX to backup server.
