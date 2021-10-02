@@ -21,7 +21,7 @@
     dest: /tmp/awx_tokens.yml
     flat: yes
 
-- name: Include AWX tokens from awx_tokens.yml
+- name: Include AWX master token from awx_tokens.yml
   include_vars:
     file: /tmp/awx_tokens.yml
   no_log: True
@@ -73,7 +73,7 @@
     dest: /tmp/awx_tokens.yml
     flat: yes
 
-- name: Load the new AWX token from awx_tokens.yml
+- name: Load the new AWX master token from awx_tokens.yml
   include_vars:
     file: /tmp/awx_tokens.yml
-#  no_log: True
+  no_log: True

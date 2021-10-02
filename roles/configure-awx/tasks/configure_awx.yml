@@ -7,7 +7,7 @@
     mode: '0755'
     state: directory
 
-- name: Create a Session Token for executing AWX modules
+- name: Create a AWX session token for executing modules
   awx.awx.tower_token:
     description: 'AWX Session Token'
     scope: "write"
@@ -444,7 +444,7 @@
     tower_oauthtoken: "{{ awx_session_token.ansible_facts.tower_token.token }}"
     validate_certs: yes
 
-- name: Delete the Session Token for executing AWX modules
+- name: Delete the AWX session token for executing modules
   awx.awx.tower_token:
     description: 'AWX Session Token'
     scope: "write"

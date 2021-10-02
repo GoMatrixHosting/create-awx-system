@@ -1,4 +1,14 @@
 
+# GoMatrixHosting v0.6.1
+
+- Use proper 'awx.awx.tower_token' module method to generate a persistent 'master token' then 'session tokens' for each individial run. Avoids storing the AWX admins password in plaintext on the AWX server. See [#2](https://gitlab.com/GoMatrixHosting/matrix-docker-ansible-deploy/-/issues/2) and [#13](https://gitlab.com/GoMatrixHosting/gomatrixhosting-matrix-docker-ansible-deploy/-/issues/13).
+
+
+# Upgrade Notes v0.6.1
+
+
+
+
 # GoMatrixHosting v0.6.0
 
 - Fix previously added subscription deletion playbooks.
