@@ -15,6 +15,7 @@
     tower_host: "https://{{ awx_url }}"
     tower_oauthtoken: "{{ awx_master_token }}"
   register: awx_session_token
+  no_log: True
 
 - name: Remove 'Demo Job Template' job template
   awx.awx.tower_job_template:
