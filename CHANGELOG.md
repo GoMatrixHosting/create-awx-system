@@ -2,11 +2,14 @@
 # GoMatrixHosting v0.6.1
 
 - Use proper 'awx.awx.tower_token' module method to generate a persistent 'master token' then 'session tokens' for each individial run. Avoids storing the AWX admins password in plaintext on the AWX server. See [#2](https://gitlab.com/GoMatrixHosting/matrix-docker-ansible-deploy/-/issues/2) and [#13](https://gitlab.com/GoMatrixHosting/gomatrixhosting-matrix-docker-ansible-deploy/-/issues/13).
+- Disable scm_update_on_launch on new users deploy project and make the hourly "Deploy/Update All Servers" update those projects, improves the speed of deploy stage jobs. See [#7](https://gitlab.com/GoMatrixHosting/ansible-create-delete-subscription-membership/-/issues/7).
 
 
 # Upgrade Notes v0.6.1
 
 - Reinstall AWX.
+- For every "matrix_domain - Matrix Docker Ansible Deploy' project in AWX, manually edit it, then uncheck the "Update Revision on Launch" checkbox:
+`https://panel.example/#/projects`
 
 
 # GoMatrixHosting v0.6.0
