@@ -123,7 +123,7 @@
   shell: |
     echo -n {{ vault_unlock_ssh_password }} > /tmp/vault.key
   no_log: true
-  
+
 - name: Set plaintext_ssh_password variable file
   delegate_to: 127.0.0.1
   become: false
@@ -137,7 +137,7 @@
   shell: |
     ansible-vault encrypt --vault-id unlock_ssh_password@/tmp/vault.key --output=/tmp/vaulted_ssh_password.yml /tmp/plaintext_ssh_password.yml
   no_log: true
-     
+
 - name: Copy vaulted_ssh_password.yml to the AWX hosting folder
   copy:
     src: /tmp/vaulted_ssh_password.yml
@@ -152,26 +152,26 @@
   become: false
   shell: |
     shred -u /tmp/vault.key
-     
+
 - name: Shred the plaintext_ssh_password variable file
   delegate_to: 127.0.0.1
   become: false
   shell: |
     shred -u /tmp/plaintext_ssh_password.yml
-    
+
 - name: Shred the vaulted_ssh_password variable file
   delegate_to: 127.0.0.1
   become: false
   shell: |
     shred -u /tmp/vaulted_ssh_password.yml
-     
+
 - name: Add Unlock SSH Password credential to admin users account
   awx.awx.tower_credential:
     name: "Unlock SSH Password"
     description: "The password to unlock the variable file containing the client systems SSH key password."
     credential_type: Vault
     organization: "{{ org_name }} [Admin]"
-    inputs: 
+    inputs:
       vault_id: unlock_ssh_password
       vault_password: "{{ vault_unlock_ssh_password }}"
     tower_host: "https://{{ awx_url }}"
@@ -255,7 +255,7 @@
     tower_host: "https://{{ awx_url }}"
     tower_oauthtoken: "{{ awx_session_token.ansible_facts.tower_token.token }}"
     validate_certs: yes
-    
+
 - name: Create '00 - Create Wireguard Server' job template
   awx.awx.tower_job_template:
     name: "00 - Create Wireguard Server"
@@ -363,7 +363,7 @@
     tower_oauthtoken: "{{ awx_session_token.ansible_facts.tower_token.token }}"
     validate_certs: yes
 
-- name: Collect timezone of AWX server (Debian and derivatives only) 
+- name: Collect timezone of AWX server (Debian and derivatives only)
   command: cat /etc/timezone
   register: timezone_output
 
@@ -454,11 +454,14 @@
     tower_host: "https://{{ awx_url }}"
     tower_oauthtoken: "{{ awx_session_token.ansible_facts.tower_token.token }}"
 
+# pin to v17.1.0 https://github.com/ansible/awx/tree/devel/awx_collection
 - name: Install awx.awx collection in AWX docker
   command: docker exec awx_task /bin/bash -l -c "ansible-galaxy collection install --force awx.awx:17.1.0"
 
+# v1.10.0 is known good https://github.com/ansible-collections/community.digitalocean/releases/tag/1.10.0 , waiting for 1.11.0 release
 - name: Install community.digitalocean collection in AWX docker
   command: docker exec awx_task /bin/bash -l -c "ansible-galaxy collection install --force community.digitalocean"
-  
+
+# v1.9.4 is known good https://github.com/ansible-collections/community.crypto/tags
 - name: Install community.crypto collection in AWX docker
   command: docker exec awx_task /bin/bash -l -c "ansible-galaxy collection install --force community.crypto"
