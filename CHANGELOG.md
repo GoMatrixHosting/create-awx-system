@@ -1,4 +1,17 @@
 
+# GoMatrixHosting v0.6.1
+
+- Use proper 'awx.awx.tower_token' module method to generate a persistent 'master token' then 'session tokens' for each individial run. Avoids storing the AWX admins password in plaintext on the AWX server. See [#2](https://gitlab.com/GoMatrixHosting/matrix-docker-ansible-deploy/-/issues/2) and [#13](https://gitlab.com/GoMatrixHosting/gomatrixhosting-matrix-docker-ansible-deploy/-/issues/13).
+- Disable scm_update_on_launch on new users deploy project and make the hourly "Deploy/Update All Servers" update those projects, improves the speed of deploy stage jobs. See [#7](https://gitlab.com/GoMatrixHosting/ansible-create-delete-subscription-membership/-/issues/7).
+
+
+# Upgrade Notes v0.6.1
+
+- Reinstall AWX.
+- For every "matrix_domain - Matrix Docker Ansible Deploy' project in AWX, manually edit it, then uncheck the "Update Revision on Launch" checkbox:
+`https://panel.example/#/projects`
+
+
 # GoMatrixHosting v0.6.0
 
 - Fix previously added subscription deletion playbooks.
@@ -8,19 +21,19 @@
 
 # Upgrade Notes v0.6.0
 
-Delete previous borg backup keys for AWX:
+- Delete previous borg backup keys for AWX:
 `$ rm ~/.ssh/borg_{{ awx_url }}_ed25519`
-Delete previous client > backup keys:
+- Delete previous client > backup keys:
 `$ rm /var/lib/awx/projects/hosting/backup_*.key`
-Remove old backup keys entry for clients from the backup server:
+- Remove old backup keys entry for clients from the backup server:
 `$ sed '/^command="borg serve --restrict-to-path {{ backup_server_directory }}/Clients",restrict ssh-ed25519/d' /home/{{ backup_server_user }}/.ssh/authorized_keys`
-Remove the following variables from the create-awx-system vars.yml:
+- Remove the following variables from the create-awx-system vars.yml:
 ```
 backup_private_ssh_key: /home/user/.ssh/backups3_ed25519
 backup_public_ssh_key: /home/user/.ssh/backups3_ed25519.pub
 ```
-Reinstall AWX.
-Re-provision all servers.
+- Reinstall AWX.
+- Re-provision all servers.
 
 
 # GoMatrixHosting v0.5.9

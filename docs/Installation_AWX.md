@@ -78,8 +78,6 @@ If you will be using a backup server, also define:
 - backup_server_directory 	(The directory to backup to on the backup server.)
 - backup_server_location:	(The location of the backup server.)
 - backup_awx_encryption_passphrase 	(Strong password for the AWX borg backup.)
-- backup_private_ssh_key	(Location of passwordless private backup key AWX will use.)
-- backup_public_ssh_key		(Location of public backup key AWX will use.)
 - vault_unlock_borg_passwords	(Strong password to vault the clients borg backup keys.)
 
 If you will be using this setup commercially, also define:
@@ -138,7 +136,7 @@ Install prerequisite packages for ansible on the controller:
 
 Run the script:
 
-`$ ansible-playbook -v -i ./inventory/hosts -t "configure-awx,setup-radius,setup-swatchdog,setup-backup,enable-backup" post_setup.yml`
+`$ ansible-playbook -v -i ./inventory/hosts -t "generate-token,configure-awx,setup-radius,setup-swatchdog,setup-backup,enable-backup" post_setup.yml`
 
 
 5) Perform initial SSH handshake from AWX to backup server.
