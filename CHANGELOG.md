@@ -3,9 +3,71 @@
 
 - Add new options to '0 - Configure Element' to alter the logo, logo link, headline and text. See [#22](https://gitlab.com/GoMatrixHosting/gomatrixhosting-matrix-docker-ansible-deploy/-/issues/22).
 - Added alternative method for generating master token if it fails. See [this reddit thread](https://www.reddit.com/r/awx/comments/lastzb/awx_failed_to_get_token_the_read_operation_times/).
+- Fix fragmented variable names, AWX related variables all begin with 'awx_' now.
 
 
 # Upgrade Notes v0.6.2
+
+- Update variable names in every matrix_vars.yml:
+```
+# Configure Website + Access Backup
+customise_base_domain_website: false
+sftp_password: ""
+...
+# Configure Element
+...
+element_subdomain: 'element'
+...
+# Configure Synapse
+ext_registrations_require_3pid: false
+ext_enable_registration_captcha: false
+ext_recaptcha_public_key: public-key
+ext_recaptcha_private_key: private-key
+...
+# Custom Variables
+matrix_synapse_auto_join_rooms: []
+ext_federation_whitelist_raw: []
+ext_url_preview_accept_language_default: ["en"]
+# https://github.com/ma1uta/ma1sd/blob/master/docs/stores/README.md
+ext_matrix_ma1sd_auth_store: 'Synapse Internal'
+ext_matrix_ma1sd_configuration_extension_yaml: ["matrix_ma1sd_configuration_extension_yaml: |", "  ldap:", "    enabled: true", "    connection:", "      host: ldapHostnameOrIp", "      tls: false", "      port: 389", "      baseDNs: [\'OU=Users,DC=example,DC=org\']", "      bindDn: CN=My ma1sd User,OU=Users,DC=example,DC=org", "      bindPassword: TheUserPassword"]
+sftp_auth_method: 'Disabled'
+sftp_password: ''
+sftp_public_key: ''
+ext_dimension_users_raw: []
+```
+becomes:
+```
+# Configure Element
+awx_matrix_client_element_welcome_logo: ''
+awx_matrix_client_element_welcome_logo_link: ''
+awx_matrix_client_element_welcome_headline: ''
+awx_matrix_client_element_welcome_text: ''
+awx_element_subdomain: 'element'
+...
+# Configure Ma1sd
+# https://github.com/ma1uta/ma1sd/blob/master/docs/stores/README.md
+awx_matrix_ma1sd_auth_store: 'Synapse Internal'
+awx_matrix_ma1sd_configuration_extension_yaml: ["matrix_ma1sd_configuration_extension_yaml: |", "  ldap:", "    enabled: true", "    connection:", "      host: ldapHostnameOrIp", "      tls: false", "      port: 389", "      baseDNs: [\'OU=Users,DC=example,DC=org\']", "      bindDn: CN=My ma1sd User,OU=Users,DC=example,DC=org", "      bindPassword: TheUserPassword"]
+...
+# Configure Synapse
+awx_registrations_require_3pid: false
+awx_enable_registration_captcha: false
+awx_recaptcha_public_key: public-key
+awx_recaptcha_private_key: private-key
+awx_matrix_synapse_auto_join_rooms: []
+awx_federation_whitelist_raw: []
+awx_url_preview_accept_language_default: ["en"]
+...
+# Configure Dimension
+awx_dimension_users_raw: []
+...
+# Custom Variables
+awx_customise_base_domain_website: false
+awx_sftp_auth_method: 'Disabled'
+awx_sftp_password: ''
+awx_sftp_public_key: ''
+```
 
 
 # GoMatrixHosting v0.6.1
