@@ -1,4 +1,12 @@
 
+# GoMatrixHosting v0.6.2
+
+- Add new options to '0 - Configure Element' to alter the logo, logo link, headline and text. See [#22](https://gitlab.com/GoMatrixHosting/gomatrixhosting-matrix-docker-ansible-deploy/-/issues/22).
+
+
+# Upgrade Notes v0.6.2
+
+
 # GoMatrixHosting v0.6.1
 
 - Use proper 'awx.awx.tower_token' module method to generate a persistent 'master token' then 'session tokens' for each individial run. Avoids storing the AWX admins password in plaintext on the AWX server. See [#2](https://gitlab.com/GoMatrixHosting/matrix-docker-ansible-deploy/-/issues/2) and [#13](https://gitlab.com/GoMatrixHosting/gomatrixhosting-matrix-docker-ansible-deploy/-/issues/13).
