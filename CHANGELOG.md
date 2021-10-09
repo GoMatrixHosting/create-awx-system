@@ -2,6 +2,7 @@
 # GoMatrixHosting v0.6.2
 
 - Add new options to '0 - Configure Element' to alter the logo, logo link, headline and text. See [#22](https://gitlab.com/GoMatrixHosting/gomatrixhosting-matrix-docker-ansible-deploy/-/issues/22).
+- Added alternative method for generating master token if it fails. See [this reddit thread](https://www.reddit.com/r/awx/comments/lastzb/awx_failed_to_get_token_the_read_operation_times/).
 
 
 # Upgrade Notes v0.6.2
