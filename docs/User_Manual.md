@@ -190,7 +190,20 @@ Set Branding for Web Client	Sets the 'branding' seen in the tab and on the welco
 
 Set Theme for Web Client	Sets the default theme for the web client, can be changed later by individual users.
 
-Set Welcome Page Background	Set Welcome Page Background
+Set Welcome Page Background	Sets the background image on the welcome page, you should enter a URL to the image you want to use. 
+				Must be a 'https' link, otherwise it won't be set. Leaving this field blank will cause the default background to be used.
+
+Set Welcome Page Logo		Sets the logo found on the welcome and login page, must be a valid https link to your logo, the logo itself should be a square vector image (SVG). 
+				Leaving this field blank will cause the default Element logo to be used.
+
+Set Welcome Page Logo URL	Sets the URL link the welcome page logo leads to, must be a valid https link. Leaving this field blank will cause this default link to be used: 
+				'https://element.io'
+
+Set Welcome Page Headline	Sets the headline seen on the welcome page. Leaving this field blank will cause this default headline to be used: 
+				'Welcome to Element!'
+
+Set Welcome Page Text		Sets the text seen on the welcome page. Leaving this field blank will cause this default headline to be used: 
+				'Decentralised, encrypted chat & collaboration powered by [Matrix]'
 
 Show Registration Button	If you show the registration button on the welcome page.
 

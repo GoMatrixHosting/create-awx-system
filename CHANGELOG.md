@@ -68,7 +68,7 @@ awx_sftp_auth_method: 'Disabled'
 awx_sftp_password: ''
 awx_sftp_public_key: ''
 ```
-
+- Re-provision all servers.
 
 # GoMatrixHosting v0.6.1
 
