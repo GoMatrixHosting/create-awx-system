@@ -11,6 +11,10 @@
 
 - Update variable names in every matrix_vars.yml:
 ```
+# ls /var/lib/awx/projects/clients/*/*/matrix_vars.yml
+```
+Edit so that:
+```
 # AWX Settings Start
 matrix_awx_enabled: true
 matrix_awx_janitor_user_password: 6304d28ed0f56397c4de241a634ab845
@@ -21,6 +25,20 @@ matrix_awx_mjolnir_user_password: 87b86cf34d4ad1ce5cd0910fd0de3e77
 matrix_awx_mjolnir_user_created: true
 matrix_awx_backup_enabled: falses
 # AWX Settings End
+...
+# Element Settings Start
+matrix_client_element_branding_welcomeBackgroundUrl: https://i.imgur.com/wDTXQtz.jpg
+# Element Settings End
+...
+# Corporal Settings Start
+matrix_corporal_enabled: false
+matrix_corporal_policy_provider_mode: 'Simple Static File'
+matrix_corporal_simple_static_config: ''
+matrix_corporal_pull_mode_uri: 'https://intranet.example.com/matrix/policy'
+matrix_corporal_raise_ratelimits: 'Raised'
+matrix_corporal_pull_mode_token: ''
+matrix_corporal_http_api_auth_token: ''
+# Corporal Settings End
 ...
 # Custom Settings Start
 ext_recaptcha_private_key: "private-key"
@@ -51,6 +69,10 @@ awx_mjolnir_user_created: true
 awx_backup_enabled: falses
 # AWX Settings End
 ...
+# Element Settings Start
+matrix_client_element_branding_welcomeBackgroundUrl: 'https://i.imgur.com/wDTXQtz.jpg'
+# Element Settings End
+...
 # ma1sd Settings Start
 ...
 # https://github.com/ma1uta/ma1sd/blob/master/docs/stores/README.md
@@ -67,6 +89,16 @@ awx_federation_whitelist: []
 awx_url_preview_accept_language_default: ["en"]
 # Synapse Settings End
 ...
+# Corporal Settings Start
+matrix_corporal_enabled: false
+awx_corporal_policy_provider_mode: 'Simple Static File'
+awx_corporal_simple_static_config: ''
+awx_corporal_pull_mode_uri: 'https://intranet.example.com/matrix/policy'
+awx_corporal_raise_ratelimits: 'Raised'
+awx_corporal_pull_mode_token: ''
+awx_corporal_http_api_auth_token: ''
+# Corporal Settings End
+...
 # Dimension Settings Start
 ...
 awx_dimension_users: []
@@ -78,6 +110,18 @@ awx_sftp_auth_method: 'Disabled'
 awx_sftp_password: ''
 awx_sftp_public_key: ''
 # Custom Settings End
+```
+Also edit variable names in:
+```
+# ls /var/lib/awx/projects/clients/*/*/borg_backup.yml
+```
+Replacing:
+```
+matrix_awx_backup_encryption_passphrase: dec7543661db8e84258aebce0cbecec4
+```
+With:
+```
+awx_backup_encryption_passphrase: dec7543661db8e84258aebce0cbecec4
 ```
 - Re-provision all servers.
 
