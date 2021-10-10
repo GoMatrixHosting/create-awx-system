@@ -6,7 +6,7 @@ A guide on how to recover a client's server.
 1) Locate the borg backups password.
 
 root@AWX7-panel:~# cat /var/lib/awx/projects/backups/stevesubway.xyz-borg_backup.yml 
-matrix_awx_backup_encryption_passphrase: 0ba70e6786d0acc54c116c68a5a73d2c
+awx_backup_encryption_passphrase: 0ba70e6786d0acc54c116c68a5a73d2c
 
 
 2) Restore backup of /matrix from borg repo:

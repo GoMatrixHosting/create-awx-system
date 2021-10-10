@@ -4,69 +4,80 @@
 - Add new options to '0 - Configure Element' to alter the logo, logo link, headline and text. See [#22](https://gitlab.com/GoMatrixHosting/gomatrixhosting-matrix-docker-ansible-deploy/-/issues/22).
 - Added alternative method for generating master token if it fails. See [this reddit thread](https://www.reddit.com/r/awx/comments/lastzb/awx_failed_to_get_token_the_read_operation_times/).
 - Fix fragmented variable names, AWX related variables all begin with 'awx_' now.
+- Batch up self-check tag tasks for easier reading.
 
 
 # Upgrade Notes v0.6.2
 
 - Update variable names in every matrix_vars.yml:
 ```
-# Configure Website + Access Backup
-customise_base_domain_website: false
-sftp_password: ""
+# AWX Settings Start
+matrix_awx_enabled: true
+matrix_awx_janitor_user_password: 6304d28ed0f56397c4de241a634ab845
+matrix_awx_janitor_user_created: true
+matrix_awx_dimension_user_password: e3373a103ecbf9c66d8a802540e2a4f8
+matrix_awx_dimension_user_created: true
+matrix_awx_mjolnir_user_password: 87b86cf34d4ad1ce5cd0910fd0de3e77
+matrix_awx_mjolnir_user_created: true
+matrix_awx_backup_enabled: falses
+# AWX Settings End
 ...
-# Configure Element
-...
-element_subdomain: 'element'
-...
-# Configure Synapse
-ext_registrations_require_3pid: false
-ext_enable_registration_captcha: false
-ext_recaptcha_public_key: public-key
-ext_recaptcha_private_key: private-key
-...
-# Custom Variables
-matrix_synapse_auto_join_rooms: []
-ext_federation_whitelist_raw: []
-ext_url_preview_accept_language_default: ["en"]
-# https://github.com/ma1uta/ma1sd/blob/master/docs/stores/README.md
-ext_matrix_ma1sd_auth_store: 'Synapse Internal'
-ext_matrix_ma1sd_configuration_extension_yaml: ["matrix_ma1sd_configuration_extension_yaml: |", "  ldap:", "    enabled: true", "    connection:", "      host: ldapHostnameOrIp", "      tls: false", "      port: 389", "      baseDNs: [\'OU=Users,DC=example,DC=org\']", "      bindDn: CN=My ma1sd User,OU=Users,DC=example,DC=org", "      bindPassword: TheUserPassword"]
+# Custom Settings Start
+ext_recaptcha_private_key: "private-key"
+ext_recaptcha_public_key: "public-key"
+ext_enable_registration_captcha: true
 sftp_auth_method: 'Disabled'
 sftp_password: ''
 sftp_public_key: ''
+customise_base_domain_website: false
+# https://github.com/ma1uta/ma1sd/blob/master/docs/stores/README.md
+ext_matrix_ma1sd_auth_store: 'Synapse Internal'
+ext_matrix_ma1sd_configuration_extension_yaml: ["matrix_ma1sd_configuration_extension_yaml: |", "  ldap:", "    enabled: true", "    connection:", "      host: ldapHostnameOrIp", "      tls: false", "      port: 389", "      baseDNs: [\'OU=Users,DC=example,DC=org\']", "      bindDn: CN=My ma1sd User,OU=Users,DC=example,DC=org", "      bindPassword: TheUserPassword"]
 ext_dimension_users_raw: []
+ext_federation_whitelist_raw: []
+ext_url_preview_accept_language_default: ["en"]
+# Custom Settings End
 ```
 becomes:
 ```
-# Configure Element
-awx_matrix_client_element_welcome_logo: ''
-awx_matrix_client_element_welcome_logo_link: ''
-awx_matrix_client_element_welcome_headline: ''
-awx_matrix_client_element_welcome_text: ''
-awx_element_subdomain: 'element'
+# AWX Settings Start
+matrix_awx_enabled: true
+awx_janitor_user_password: 6304d28ed0f56397c4de241a634ab845
+awx_janitor_user_created: true
+awx_dimension_user_password: e3373a103ecbf9c66d8a802540e2a4f8
+awx_dimension_user_created: true
+awx_mjolnir_user_password: 87b86cf34d4ad1ce5cd0910fd0de3e77
+awx_mjolnir_user_created: true
+awx_backup_enabled: falses
+# AWX Settings End
 ...
-# Configure Ma1sd
+# ma1sd Settings Start
+...
 # https://github.com/ma1uta/ma1sd/blob/master/docs/stores/README.md
 awx_matrix_ma1sd_auth_store: 'Synapse Internal'
 awx_matrix_ma1sd_configuration_extension_yaml: ["matrix_ma1sd_configuration_extension_yaml: |", "  ldap:", "    enabled: true", "    connection:", "      host: ldapHostnameOrIp", "      tls: false", "      port: 389", "      baseDNs: [\'OU=Users,DC=example,DC=org\']", "      bindDn: CN=My ma1sd User,OU=Users,DC=example,DC=org", "      bindPassword: TheUserPassword"]
+# ma1sd Settings End
 ...
-# Configure Synapse
-awx_registrations_require_3pid: false
+# Synapse Settings Start
+...
 awx_enable_registration_captcha: false
 awx_recaptcha_public_key: public-key
 awx_recaptcha_private_key: private-key
-awx_matrix_synapse_auto_join_rooms: []
-awx_federation_whitelist_raw: []
+awx_federation_whitelist: []
 awx_url_preview_accept_language_default: ["en"]
+# Synapse Settings End
 ...
-# Configure Dimension
-awx_dimension_users_raw: []
+# Dimension Settings Start
 ...
-# Custom Variables
+awx_dimension_users: []
+# Dimension Settings End
+...
+# Custom Settings Start
 awx_customise_base_domain_website: false
 awx_sftp_auth_method: 'Disabled'
 awx_sftp_password: ''
 awx_sftp_public_key: ''
+# Custom Settings End
 ```
 - Re-provision all servers.
 
