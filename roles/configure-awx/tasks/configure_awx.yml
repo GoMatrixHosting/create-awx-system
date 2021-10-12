@@ -7,6 +7,11 @@
     mode: '0755'
     state: directory
 
+- name: Include AWX master token from awx_tokens.yml
+  include_vars:
+    file: /tmp/awx_tokens.yml
+  no_log: True
+
 - name: Create a AWX session token for executing modules
   awx.awx.tower_token:
     description: 'AWX Session Token'

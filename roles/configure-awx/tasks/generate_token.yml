@@ -35,6 +35,12 @@
     tower_password: "{{ admin_password }}"
   when: awx_master_token_id is defined
 
+#- name: "Collect AWX admin token the hard way! Used if running into this error: https://www.reddit.com/r/awx/comments/lastzb/awx_failed_to_get_token_the_read_operation_times/"
+#  delegate_to: 127.0.0.1
+#  shell: |
+#      curl -sku {{ admin_username }}:{{ admin_password }} -H "Content-Type: application/json" -X POST -d '{"description":"Tower CLI", "application":null, "scope":"write"}' https://{{ awx_url }}/api/v2/users/1/personal_tokens/ | jq '.token' | sed -r 's/\"//g'
+#  register: awx_token
+
 - name: Create the master token using username/password
   awx.awx.tower_token:
     description: 'AWX Master Token'
@@ -55,6 +61,7 @@
     state: present
   with_dict:
     'awx_master_token': '{{ awx_master_token_creation.ansible_facts.tower_token.token }}'
+#    'awx_master_token': '{{ awx_token.stdout }}'
 
 - name: Add awx_master_token_id line to awx_tokens.yml file on AWX
   lineinfile:
@@ -66,7 +73,9 @@
     state: present
   with_dict:
     'awx_master_token_id': '{{ awx_master_token_creation.ansible_facts.tower_token.id }}'
-    
+#    'awx_master_token_id': 'null'
+# If used the id needs to be hard coded in before re-running this tasklist!
+
 - name: Fetch the awx_tokens.yml variable from AWX again
   fetch:
     src: /var/lib/awx/projects/hosting/awx_tokens.yml
