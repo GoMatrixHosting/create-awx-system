@@ -5,6 +5,7 @@
 - Added alternative method for generating master token if it fails. See [this reddit thread](https://www.reddit.com/r/awx/comments/lastzb/awx_failed_to_get_token_the_read_operation_times/).
 - Fix fragmented variable names, AWX related variables all begin with 'awx_' now.
 - Batch up self-check tag tasks for easier reading.
+- Remove whitespaces entered into matrix_domain before provision. See [#13](https://gitlab.com/GoMatrixHosting/ansible-provision-server/-/issues/13).
 
 
 # Upgrade Notes v0.6.2
@@ -25,10 +26,6 @@ matrix_awx_mjolnir_user_password: 87b86cf34d4ad1ce5cd0910fd0de3e77
 matrix_awx_mjolnir_user_created: true
 matrix_awx_backup_enabled: falses
 # AWX Settings End
-...
-# Element Settings Start
-matrix_client_element_branding_welcomeBackgroundUrl: https://i.imgur.com/wDTXQtz.jpg
-# Element Settings End
 ...
 # Corporal Settings Start
 matrix_corporal_enabled: false
@@ -69,10 +66,6 @@ awx_mjolnir_user_created: true
 awx_backup_enabled: falses
 # AWX Settings End
 ...
-# Element Settings Start
-matrix_client_element_branding_welcomeBackgroundUrl: 'https://i.imgur.com/wDTXQtz.jpg'
-# Element Settings End
-...
 # ma1sd Settings Start
 ...
 # https://github.com/ma1uta/ma1sd/blob/master/docs/stores/README.md
@@ -111,7 +104,7 @@ awx_sftp_password: ''
 awx_sftp_public_key: ''
 # Custom Settings End
 ```
-Also edit variable names in:
+- Also edit variable names in:
 ```
 # ls /var/lib/awx/projects/clients/*/*/borg_backup.yml
 ```
@@ -123,6 +116,7 @@ With:
 ```
 awx_backup_encryption_passphrase: dec7543661db8e84258aebce0cbecec4
 ```
+- Also edit every provision jobs survey renaming `element_subdomain` to `awx_element_subdomain`.
 - Re-provision all servers.
 
 # GoMatrixHosting v0.6.1
