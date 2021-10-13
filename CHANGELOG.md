@@ -1,4 +1,9 @@
 
+# GoMatrixHosting v0.6.3
+
+- Automate generation of User Manuals from .odt file.
+
+
 # GoMatrixHosting v0.6.2
 
 - Add new options to '0 - Configure Element' to alter the logo, logo link, headline and text. See [#22](https://gitlab.com/GoMatrixHosting/gomatrixhosting-matrix-docker-ansible-deploy/-/issues/22).
