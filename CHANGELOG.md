@@ -1,7 +1,17 @@
 
 # GoMatrixHosting v0.6.3
 
-- Automate generation of User Manuals from .odt file.
+- Automate generation of User Manuals from .odt file. See [#20](https://gitlab.com/GoMatrixHosting/create-awx-system/-/issues/20).
+- Minor fixes to the still broken Corporal section.
+- Add Discord AppService Bridge section. See [#9](https://gitlab.com/GoMatrixHosting/ansible-create-delete-subscription-membership/-/issues/9).
+
+
+# Upgrade Notes v0.6.3
+
+- Update every subscriptions matrix_vars.yml to include the new dividers:
+```
+echo '# Bridge Discord AppService Start\n# Bridge Discord AppService End' >> /var/lib/awx/projects/clients/*/*/matrix_vars.yml
+```
 
 
 # GoMatrixHosting v0.6.2
