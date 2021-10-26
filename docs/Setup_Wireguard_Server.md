@@ -3,10 +3,10 @@
 
 A guide for configuring a wireguard proxy for a Matrix server with networking/firewall issues. The AWX tower will be able to SSH into the wireguard client via port 2222 afterwards and deploy the Matrix server.
 
-1) Create a Debian 10 machine for the wireguard server, it only needs 1GB of RAM. Add the AWX hosts public SSH key to it.
+1) Create a Debian 10 machine for the wireguard server, it only needs 1GB of RAM. Add the AWX clients public SSH key to it.
 
 
-2) Create a Debian 10 machine for the wireguard client. Add the AWX hosts public SSH key to it.
+2) Create a Debian 10 machine for the wireguard client. Add the AWX clients public SSH key to it.
 
 
 3) Ensure that the 'On-Premises' subscription is already created so you have the subscription_id.
@@ -31,9 +31,13 @@ root@wg-client:# git clone https://github.com/voidstarzero/wg-ifupdown
 root@wg-client:# cd wg-ifupdown
 root@wg-client:# ./install.sh
 
+# For Debian 10:
 root@wg-client:# echo 'deb http://deb.debian.org/debian buster-backports main' >> /etc/apt/sources.list
 root@wg-client:# apt update
 root@wg-client:# apt install wireguard/buster-backports
+
+# For Debian 11:
+root@wg-client:# apt install wireguard
 
 
 7) Copy wireguard keys over to client machine.
@@ -58,11 +62,7 @@ iface wg0 inet static
     wg-listen-port 51820
     wg-fwmark 42
     address 192.168.99.2/24
-#    wg-config-file /etc/wireguard/wg0/config
-#    wg-config-file /etc/wireguard/example-peers.conf
     wg-autoroute no
-#    wg-addroute 198.51.100.0/24
-#    wg-addroute 203.0.113.0/24
 # see https://www.wireguard.com/netns/#improved-rule-based-routing
     post-up ip route add default dev wg0 table 2468
     post-up ip rule add not fwmark 42 table 2468

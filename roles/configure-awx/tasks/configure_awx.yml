@@ -118,6 +118,8 @@
     description: "The AWX server itself."
     inventory: "{{ org_name }} [Admin]"
     state: present
+    variables:
+      ansible_connection: local
     tower_host: "https://{{ awx_url }}"
     tower_oauthtoken: "{{ awx_session_token.ansible_facts.tower_token.token }}"
     validate_certs: yes

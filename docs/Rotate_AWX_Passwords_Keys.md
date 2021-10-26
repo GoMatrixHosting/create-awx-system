@@ -127,7 +127,7 @@ $ rm /root/.ssh/borg_backup_ed25519.pub
 
 15) Run every '0 - XXX - Provision Wireguard Server' job but change the following extra variable:
 ```
-"update_ssh_key": "False"
+"update_ssh_key": "True"
 ```
 
 
