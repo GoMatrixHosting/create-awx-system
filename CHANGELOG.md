@@ -1,4 +1,14 @@
 
+# GoMatrixHosting v0.6.4
+
+- Fix FreeRADIUS/OAuth timeout issue. See [#21](https://gitlab.com/GoMatrixHosting/create-awx-system/-/issues/21).
+
+
+# Upgrade Notes v0.6.4
+
+- Re-install AWX.
+
+
 # GoMatrixHosting v0.6.3
 
 - Automate generation of User Manuals from .odt file. See [#20](https://gitlab.com/GoMatrixHosting/create-awx-system/-/issues/20).
@@ -10,8 +20,15 @@
 
 - Update every subscriptions matrix_vars.yml to include the new dividers:
 ```
-echo '# Bridge Discord AppService Start\n# Bridge Discord AppService End' >> /var/lib/awx/projects/clients/*/*/matrix_vars.yml
+$ ls /var/lib/awx/projects/clients/*/*/matrix_vars.yml
+/var/lib/awx/projects/clients/user1/T-GD69EWZ4TRQ/matrix_vars.yml
+/var/lib/awx/projects/clients/user2/T-DBLN3HX5SCV0/matrix_vars.yml
+...
+$ printf '# Bridge Discord AppService Start\n# Bridge Discord AppService End\n' >> /var/lib/awx/projects/clients/user1/T-GD69EWZ4TRQ/matrix_vars.yml
+$ printf '# Bridge Discord AppService Start\n# Bridge Discord AppService End\n' >> /var/lib/awx/projects/clients/user2/T-DBLN3HX5SCV0/matrix_vars.yml
+...
 ```
+- Re-provision all servers.
 
 
 # GoMatrixHosting v0.6.2

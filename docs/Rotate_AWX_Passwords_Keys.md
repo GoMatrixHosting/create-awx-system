@@ -125,17 +125,23 @@ $ rm /root/.ssh/borg_backup_ed25519.pub
 14) Add the new client public key to your [DigitalOcean account settings](https://cloud.digitalocean.com/account/security).
 
 
-15) Run the '00 - Rotate SSH Keys' job as the AWX admin.
+15) Run every '0 - XXX - Provision Wireguard Server' job but change the following extra variable:
+```
+"update_ssh_key": "False"
+```
 
 
-16) Delete existing client backup ssh keys of every server from the AWX server:
+16) Run the '00 - Rotate SSH Keys' job as the AWX admin.
+
+
+17) Delete existing client backup ssh keys of every server from the AWX server:
 ```
 $ rm /var/lib/awx/projects/clients/*/*/borg_backup_ed25519
 $ rm /var/lib/awx/projects/clients/*/*/borg_backup_ed25519.pub
 ```
 
 
-17) Run the '00 - Reprovision All Servers' job template.
+18) Run the '00 - Reprovision All Servers' job template.
 
 
-18) Update the public SSH key on the front-end website for on-premises users.
+19) Update the public SSH key on the front-end website for on-premises users.
