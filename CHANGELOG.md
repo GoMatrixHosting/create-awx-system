@@ -2,11 +2,14 @@
 # GoMatrixHosting v0.6.4
 
 - Fix FreeRADIUS/OAuth timeout issue. See [#21](https://gitlab.com/GoMatrixHosting/create-awx-system/-/issues/21).
+- Upgraded Wireguard servers to support Debian 11.
+- Added missing "ansible_connection: local" variable to AWX admins localhost.
 
 
 # Upgrade Notes v0.6.4
 
 - Re-install AWX.
+- Re-provision all servers.
 
 
 # GoMatrixHosting v0.6.3

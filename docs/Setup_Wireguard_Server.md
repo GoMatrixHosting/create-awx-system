@@ -3,10 +3,10 @@
 
 A guide for configuring a wireguard proxy for a Matrix server with networking/firewall issues. The AWX tower will be able to SSH into the wireguard client via port 2222 afterwards and deploy the Matrix server.
 
-1) Create a Debian 10 machine for the wireguard server, it only needs 1GB of RAM. Add the AWX clients public SSH key to it.
+1) Create a Debian 10/11 machine for the wireguard server, it only needs 1GB of RAM. Add the AWX clients public SSH key to it.
 
 
-2) Create a Debian 10 machine for the wireguard client. Add the AWX clients public SSH key to it.
+2) Create a Debian 10/11 machine for the wireguard client. Add the AWX clients public SSH key to it.
 
 
 3) Ensure that the 'On-Premises' subscription is already created so you have the subscription_id.
@@ -111,6 +111,6 @@ PING 192.168.99.1 (192.168.99.1) 56(84) bytes of data.
 64 bytes from 192.168.99.1: icmp_seq=2 ttl=64 time=54.7 ms
 
 
-11) Remove the 'setup-firewall' tag then run 'Provision a New Server', enter the external IP of the wireguard server into the survey. 
+12) Remove the 'setup-firewall' tag then run 'Provision a New Server', enter the external IP of the wireguard server into the survey. 
 
 
