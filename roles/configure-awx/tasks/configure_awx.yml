@@ -9,7 +9,7 @@
 
 - name: Include AWX master token from awx_tokens.yml
   include_vars:
-    file: /tmp/awx_tokens.yml
+    file: /var/lib/awx/projects/hosting/awx_tokens.yml
   no_log: True
 
 - name: Create a AWX session token for executing modules
