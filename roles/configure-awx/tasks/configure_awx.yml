@@ -7,6 +7,12 @@
     mode: '0755'
     state: directory
 
+- name: Fetch the awx_tokens.yml variable from AWX again
+  fetch:
+    src: /var/lib/awx/projects/hosting/awx_tokens.yml
+    dest: /tmp/awx_tokens.yml
+    flat: yes
+
 - name: Include AWX master token from awx_tokens.yml
   include_vars:
     file: /tmp/awx_tokens.yml
@@ -118,6 +124,8 @@
     description: "The AWX server itself."
     inventory: "{{ org_name }} [Admin]"
     state: present
+    variables:
+      ansible_connection: local
     tower_host: "https://{{ awx_url }}"
     tower_oauthtoken: "{{ awx_session_token.ansible_facts.tower_token.token }}"
     validate_certs: yes
@@ -463,9 +471,9 @@
 - name: Install awx.awx collection in AWX docker
   command: docker exec awx_task /bin/bash -l -c "ansible-galaxy collection install --force awx.awx:17.1.0"
 
-# v1.10.0 is known good https://github.com/ansible-collections/community.digitalocean/releases/tag/1.10.0 , waiting for 1.11.0 release
+# v1.10.0 is known good https://github.com/ansible-collections/community.digitalocean/releases/tag/1.10.0 , testing 1.11.0 release
 - name: Install community.digitalocean collection in AWX docker
-  command: docker exec awx_task /bin/bash -l -c "ansible-galaxy collection install --force community.digitalocean"
+  command: docker exec awx_task /bin/bash -l -c "ansible-galaxy collection install --force community.digitalocean:1.11.0"
 
 # v1.9.4 is known good https://github.com/ansible-collections/community.crypto/tags
 - name: Install community.crypto collection in AWX docker

@@ -19,6 +19,7 @@
 #
 exec {
 	wait = yes
+	timeout = 30
 	input_pairs = request
         program = "/usr/local/bin/oauth2-oracle.py"
 }

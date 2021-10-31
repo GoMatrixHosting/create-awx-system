@@ -50,14 +50,12 @@ $ rsync -av ./awx panel.example.org:/root/
 6) Modify the python package Radius uses, and increase its timeout value:
 ```
 # docker exec -it awx_web /bin/bash
-bash-4.4# . ./var/lib/awx/venv/awx/bin/activate
-(awx) bash-4.4# rm -r /var/lib/awx/venv/awx/lib/python3.6/site-packages/pyrad/__pycache__
-(awx) bash-4.4# vi /var/lib/awx/venv/awx/lib/python3.6/site-packages/pyrad/client.py
+bash-4.4# vi /var/lib/awx/venv/awx/lib/python3.6/site-packages/pyrad/client.py && rm -r /var/lib/awx/venv/awx/lib/python3.6/site-packages/pyrad/__pycache__
 ```
 
-Change timeout value to 20:
+Change timeout value to 30:
 ```
-        self.timeout = 20
+        self.timeout = 30
 ```
 
 7) Continue from step 4 of /docs/Installation_AWX.md.

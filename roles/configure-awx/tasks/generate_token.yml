@@ -76,13 +76,3 @@
 #    'awx_master_token_id': 'null'
 # If used the id needs to be hard coded in before re-running this tasklist!
 
-- name: Fetch the awx_tokens.yml variable from AWX again
-  fetch:
-    src: /var/lib/awx/projects/hosting/awx_tokens.yml
-    dest: /tmp/awx_tokens.yml
-    flat: yes
-
-- name: Load the new AWX master token from awx_tokens.yml
-  include_vars:
-    file: /tmp/awx_tokens.yml
-  no_log: True
