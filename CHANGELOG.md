@@ -3,6 +3,7 @@
 
 - Fix FreeRADIUS/OAuth timeout issue. See [#21](https://gitlab.com/GoMatrixHosting/create-awx-system/-/issues/21).
 - Upgraded Wireguard servers to support Debian 11.
+- Update 'Rotate_SSH_Keys.md' doc to include Wireguard server SSH rotation.
 - Added missing "ansible_connection: local" variable to AWX admins localhost.
 
 

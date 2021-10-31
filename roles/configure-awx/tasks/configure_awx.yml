@@ -7,9 +7,15 @@
     mode: '0755'
     state: directory
 
+- name: Fetch the awx_tokens.yml variable from AWX again
+  fetch:
+    src: /var/lib/awx/projects/hosting/awx_tokens.yml
+    dest: /tmp/awx_tokens.yml
+    flat: yes
+
 - name: Include AWX master token from awx_tokens.yml
   include_vars:
-    file: /var/lib/awx/projects/hosting/awx_tokens.yml
+    file: /tmp/awx_tokens.yml
   no_log: True
 
 - name: Create a AWX session token for executing modules
