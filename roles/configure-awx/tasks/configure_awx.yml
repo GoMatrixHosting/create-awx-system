@@ -336,11 +336,13 @@
 - name: Create '00 - Deploy/Update All Servers' job template
   awx.awx.tower_job_template:
     name: "00 - Deploy/Update All Servers"
-    description: "Checks for updates hourly, if ones available it applies it to every Matrix server connected to AWX."
+    description: "Checks for updates regularly, if ones available it updates SCM projects for deploy stage jobs, then applies that update to every Matrix server connected to AWX."
     job_type: run
     inventory: "{{ org_name }} [Admin]"
     project: "Ansible Create Delete Subscription Membership"
     playbook: deploy_all.yml
+    survey_enabled: true
+    survey_spec: "{{ lookup('file', '{{ role_path }}/surveys/deploy_update_all.json') }}"
     state: present
     verbosity: 1
     tower_host: "https://{{ awx_url }}"
@@ -380,9 +382,9 @@
   command: cat /etc/timezone
   register: timezone_output
 
-- name: Create an rrule string for a daily schedule
+- name: Create an rrule string for a daily backup schedule
   set_fact:
-    rrule_line_daily: "DTSTART;TZID={{ timezone_output.stdout }}:20200101T000000 RRULE:FREQ=WEEKLY;INTERVAL=1;BYDAY=SU,MO,TU,WE,TH,FR,SA"
+    rrule_line_daily: "DTSTART;TZID={{ timezone_output.stdout }}:{{ backup_schedule_start }} RRULE:FREQ={{ backup_schedule_frequency }};INTERVAL={{ backup_schedule_interval }}"
 
 - name: Build a schedule for '00 - Backup All Servers' job template
   awx.awx.tower_schedule:
@@ -397,7 +399,7 @@
 
 - name: Create an rrule string for a hourly schedule
   set_fact:
-    rrule_line_hourly: "DTSTART;TZID={{ timezone_output.stdout }}:20200101T000000 RRULE:FREQ=HOURLY;INTERVAL=1"
+    rrule_line_hourly: "DTSTART;TZID={{ timezone_output.stdout }}:{{ update_schedule_start }} RRULE:FREQ={{ update_schedule_frequency }};INTERVAL={{ update_schedule_interval }}"
 
 - name: Build a schedule for '00 - Deploy/Update All Servers' job template
   awx.awx.tower_schedule:
@@ -473,7 +475,7 @@
 
 # v1.10.0 is known good https://github.com/ansible-collections/community.digitalocean/releases/tag/1.10.0 , testing 1.11.0 release
 - name: Install community.digitalocean collection in AWX docker
-  command: docker exec awx_task /bin/bash -l -c "ansible-galaxy collection install --force community.digitalocean:1.11.0"
+  command: docker exec awx_task /bin/bash -l -c "ansible-galaxy collection install --force community.digitalocean"
 
 # v1.9.4 is known good https://github.com/ansible-collections/community.crypto/tags
 - name: Install community.crypto collection in AWX docker

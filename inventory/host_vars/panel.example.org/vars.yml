@@ -19,6 +19,11 @@ pg_password: << strong-password >>
 admin_password: << strong-password >>
 delete_subscription_hours_delay: 48
 
+# Update/Deploy All Settings
+client_update_start: '20200101T000000'
+client_update_frequency: 'HOURLY'
+client_update_interval: 1
+
 # Repository Settings
 create_delete_source: https://gitlab.com/GoMatrixHosting/ansible-create-delete-subscription-membership.git
 create_delete_branch: master
@@ -53,6 +58,9 @@ backup_private_ssh_key: /key/location/client_id_ed25519
 backup_public_ssh_key: /key/location/client_id_ed25519.pub
 backup_server_ssh_fingerprint: '180.255.91.58 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOdNgn7zqlpWIsiTV91QLEtRnXH18uMC27zVJYHsql/D'
 backup_server_days_retention: 28
+backup_schedule_start: 20200101T000000
+backup_schedule_frequency: 'DAILY'
+backup_schedule_interval: 1
 
 # FreeRADIUS
 radius_secret: << strong-password >>

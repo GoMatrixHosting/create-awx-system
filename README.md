@@ -28,6 +28,13 @@ This Ansible playbook can be improved in the following ways:
 - Someone should fork it! :)
 
 
+## Forking Notes
+
+If you're forking this software please follow our [gitlab.com repositories](https://gitlab.com/GoMatrixHosting), our github.com mirrors are not as accurate.
+
+Also be sure to follow the [Upgrade Notes](https://gitlab.com/GoMatrixHosting/create-awx-system/-/blob/master/CHANGELOG.md) that are published for every release, if you don't do this you'll encounter a lot of strange errors we probably won't help you with.
+
+
 ## Contact Us
 
 - General room: [#general:gomatrixhosting.com](https://matrix.to/#/#general:gomatrixhosting.com)

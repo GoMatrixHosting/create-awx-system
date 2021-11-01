@@ -1,0 +1,18 @@
+{
+  "name": "Deploy/Update All Servers",
+  "description": "Checks for updates regularly, if ones available it updates SCM projects for deploy stage jobs, then applies that update to every Matrix server connected to AWX.",
+  "spec": [
+    {
+      "question_name": "Force Upgrade",
+      "question_description": "Skips checking the repository, forces SCM update for deploy stage projects, then forces an upgrade on every Matrix server connected to AWX.",
+      "required": true,
+      "min": null,
+      "max": null,
+      "default": "false",
+      "choices": "true\nfalse",
+      "new_question": true,
+      "variable": "force_update",
+      "type": "multiplechoice"
+    }
+  ]
+}

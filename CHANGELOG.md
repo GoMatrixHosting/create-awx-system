@@ -1,4 +1,27 @@
 
+# GoMatrixHosting v0.6.5
+
+- Upgraded the '00 - Deploy/Update All Servers Schedule' and '00 - Backup All Servers' so that they can now set more dynamic hourly, daily, weekly or monthly schedules. See [#23](https://gitlab.com/GoMatrixHosting/create-awx-system/-/issues/23).
+- Add 'Force Upgrade' survey option to '00 - Deploy/Update All Servers' allowing the AWX admin to skip the repository check.
+
+
+# Upgrade Notes v0.6.5
+
+- Add the following new vars.yml sections to create-awx-system:
+```
+# Update/Deploy All Settings
+client_update_start: '20200101T000000'
+client_update_frequency: 'HOURLY'
+client_update_interval: 1
+...
+# Backup Server Settings
+backup_schedule_start: 20200101T000000
+backup schedule_frequency: 'DAILY'
+backup_schedule_interval: 1
+```
+- Re-install AWX.
+
+
 # GoMatrixHosting v0.6.4
 
 - Fix FreeRADIUS/OAuth timeout issue. See [#21](https://gitlab.com/GoMatrixHosting/create-awx-system/-/issues/21).
