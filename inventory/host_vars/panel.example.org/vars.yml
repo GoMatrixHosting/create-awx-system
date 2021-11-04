@@ -20,9 +20,9 @@ admin_password: << strong-password >>
 delete_subscription_hours_delay: 48
 
 # Update/Deploy All Settings
-client_update_start: '20200101T000000'
-client_update_frequency: 'HOURLY'
-client_update_interval: 1
+update_schedule_start: '20200101T000000'
+update_schedule_frequency: 'HOURLY'
+update_schedule_interval: 1
 
 # Repository Settings
 create_delete_source: https://gitlab.com/GoMatrixHosting/ansible-create-delete-subscription-membership.git
