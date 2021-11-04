@@ -40,6 +40,9 @@ Record these variables to ./inventory/host_vars/panel.example.org/vars.yml:
 - pg_password			(Strong password for the AWX database.)
 - admin_password 		(Strong password for the AWX admin user.)
 - delete_subscription_hours_delay	(The number of hours to delay the subscription deletion.)
+- update_schedule_start		(The start time for scheduled client updates in 'YYYYMMDDTHHMMSS' format, for example '20211030T080000' which means the 30th of October 2021 at 8AM.)
+- update_schedule_frequency	(The time period for scheduled client updates, options are 'MINUTELY', 'HOURLY', 'DAILY', 'WEEKLY','MONTHLY')
+- update_schedule_interval	(The number of minutes/hours/days/weeks/months to schedule client updates to.)
 - create_delete_source		(Repository URL for 'Ansible Create Delete Subscription Membership'.)
 - create_delete_branch		(Branch of this repository to use.)
 - provision_source		(Repository URL for 'Ansible Provision'.)
@@ -53,14 +56,17 @@ Record these variables to ./inventory/host_vars/panel.example.org/vars.yml:
 
 If you will be using a backup server, also define:
 - backup_server_enabled		('true' if using a backup server, otherwise 'false')
-If 'false' you can skip these:
+If not you can skip these:
 - backup_server_ip 		(IP address of the backup server.)
 - backup_server_hostname 	(The hostname of the backup server.)
 - backup_server_user 		(The username of the backup server.)
 - backup_server_directory 	(The directory to backup to on the backup server.)
 - backup_server_location:	(The location of the backup server.)
 - backup_awx_encryption_passphrase 	(Strong password for the AWX borg backup.)
-- vault_unlock_borg_passwords	(Strong password to vault the clients borg backup keys.)
+- backup_server_ssh_fingerprint (The host SSH fingerprint of your backup server.)
+- backup_schedule_start		(The start time for scheduled client backups in 'YYYYMMDDTHHMMSS' format, for example '20211030T080000' which means the 30th of October 2021 at 8AM.)
+- backup_schedule_frequency	(The time period for scheduled client backups, options are 'MINUTELY', 'HOURLY', 'DAILY', 'WEEKLY','MONTHLY')
+- backup_schedule_interval	(The number of minutes/hours/days/weeks/months to schedule client backups to.)
 
 If using the Mailgun relay define these values, if not then enter placeholder values (eg: 1234): 
 - mg_sender_email_address	(The Mailgun email address. eg: "user@mail.example.org")
