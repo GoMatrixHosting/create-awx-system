@@ -4,6 +4,7 @@
 - Upgraded the '00 - Deploy/Update All Servers Schedule' and '00 - Backup All Servers' so that they can now set more dynamic hourly, daily, weekly or monthly schedules. See [#23](https://gitlab.com/GoMatrixHosting/create-awx-system/-/issues/23).
 - Add 'Force Upgrade' survey option to '00 - Deploy/Update All Servers' allowing the AWX admin to skip the repository check.
 - Added the following new repository: [gmhosting-external-tools](https://gitlab.com/GoMatrixHosting/gmhosting-external-tools)
+- Added forking notes to create-awx-system [README.md](https://gitlab.com/GoMatrixHosting/create-awx-system/-/blob/master/README.md)
 
 
 # Upgrade Notes v0.6.5
