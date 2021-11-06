@@ -2,6 +2,7 @@
 # GoMatrixHosting v0.6.6
 
 - Tested new upgrade-distro tool for upgrading clients to Debian 11.
+- Add new '00 - Self-Check All Servers' template for mass testing.
 
 
 # Upgrade Notes v0.6.6
