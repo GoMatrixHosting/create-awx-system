@@ -412,6 +412,20 @@
     tower_oauthtoken: "{{ awx_session_token.ansible_facts.tower_token.token }}"
     validate_certs: yes
 
+- name: Create '00 - Self-Check All Servers' job template
+  awx.awx.tower_job_template:
+    name: "00 - Self-Check All Servers"
+    description: "Runs self-check template for every subscription."
+    job_type: run
+    inventory: "{{ org_name }} [Admin]"
+    project: "Ansible Create Delete Subscription Membership"
+    playbook: self_check_all.yml
+    state: present
+    verbosity: 1
+    tower_host: "https://{{ awx_url }}"
+    tower_oauthtoken: "{{ awx_session_token.ansible_facts.tower_token.token }}"
+    validate_certs: yes
+
 - name: Create '00 - Restore and Import Postgresql Dump' job template
   awx.awx.tower_job_template:
     name: "00 - Restore and Import Postgresql Dump"

@@ -7,6 +7,7 @@
 # Upgrade Notes v0.6.6
 
 - Upgrade all client machines to Debian 11:
+```
   1 - Run '00 - Backup All Servers' template, ensure backup was successful.
   2 - Run '0 - Self-Check' on each client server.
   3 - Run the upgrade script across each client server:
@@ -14,12 +15,21 @@
   4 - Run '00 - Reprovision All Servers' template.
   5 - Force update with '00 - Deploy/Update All Servers' template.
   6 - Run '0 - Self-Check' on each client server, ensure it is successful.
-
+```
 - Upgrade all wireguard machines to Debian 11:
+```
   1 - Run the upgrade script across each client server:
   `$ ansible-playbook -i ./inventory/hosts upgrade_distro.yml`
   2 - Run every 'Provision Wireguard Server' template again.
-  3 - Run '0 - Self-Check' on eacch wireguarded server, ensure it is successful.
+  3 - Run '0 - Self-Check' on each wireguarded server, ensure it is successful.
+```
+- Update AWX system to use Debian 11, edit vars.yml:
+```
+# DigitalOcean Settings
+...
+do_image_master: debian-11-x64
+```
+- Re-install AWX.
 
 
 # GoMatrixHosting v0.6.5

@@ -52,7 +52,7 @@ client-public.key                                                               
 $ ssh matrix.mantismedical.xyz chmod 600 /etc/wireguard/wg0/client-private.key
 
 
-8) On the wireguard client adjust '/etc/network/interfaces.d/wg0' file:
+8) On the matrix server adjust '/etc/network/interfaces.d/wg0' file:
 
 ```
 auto wg0
@@ -70,7 +70,7 @@ iface wg0 inet static
 ```
 
 
-9) On the wireguard client adjust '/etc/wireguard/wg0/config' file, include content of the servers public key as well as the public IP:
+9) On the matrix server adjust '/etc/wireguard/wg0/config' file, include content of the wireguard servers public key as well as the wireguard servers public IP:
 
 $ ssh wireguard.mantismedical.xyz cat /etc/wireguard/wg0/server-public.key
 JWFWfaUESFw5KDbwFzPTESiUIfall6n8wciluxJaI0o=
