@@ -396,6 +396,19 @@
     tower_host: "https://{{ awx_url }}"
     tower_oauthtoken: "{{ awx_session_token.ansible_facts.tower_token.token }}"
     validate_certs: yes
+  when: backup_server_enabled | bool
+
+- name: Disable the schedule for '00 - Backup All Servers' if backups are disabled
+  awx.awx.tower_schedule:
+    name: "00 - Backup All Servers Schedule"
+    enabled: no
+    state: present
+    unified_job_template: "00 - Backup All Servers"
+    rrule: "{{ rrule_line_daily }}"
+    tower_host: "https://{{ awx_url }}"
+    tower_oauthtoken: "{{ awx_session_token.ansible_facts.tower_token.token }}"
+    validate_certs: yes
+  when: not backup_server_enabled | bool
 
 - name: Create an rrule string for a hourly schedule
   set_fact:

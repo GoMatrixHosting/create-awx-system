@@ -62,7 +62,7 @@ OR
 - server_ipv6: 2604:a880:800:c1::181:7001		[/matrix/awx/server_vars.yml]
 
 
-6) Observe 'subscription_id' in server_vars.yml, if it's a MemberPress subscription (Starts with I-) launch '00 - Ansible Create MP Subscription' with the above variables, otherwise if it's a manual subscription (Starts with T-) launch '00 - Ansible Create Manual Subscription'.
+6) Observe 'subscription_id' in server_vars.yml, if it's a MemberPress subscription (Starts with sub_) launch '00 - Ansible Create MP Subscription' with the above variables, otherwise if it's a manual subscription (Starts with T-) launch '00 - Ansible Create Manual Subscription'.
 
 
 7) Ensure the previous backup has been moved:
