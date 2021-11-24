@@ -1,4 +1,5 @@
-all: User_Manual.pdf User_Manual.md
+#all: User_Manual.pdf User_Manual.md (needs fixing)
+all: User_Manual.md
 	@true
 
 User_Manual.md: User_Manual.odt

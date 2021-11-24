@@ -1,4 +1,21 @@
 
+# GoMatrixHosting v0.6.6
+
+- Create new [recover-matrix-server](https://gitlab.com/GoMatrixHosting/gmhosting-external-tools/-/tree/main/recover-matrix-server) tool for automated recovery of Matrix servers. See [#1](https://gitlab.com/GoMatrixHosting/gmhosting-external-tools/-/issues/1).
+- Tested new [upgrade-distro tool](https://gitlab.com/GoMatrixHosting/gmhosting-external-tools/-/tree/main/upgrade-distro) for upgrading client servers to Debian 11. See [#7](https://gitlab.com/GoMatrixHosting/matrix-docker-ansible-deploy/-/issues/7).
+- Add new '00 - Self-Check All Servers' template for bulk testing.
+- Disable '00 - Backup All Servers' schedule if `backup_server_enabled: false`.
+- New clearer naming scheme for DigitalOcean droplets `{{ subscription_id }}-{{ matrix_domain }}`.
+- Changed default usernames for accounts `@janitor > @_janitor`, `@dimension > @_dimension`, `@mjolnir > @_mjolnir` so the client can use those usernames.
+- Added 10m timeout for calculating size of media repositories.
+
+
+# Upgrade Notes v0.6.6
+
+- Update all your DigitalOcean droplets to the new naming scheme.
+- Re-install AWX.
+
+
 # GoMatrixHosting v0.6.5
 
 - Upgraded the '00 - Deploy/Update All Servers Schedule' and '00 - Backup All Servers' so that they can now set more dynamic hourly, daily, weekly or monthly schedules. See [#23](https://gitlab.com/GoMatrixHosting/create-awx-system/-/issues/23).
