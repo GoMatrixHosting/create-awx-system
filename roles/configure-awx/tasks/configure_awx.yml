@@ -382,7 +382,7 @@
   command: cat /etc/timezone
   register: timezone_output
 
-- name: Create an rrule string for a daily backup schedule
+- name: Create an rrule string for '00 - Backup All Servers'
   set_fact:
     rrule_line_daily: "DTSTART;TZID={{ timezone_output.stdout }}:{{ backup_schedule_start }} RRULE:FREQ={{ backup_schedule_frequency }};INTERVAL={{ backup_schedule_interval }}"
 
@@ -410,7 +410,7 @@
     validate_certs: yes
   when: not backup_server_enabled | bool
 
-- name: Create an rrule string for a hourly schedule
+- name: Create an rrule string for the '00 - Deploy/Update All Servers'
   set_fact:
     rrule_line_hourly: "DTSTART;TZID={{ timezone_output.stdout }}:{{ update_schedule_start }} RRULE:FREQ={{ update_schedule_frequency }};INTERVAL={{ update_schedule_interval }}"
 

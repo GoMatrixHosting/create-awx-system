@@ -2,56 +2,15 @@
 # GoMatrixHosting v0.6.6
 
 - Tested new upgrade-distro tool for upgrading client servers to Debian 11.
-- Add new '00 - Self-Check All Servers' template for mass testing.
+- Add new '00 - Self-Check All Servers' template for bulk testing.
+- Disable '00 - Backup All Servers' schedule if `backup_server_enabled: false`.
+- New clearer naming scheme for DigitalOcean droplets `{{ subscription_id }}-{{ matrix_domain }}`.
+- Changed default usernames for accounts `@janitor > @_janitor`, `@dimension > @_dimension`, `@mjolnir > @_mjolnir` so the client can use those usernames.
 
 
 # Upgrade Notes v0.6.6
 
-- Run the 'configure-awx' tag from create-awx-system:
-`$ ansible-playbook -v -i ./inventory/hosts -t "configure-awx" post_setup.yml`
-- Upgrade all client machines to Debian 11:
-```
-  1 - Run '00 - Backup All Servers' template, ensure backup was successful.
-  2 - Run the new '00 - Self-Check All Servers', observe outputs.
-  3 - Run the upgrade script across each client server:
-  `$ ansible-playbook -i ./inventory/hosts upgrade_distro.yml`
-  4 - Run '00 - Reprovision All Servers' template.
-  
-- wireguarded matrix server bitching about python3-apt:
-"msg": "Could not import python modules: apt, apt_pkg. Please install python3-apt package."
-- i reboot it manually
-- same error... 
-- i run `$ sudo apt autoremove manually`
-
-  "stdout": "Reading package lists...\nBuilding dependency tree...\nReading state information...\nPackage python-apt is not available, but is referred to by another package.\nThis may mean that the package is missing, has been obsoleted, or\nis only available from another source\nHowever the following packages replace it:\n  python3-apt-dbg python3-apt python-apt-doc python-apt-common\n\n",
-  "cmd": "apt-get install --no-install-recommends python-apt -y -q"
-
-- i run `$ python3-apt-dbg python3-apt python-apt-doc python-apt-common`
-
-nope
-
-set interpreter in ansible.cfg, nope
-
-set interpreter in dummyvalue.com host vars, nope
-
-
-
-  5 - Force update with '00 - Deploy/Update All Servers' template.
-  6 - Run the new '00 - Self-Check All Servers' again, observe outputs.
-```
-- Upgrade all wireguard machines to Debian 11:
-```
-  1 - Run the upgrade script across each client server:
-  `$ ansible-playbook -i ./inventory/hosts upgrade_distro.yml`
-  2 - Run every 'Provision Wireguard Server' template again.
-  3 - Run the new '00 - Self-Check All Servers' again, observe outputs.
-```
-- Update AWX system to use Debian 11, edit vars.yml:
-```
-# DigitalOcean Settings
-...
-do_image_master: debian-11-x64
-```
+- Update all your DigitalOcean droplets to the new naming scheme.
 - Re-install AWX.
 
 
