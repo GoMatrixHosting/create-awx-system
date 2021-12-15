@@ -1,7 +1,7 @@
 
 ~~ Recover Matrix Server ~~
 
-# >> THIS GUIDE IS DEPRECATED, PLEASE USE THE NEW [recover-matrix-server](https://gitlab.com/GoMatrixHosting/gmhosting-external-tools/-/blob/main/recover-matrix-server/README.md) TOOL <<
+# >> THIS GUIDE IS DEPRECIATED, PLEASE USE THE NEW [recover-matrix-server](https://gitlab.com/GoMatrixHosting/gmhosting-external-tools/-/blob/main/recover-matrix-server/README.md) TOOL <<
 
 A guide on how to recover a client's server.
 
