@@ -5,7 +5,7 @@
   - Recovering into a new member_id.
   - Recovering into a different subscription type.
   - Recovering to a new DigitalOcean region or on-premises location.
-- Changed default usernames for accounts `@_janitor > @janitor_`, `@_dimension > @dimension_`, `@_mjolnir > @mjolnir_` due to `"Sending registration request...\nERROR! Received 400 Bad Request\nUser ID may not begin with _"` error.
+- Changed default usernames for accounts `@_janitor > @admin-janitor`, `@_dimension > @admin-dimension`, `@_mjolnir > @admin-mjolnir` due to `"Sending registration request...\nERROR! Received 400 Bad Request\nUser ID may not begin with _"` error.
 
 
 # GoMatrixHosting v0.6.6
