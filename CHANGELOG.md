@@ -1,11 +1,17 @@
 
 # GoMatrixHosting v0.6.7
 
-- Major updates to the [recover-matrix-server](https://gitlab.com/GoMatrixHosting/gmhosting-external-tools/-/tree/main/recover-matrix-server) tool for automated recovery of Matrix servers. See [#1](https://gitlab.com/GoMatrixHosting/gmhosting-external-tools/-/issues/1) tool. It now enables:
+- Major updates to the [recover-matrix-server](https://gitlab.com/GoMatrixHosting/gmhosting-external-tools/-/tree/main/recover-matrix-server) tool for automated recovery of Matrix servers. See [#1](https://gitlab.com/GoMatrixHosting/gmhosting-external-tools/-/issues/1) tool. It now allows:
   - Recovering into a new member_id.
   - Recovering into a different subscription type.
   - Recovering to a new DigitalOcean region or on-premises location.
+  - Preserving the previous subscriptions job templates history.
 - Changed default usernames for accounts `@_janitor > @admin-janitor`, `@_dimension > @admin-dimension`, `@_mjolnir > @admin-mjolnir` due to `"Sending registration request...\nERROR! Received 400 Bad Request\nUser ID may not begin with _"` error.
+
+
+# Upgrade Notes v0.6.7
+
+- Deploy/update all servers.
 
 
 # GoMatrixHosting v0.6.6
