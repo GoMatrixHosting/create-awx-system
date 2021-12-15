@@ -7,6 +7,7 @@
   - Recovering to a new DigitalOcean region or on-premises location.
   - Preserving the previous subscriptions job templates history.
 - Changed default usernames for accounts `@_janitor > @admin-janitor`, `@_dimension > @admin-dimension`, `@_mjolnir > @admin-mjolnir` due to `"Sending registration request...\nERROR! Received 400 Bad Request\nUser ID may not begin with _"` error.
+- Added async timeout for media-repo size calculation.
 
 
 # Upgrade Notes v0.6.7
