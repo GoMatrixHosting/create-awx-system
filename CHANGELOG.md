@@ -1,4 +1,13 @@
 
+# GoMatrixHosting v0.6.7
+
+- Major updates to the [recover-matrix-server](https://gitlab.com/GoMatrixHosting/gmhosting-external-tools/-/tree/main/recover-matrix-server) tool for automated recovery of Matrix servers. See [#1](https://gitlab.com/GoMatrixHosting/gmhosting-external-tools/-/issues/1) tool. It now enables:
+  - Recovering into a new member_id.
+  - Recovering into a different subscription type.
+  - Recovering to a new DigitalOcean region or on-premises location.
+- Changed default usernames for accounts `@_janitor > @janitor_`, `@_dimension > @dimension_`, `@_mjolnir > @mjolnir_` due to `"Sending registration request...\nERROR! Received 400 Bad Request\nUser ID may not begin with _"` error.
+
+
 # GoMatrixHosting v0.6.6
 
 - Create new [recover-matrix-server](https://gitlab.com/GoMatrixHosting/gmhosting-external-tools/-/tree/main/recover-matrix-server) tool for automated recovery of Matrix servers. See [#1](https://gitlab.com/GoMatrixHosting/gmhosting-external-tools/-/issues/1).
@@ -8,6 +17,7 @@
 - New clearer naming scheme for DigitalOcean droplets `{{ subscription_id }}-{{ matrix_domain }}`.
 - Changed default usernames for accounts `@janitor > @_janitor`, `@dimension > @_dimension`, `@mjolnir > @_mjolnir` so the client can use those usernames.
 - Added 10m timeout for calculating size of media repositories.
+- Fixed postgres version mismatch bug that was effecting backups.
 
 
 # Upgrade Notes v0.6.6
