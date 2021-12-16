@@ -12,6 +12,12 @@
 
 # Upgrade Notes v0.6.7
 
+- Edit matrix_vars.yml of every subscription so that:
+```
+awx_janitor_user_created: false
+awx_dimension_user_created: false
+awx_mjolnir_user_created: false
+```
 - Deploy/update all servers.
 
 
