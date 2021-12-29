@@ -1,4 +1,6 @@
 
+# GoMatrixHosting v0.6.8
+
 # GoMatrixHosting v0.6.7
 
 - Major updates to the [recover-matrix-server](https://gitlab.com/GoMatrixHosting/gmhosting-external-tools/-/tree/main/recover-matrix-server) tool that automatically recover Matrix servers connected to AWx. See [#1](https://gitlab.com/GoMatrixHosting/gmhosting-external-tools/-/issues/1) tool. It's now faster and allows:

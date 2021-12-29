@@ -1,5 +1,4 @@
 
-
 - name: Update repositories and all packages on target machine
   apt:
     name: "*"
@@ -9,7 +8,7 @@
   apt:
     pkg:
      - etckeeper
-     - ansible-tower-cli
+     #- ansible-tower-cli
      - webhook
 
 - name: Ensure group "webhook" exists
@@ -59,27 +58,71 @@
     group: root
     mode: '0755'
 
+- name: Fetch the awx_tokens.yml variable from AWX again
+  fetch:
+    src: /var/lib/awx/projects/hosting/awx_tokens.yml
+    dest: /tmp/awx_tokens.yml
+    flat: yes
+
+- name: Include AWX master token from awx_tokens.yml
+  include_vars:
+    file: /tmp/awx_tokens.yml
+  no_log: True
+
+- name: Create a AWX session token for executing modules
+  awx.awx.tower_token:
+    description: 'AWX Session Token'
+    scope: "write"
+    state: present
+    tower_host: "https://{{ awx_host }}"
+    tower_oauthtoken: "{{ awx_master_token }}"
+  register: awx_session_token
+  no_log: True
+
+- name: Save webhook-create-account.yml template
+  template:
+    src: '{{ role_path }}/webhook-create-account.yml.j2'
+    dest: '/usr/local/bin/webhook-create-account.yml'
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Save webhook-create-subscription.yml template
+  template:
+    src: '{{ role_path }}/webhook-create-subscription.yml.j2'
+    dest: '/usr/local/bin/webhook-create-subscription.yml'
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Save webhook-delete-subscription.yml template
+  template:
+    src: '{{ role_path }}/webhook-delete-subscription.yml.j2'
+    dest: '/usr/local/bin/webhook-delete-subscription.yml'
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Delete the AWX session token for executing modules
+  awx.awx.tower_token:
+    description: 'AWX Session Token'
+    scope: "write"
+    state: absent
+    existing_token_id: "{{ awx_session_token.ansible_facts.tower_token.id }}"
+    tower_host: "https://{{ awx_host }}"
+    tower_oauthtoken: "{{ awx_session_token.ansible_facts.tower_token.token }}"
+
 - name: Restart service webhook, in all cases
   service:
     name: webhook
     state: restarted
-    
+
 - name: Install awxkit for webhook user
   command: |
-    sudo -H -u webhook bash -c 'pip3 install awxkit==15.0.1'
+    runuser -u webhook -- bash -c 'pip3 install awxkit==17.0.1'
 
-- name: Configure awx-cli host
+- name: Configure awxkit host, username and password
   command: |
-    sudo -H -u webhook bash -c 'awx-cli config host {{ awx_url }}'
-
-- name: Configure awx-cli username
-  command: |
-    sudo -H -u webhook bash -c 'awx-cli config username admin'
-
-- name: Configure awx-cli password
-  command: |
-    sudo -H -u webhook bash -c 'awx-cli config password {{ admin_password }}'
-
-
-
-
+    runuser -u webhook -- bash -c '/home/webhook/.local/bin/awx --conf.host https://{{ awx_url }} --conf.username admin --conf.password {{ admin_password }}'
+  register: awkkit_config
+  failed_when: "'/{/}' in awkkit_config.stdout"

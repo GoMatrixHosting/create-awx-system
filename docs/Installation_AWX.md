@@ -98,7 +98,7 @@ If you will be using this setup commercially, also define:
 
 Run the script:
 
-`$ ansible-playbook -v -i ./inventory/hosts -t "setup,setup-monitor,setup-webhooks" pre_setup.yml`
+`$ ansible-playbook -v -i ./inventory/hosts -t "setup,setup-monitor,setup-webhooks,generate-token" pre_setup.yml`
 
 
 3) Run the AWX deployment script.
@@ -142,7 +142,7 @@ Install prerequisite packages for ansible on the controller:
 
 Run the script:
 
-`$ ansible-playbook -v -i ./inventory/hosts -t "generate-token,configure-awx,setup-radius,setup-swatchdog,setup-backup,enable-backup" post_setup.yml`
+`$ ansible-playbook -v -i ./inventory/hosts -t "configure-awx,setup-radius,setup-swatchdog,setup-backup,enable-backup" post_setup.yml`
 
 
 5) Perform initial SSH handshake from AWX to backup server.

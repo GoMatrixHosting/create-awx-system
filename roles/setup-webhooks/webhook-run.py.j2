@@ -3,6 +3,7 @@
 import json
 import os
 import subprocess
+from pathlib import Path
 
 with open(os.environ['HOOK_PAYLOAD'], "r") as f:
   # returns JSON object as a dictionary
@@ -38,14 +39,31 @@ if event_type == "member-added":
   print("Client Email: " + client_email)
   member_id = str(data['data']['id'])
   print("Member ID: " + member_id)
-  extra_vars = {}
-  extra_vars['client_email']=client_email
-  extra_vars['member_id']=member_id
-  awx_job_launch_command = ["awx-cli", "job", "launch", "-J", create_account_job_template]
-  # passing extra_vars requires AWX's "PROMPT ON LAUNCH" to be enabled
-  extravars = '--extra-vars=' + json.JSONEncoder().encode(extra_vars)
-  awx_job_launch_command = awx_job_launch_command + [ extravars ]
-  shellcmd(awx_job_launch_command)
+  
+  # Touch the extra-vars file
+  Path('/tmp/create_account.json').touch()
+  
+  # Clear the extra-vars file
+  open('/tmp/create_account.json', 'w').close()
+  
+  # Write the extra-vars file
+  extra_vars_file = open(client_file_path,'a')
+  extra_vars_client_file.write("member_id: " + member_id + "\nclient_email: " + client_email)
+  extra_vars_client_file.close()
+  
+  # Launch the ansible playbook
+  ansible_launch_command = "ansible-playbook -v ./webhook-create-account.yml"
+  shellcmd(ansible_launch_command)
+  
+  #extra_vars = {}
+  #extra_vars['client_email']=client_email
+  #extra_vars['member_id']=member_id
+  #awx_job_launch_command = ["awx-cli", "job", "launch", "-J", create_account_job_template]
+  ## passing extra_vars requires AWX's "PROMPT ON LAUNCH" to be enabled
+  #extravars = '--extra-vars=' + json.JSONEncoder().encode(extra_vars)
+  #awx_job_launch_command = awx_job_launch_command + [ extravars ]
+  #shellcmd(awx_job_launch_command)
+  
   # Add client entry to client-list file
   client_file_path = "/var/lib/awx/projects/clients/client-list"
   client_file = open(client_file_path,'a')

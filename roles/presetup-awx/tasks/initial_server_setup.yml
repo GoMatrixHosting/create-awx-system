@@ -17,7 +17,7 @@
     - curl
     - gnupg2
     - software-properties-common
-    - python-pip
+    - python3-pip
     - unattended-upgrades
     - apt-listchanges
 
@@ -142,8 +142,8 @@
   pip:
     name: requests==2.14.2
 
-- name: Setup update-alternatives 1
-  command: update-alternatives --install /usr/bin/python python /usr/bin/python2.7 1
+#- name: Setup update-alternatives 1
+#  command: update-alternatives --install /usr/bin/python python /usr/bin/python2.7 1
 
 - name: Setup update-alternatives 2
   command: update-alternatives --install /usr/bin/python python /usr/bin/python3 2
@@ -164,3 +164,6 @@
     special_time: daily
     job: "sudo journalctl --vacuum-time=28d"
 
+- name: Set hostname of the server
+  command: |
+    hostnamectl set-hostname {{ awx_url }}

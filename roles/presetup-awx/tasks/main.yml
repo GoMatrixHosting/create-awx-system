@@ -1,5 +1,4 @@
 
-
 # Configure server for AWX installation
 - import_tasks: "{{ role_path }}/tasks/initial_server_setup.yml"
   tags: setup
@@ -12,3 +11,6 @@
 - import_tasks: "{{ role_path }}/tasks/setup_hosting_files.yml"
   tags: setup
 
+# Generates Master OAuth token for AWX admin
+- import_tasks: "{{ role_path }}/tasks/generate_token.yml"
+  tags: generate-token

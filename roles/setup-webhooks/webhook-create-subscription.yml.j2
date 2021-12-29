@@ -1,0 +1,14 @@
+
+- name: "Launches the '00 - Create MP Subscription' job template"
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  tasks:
+    - name: Execute every job template sequentially
+      awx.awx.tower_job_launch:
+      job_template: "00 - Create MP Subscription"
+      extra_vars: "{{ lookup('file', '/tmp/create_subscription.json') }}"
+      tower_host: "https://{{ awx_url }}"
+      tower_oauthtoken: "{{ awx_session_token.ansible_facts.tower_token.token }}"
+      validate_certs: yes
