@@ -51,6 +51,16 @@
     tower_password: "{{ admin_password }}"
   register: awx_master_token_creation
 
+- name: Create a AWX session token for the webhook user/role
+  awx.awx.tower_token:
+    description: 'AWX Session Token'
+    scope: "write"
+    state: present
+    tower_host: "https://{{ awx_host }}"
+    tower_oauthtoken: "{{ awx_master_token_creation.ansible_facts.tower_token.token }}"
+    #tower_oauthtoken: "{{ awx_token.stdout }}"
+  register: webhook_session_token_creation
+
 - name: Add awx_master_token line to awx_tokens.yml file on AWX
   lineinfile:
     path: '/var/lib/awx/projects/hosting/awx_tokens.yml'
@@ -76,3 +86,13 @@
 #    'awx_master_token_id': 'null'
 # If used the id needs to be hard coded in before re-running this tasklist!
 
+- name: Add webhook_session_token line to awx_tokens.yml file on AWX
+  lineinfile:
+    path: '/var/lib/awx/projects/hosting/awx_tokens.yml'
+    insertafter: '# AWX Token'
+    regexp: "^#? *{{ item.key | regex_escape() }}:"
+    line: "{{ item.key }}: {{ item.value }}"
+    mode: '0600'
+    state: present
+  with_dict:
+    'webhook_session_token': '{{ webhook_session_token_creation.ansible_facts.tower_token.token }}'

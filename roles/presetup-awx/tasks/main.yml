@@ -10,7 +10,3 @@
 # Setup hosting files for AWX
 - import_tasks: "{{ role_path }}/tasks/setup_hosting_files.yml"
   tags: setup
-
-# Generates Master OAuth token for AWX admin
-- import_tasks: "{{ role_path }}/tasks/generate_token.yml"
-  tags: generate-token

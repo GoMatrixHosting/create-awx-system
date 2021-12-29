@@ -10,5 +10,5 @@
       job_template: "00 - Delete Subscription"
       extra_vars: "{{ lookup('file', '/tmp/delete_subscription.json') }}"
       tower_host: "https://{{ awx_url }}"
-      tower_oauthtoken: "{{ awx_session_token.ansible_facts.tower_token.token }}"
+      tower_oauthtoken: "{{ webhook_session_token }}"
       validate_certs: yes

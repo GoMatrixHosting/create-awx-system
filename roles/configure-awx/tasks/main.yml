@@ -1,4 +1,8 @@
 
+# Generates Master OAuth token for AWX admin
+- import_tasks: "{{ role_path }}/tasks/generate_token.yml"
+  tags: generate-token
+
 # Configure server after AWX installation
 - import_tasks: "{{ role_path }}/tasks/configure_awx.yml"
   tags: configure-awx
