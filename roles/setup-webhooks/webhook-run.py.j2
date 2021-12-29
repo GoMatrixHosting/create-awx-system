@@ -5,11 +5,6 @@ import os
 import subprocess
 from pathlib import Path
 
-with open(os.environ['HOOK_PAYLOAD'], "r") as f:
-  # returns JSON object as a dictionary
-  # If the data being deserialized is not a valid JSON document, a JSONDecodeError will be raised
-  data = json.load(f)
-
 def shellcmd(command):
   print(command)
   rc = subprocess.run(command, universal_newlines=True, capture_output=True)
@@ -18,12 +13,10 @@ def shellcmd(command):
   print(rc.stderr)
   return(rc)
 
-#########################################
-# Hard Coded AWX/Tower Credentials      #
-create_account_job_template = "00 - Create Account"
-create_subscription_job_template = "00 - Create MP Subscription"
-delete_subscription_job_template = "00 - Delete Subscription"
-#########################################
+with open(os.environ['HOOK_PAYLOAD'], "r") as f:
+  # returns JSON object as a dictionary
+  # If the data being deserialized is not a valid JSON document, a JSONDecodeError will be raised
+  data = json.load(f)
 
 #print(data)
 print(json.dumps(data, indent = 1))
@@ -47,12 +40,13 @@ if event_type == "member-added":
   open('/tmp/create_account.json', 'w').close()
   
   # Write the extra-vars file
-  extra_vars_file = open(client_file_path,'a')
-  extra_vars_client_file.write("member_id: " + member_id + "\nclient_email: " + client_email)
-  extra_vars_client_file.close()
+  extra_vars_json = {"member_id": member_id, "client_email": client_email}
+  with open('/tmp/create_account.json', 'w') as extra_vars_file:
+    json.dump(extra_vars_json, extra_vars_file)
+  extra_vars_file.close()
   
   # Launch the ansible playbook
-  ansible_launch_command = "ansible-playbook -v ./webhook-create-account.yml"
+  ansible_launch_command = ["/usr/bin/ansible-playbook", "-v", "/usr/local/bin/webhook-create-account.yml"]
   shellcmd(ansible_launch_command)
   
   #extra_vars = {}
@@ -91,34 +85,67 @@ elif event_type == "recurring-transaction-completed":
   print("Clients first name is: " + client_first_name)
   client_last_name = str(data['data']['member']['last_name'])
   print("Clients last name is:  " + client_last_name)
-  awx_job_launch_command = ["awx-cli", "job", "launch", "-J", create_subscription_job_template]
+  
+  # Touch the extra-vars file
+  Path('/tmp/create_subscription.json').touch()
+  
+  # Clear the extra-vars file
+  open('/tmp/create_subscription.json', 'w').close()
+  
+  # Write the extra-vars file
+  extra_vars_json = {"plan_title": plan_title, "subscription_id": subscription_id, "member_id": member_id, "client_email": client_email, "client_first_name": client_first_name, "client_last_name": client_last_name}
+  with open('/tmp/create_subscription.json', 'w') as extra_vars_file:
+    json.dump(extra_vars_json, extra_vars_file)
+  extra_vars_file.close()
+
+  # Launch the ansible playbook
+  ansible_launch_command = ["/usr/bin/ansible-playbook", "-v", "/usr/local/bin/webhook-create-subscription.yml"]
+  shellcmd(ansible_launch_command)
+  
+  #awx_job_launch_command = ["awx-cli", "job", "launch", "-J", create_subscription_job_template]
   # passing extra_vars requires AWX's "PROMPT ON LAUNCH" to be enabled
-  extra_vars = {}
+  #extra_vars = {}
 #  client_first_name="Robert'); DROP TABLE Students; override --"; client_last_name='Sploits-override'
-  extra_vars['client_first_name']=client_first_name
-  extra_vars['client_last_name']=client_last_name
-  extra_vars['client_email']=client_email
-  extra_vars['subscription_id']=subscription_id
-  extra_vars['member_id']=member_id
-  extra_vars['plan_title']=plan_title
-  extravars = '--extra-vars=' + json.JSONEncoder().encode(extra_vars)
-  awx_job_launch_command = awx_job_launch_command + [ extravars ]
-  shellcmd(awx_job_launch_command)
+  #extra_vars['client_first_name']=client_first_name
+  #extra_vars['client_last_name']=client_last_name
+  #extra_vars['client_email']=client_email
+  #extra_vars['subscription_id']=subscription_id
+  #extra_vars['member_id']=member_id
+  #extra_vars['plan_title']=plan_title
+  #extravars = '--extra-vars=' + json.JSONEncoder().encode(extra_vars)
+  #awx_job_launch_command = awx_job_launch_command + [ extravars ]
+  #shellcmd(awx_job_launch_command)
 
 elif event_type == "subscription-expired":
   subscription_id = str(data['data']['subscr_id'])
   print("Subscription ID: " + subscription_id)
   member_id = str(data['data']['member']['id'])
   print("Member ID: " + member_id)
-
-  extra_vars = {}
-  extra_vars['subscription_id']=subscription_id
-  extra_vars['member_id']=member_id
-  awx_job_launch_command = ["awx-cli", "job", "launch", "-J", delete_subscription_job_template]
+  
+  # Touch the extra-vars file
+  Path('/tmp/delete_subscription.json').touch()
+  
+  # Clear the extra-vars file
+  open('/tmp/delete_subscription.json', 'w').close()
+  
+  # Write the extra-vars file
+  extra_vars_json = {"subscription_id": subscription_id, "member_id": member_id}
+  with open('/tmp/delete_subscription.json', 'w') as extra_vars_file:
+    json.dump(extra_vars_json, extra_vars_file)
+  extra_vars_file.close()
+  
+  # Launch the ansible playbook
+  ansible_launch_command = ["/usr/bin/ansible-playbook", "-v", "/usr/local/bin/webhook-create-subscription.yml"]
+  shellcmd(ansible_launch_command)
+  
+  #extra_vars = {}
+  #extra_vars['subscription_id']=subscription_id
+  #extra_vars['member_id']=member_id
+  #awx_job_launch_command = ["awx-cli", "job", "launch", "-J", delete_subscription_job_template]
   # passing extra_vars requires AWX's "PROMPT ON LAUNCH" to be enabled
-  extravars = '--extra-vars=' + json.JSONEncoder().encode(extra_vars)
-  awx_job_launch_command = awx_job_launch_command + [ extravars ]
-  shellcmd(awx_job_launch_command)
+  #extravars = '--extra-vars=' + json.JSONEncoder().encode(extra_vars)
+  #awx_job_launch_command = awx_job_launch_command + [ extravars ]
+  #shellcmd(awx_job_launch_command)
   
 # Collect that usernames ID using awxkit
 # ~/.local/bin/awx --conf.host https://panel.example.org --conf.username admin --conf.password xxxxxxxxxxxxxxx user list

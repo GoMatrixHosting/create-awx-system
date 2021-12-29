@@ -56,7 +56,7 @@
     description: 'AWX Session Token'
     scope: "write"
     state: present
-    tower_host: "https://{{ awx_host }}"
+    tower_host: "https://{{ awx_url }}"
     tower_oauthtoken: "{{ awx_master_token_creation.ansible_facts.tower_token.token }}"
     #tower_oauthtoken: "{{ awx_token.stdout }}"
   register: webhook_session_token_creation

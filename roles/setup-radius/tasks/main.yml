@@ -1,17 +1,36 @@
 
 - block:
+  - name: Collect Debian version from Wireguard server
+    command: lsb_release -c
+    register: debian_version
+
+  - name: Setting facts for checking the release
+    set_fact:
+      buster_string: "buster"
+      bullseye_string: "bullseye"
+
   - name: Add buster-backports repository into sources list
     apt_repository:
       repo: deb http://deb.debian.org/debian buster-backports main
       state: present
+    when: buster_string in debian_version.stdout
 
-  - name: Install FreeRADIUS packages
+  - name: Install FreeRADIUS packages for Debian 10
     apt:
       pkg:
        - freeradius
        - freeradius-python3
        - python3-requests-oauthlib
       default_release: buster-backports
+    when: buster_string in debian_version.stdout
+
+  - name: Install FreeRADIUS packages for Debian 11
+    apt:
+      pkg:
+       - freeradius
+       - freeradius-python3
+       - python3-requests-oauthlib
+    when: bullseye_string in debian_version.stdout
 
   - name: Force FreeRADIUS auth-type PAP
     lineinfile:

@@ -1,14 +1,13 @@
-
-- name: "Launches the '00 - Create Account' job template"
+- name: "Launches the '00 - Bind Account' job template"
   hosts: localhost
   connection: local
   gather_facts: false
 
   tasks:
-    - name: Launches the '00 - Create Account' job template
+    - name: Launch the '00 - Bind Account' job template
       awx.awx.tower_job_launch:
-        job_template: "00 - Create Account"
-        {% raw %}extra_vars: "{{ lookup('file', '/tmp/create_account.json') }}"
+        job_template: "00 - Bind Account"
+        {% raw %}extra_vars: "{{ lookup('file', '/tmp/bind_account.json') }}"
 {% endraw %}
         tower_host: "https://{{ awx_url }}"
         tower_oauthtoken: "{{ webhook_session_token }}"

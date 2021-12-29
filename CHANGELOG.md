@@ -1,6 +1,10 @@
 
 # GoMatrixHosting v0.6.8
 
+- Upgraded create-awx-system to run on Debian 11.
+- Deprecation of the old ansible-tower-cli and upgrades to the webhook and swatch roles.
+
+
 # GoMatrixHosting v0.6.7
 
 - Major updates to the [recover-matrix-server](https://gitlab.com/GoMatrixHosting/gmhosting-external-tools/-/tree/main/recover-matrix-server) tool that automatically recover Matrix servers connected to AWx. See [#1](https://gitlab.com/GoMatrixHosting/gmhosting-external-tools/-/issues/1) tool. It's now faster and allows:

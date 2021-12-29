@@ -98,6 +98,10 @@
     name: webhook
     state: restarted
 
+- name: Install awx.awx collection for ansible
+  command: |
+    runuser -u webhook -- bash -c 'ansible-galaxy collection install --force awx.awx:17.1.0'
+
 - name: Install awxkit for webhook user
   command: |
     runuser -u webhook -- bash -c 'pip3 install awxkit==17.0.1'

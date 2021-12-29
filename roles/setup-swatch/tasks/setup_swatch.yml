@@ -1,5 +1,4 @@
 
-
 - name: Update repositories and all packages on target machine
   apt:
     name: "*"
@@ -45,13 +44,32 @@
     group: root
     mode: '0644'
     
-- name: Install bind-user.py
+- name: Install bind-user.py script
   copy:
     src: "{{ role_path }}/bind-user.py"
     dest: /usr/local/bin/bind-user.py
     owner: swatchdog
     group: webhook
     mode: '0550'
+
+- name: Fetch the awx_tokens.yml variable from AWX again
+  fetch:
+    src: /var/lib/awx/projects/hosting/awx_tokens.yml
+    dest: /tmp/awx_tokens.yml
+    flat: yes
+
+- name: Include AWX master token from awx_tokens.yml
+  include_vars:
+    file: /tmp/awx_tokens.yml
+  no_log: True
+
+- name: Save bind-user.yml template
+  template:
+    src: '{{ role_path }}/bind-user.yml.j2'
+    dest: '/usr/local/bin/bind-user.yml'
+    owner: root
+    group: root
+    mode: '0755'
 
 - name: Swatchdog systemd unit
   copy:
@@ -83,18 +101,6 @@
     enabled: yes
     name: swatchdog
 
-- name: Configure awx-cli host
+- name: Install awx.awx collection for ansible
   command: |
-    su - swatchdog -c 'awx-cli config host {{ awx_url }}'
-
-- name: Configure awx-cli username
-  command: |
-    su - swatchdog -c 'awx-cli config username admin'
-
-- name: Configure awx-cli password
-  command: |
-    su - swatchdog -c 'awx-cli config password {{ admin_password }}'
-
-
-
-
+    runuser -u swatch -- bash -c 'ansible-galaxy collection install --force awx.awx:17.1.0'
