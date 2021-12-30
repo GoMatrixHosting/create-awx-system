@@ -35,7 +35,7 @@
 #    tower_password: "{{ admin_password }}"
 #  when: awx_master_token_id is defined
 
-- name: "Collect AWX admin token the hard way! 
+- name: "Collect AWX admin token the hard way!"
   delegate_to: 127.0.0.1
   shell: |
       curl -sku {{ admin_username }}:{{ admin_password }} -H "Content-Type: application/json" -X POST -d '{"description":"Tower CLI", "application":null, "scope":"write"}' https://{{ awx_url }}/api/v2/users/1/personal_tokens/ | jq '.token' | sed -r 's/\"//g'
