@@ -8,7 +8,6 @@
   apt:
     pkg:
      - etckeeper
-     #- ansible-tower-cli
      - webhook
 
 - name: Ensure group "webhook" exists
@@ -104,7 +103,7 @@
 
 - name: Install awxkit for webhook user
   command: |
-    runuser -u webhook -- bash -c 'pip3 install awxkit==17.0.1'
+    runuser -u webhook -- bash -c 'pip3 install awxkit==17.1.0'
 
 - name: Configure awxkit host, username and password
   command: |

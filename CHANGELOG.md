@@ -2,7 +2,13 @@
 # GoMatrixHosting v0.6.8
 
 - Upgraded create-awx-system to run on Debian 11.
-- Deprecation of the old ansible-tower-cli and upgrades to the webhook and swatch roles.
+- Removed the old ansible-tower-cli components from the AWX system, and upgraded the webhook and swatchdog roles to use the awx.awx ansible collection instead.
+- Default to the hacks method to generate master token, the regular awx.awx modules are not reliable enough with AWX v0.17.1.
+
+
+# Upgrade Notes v0.6.7
+
+- Backup and recover the AWX system onto a Debian 11 host.
 
 
 # GoMatrixHosting v0.6.7
