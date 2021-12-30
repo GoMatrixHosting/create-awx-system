@@ -36,7 +36,7 @@ pcadmin@backup-server:/mnt/backup-dir/AWX$ mv ./panel.example.org ./panel.exampl
 6) Check that AWX system is up and running.
 
 
-7) Run post_setup.yml while skipping the 'enable-backup' and 'configure-awx' tag:
+7) Run post_setup.yml with only the 'setup-backup' tag:
 
 $ ansible-playbook -v -i ./inventory/hosts -t "setup-backup" post_setup.yml
 
