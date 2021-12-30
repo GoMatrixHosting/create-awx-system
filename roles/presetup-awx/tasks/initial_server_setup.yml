@@ -159,11 +159,11 @@
   pip:
     name: requests==2.14.2
 
-- name: Setup update-alternatives 1
+- name: Setup update-alternatives 1 (Debian 10)
   command: update-alternatives --install /usr/bin/python python /usr/bin/python2.7 1
   when: buster_string in debian_version.stdout
   
-- name: Setup update-alternatives 2
+- name: Setup update-alternatives 2 (Debian 10)
   command: update-alternatives --install /usr/bin/python python /usr/bin/python3 2
   when: buster_string in debian_version.stdout
 
