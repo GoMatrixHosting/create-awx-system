@@ -103,4 +103,4 @@
 
 - name: Install awx.awx collection for ansible
   command: |
-    runuser -u swatch -- bash -c 'ansible-galaxy collection install --force awx.awx:17.1.0'
+    runuser -u swatchdog -- bash -c 'ansible-galaxy collection install --force awx.awx:17.1.0'

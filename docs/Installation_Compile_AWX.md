@@ -38,7 +38,7 @@ $ cp ./create-awx-system/media/logo-login.svg ./awx/awx/ui_next/public/static/me
 $ rsync -av ./awx panel.example.org:/root/
 ```
 
-5) Next, connect to your AWX server and run the playbook to install the AWX:
+5A) Next, connect to your AWX server and run the playbook to install the AWX (Debian 10):
 ```
 # echo 'deb http://deb.debian.org/debian buster-backports main' >> /etc/apt/sources.list
 # sudo apt update && sudo apt -t buster-backports install ansible
@@ -47,6 +47,13 @@ $ rsync -av ./awx panel.example.org:/root/
 # ansible-playbook -i ./installer/inventory ./installer/install.yml
 ```
 
+5B) Next, connect to your AWX server and run the playbook to install the AWX (Debian 11):
+```
+# sudo apt update && sudo apt install ansible
+# ansible-galaxy collection install community.docker
+# cd /root/awx
+# ansible-playbook -i ./installer/inventory ./installer/install.yml
+```
 
 6) Modify the python package Radius uses, and increase its timeout value:
 ```
