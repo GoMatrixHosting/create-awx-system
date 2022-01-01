@@ -67,9 +67,9 @@
   template:
     src: '{{ role_path }}/bind-user.yml.j2'
     dest: '/usr/local/bin/bind-user.yml'
-    owner: root
-    group: root
-    mode: '0755'
+    owner: swatchdog
+    group: webhook
+    mode: '0550'
 
 - name: Swatchdog systemd unit
   copy:
