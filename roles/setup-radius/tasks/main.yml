@@ -53,13 +53,104 @@
       group: freerad
       state: link
 
-  - name: Template the oauth2-oracle.py file
+# need to ensure /run/freeradius or whatever exists! debian 11 bug :o
+
+  - name: Ensure /var/run/freeradius directory exists, prevents this Debian 11 bug https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=954911
+    file:
+      src: '/var/run/freeradius'
+      dest: '/var/run/freeradius'
+      state: directory
+      owner: freerad
+      group: freerad
+      mode: '0770'
+
+# create new wp-oracle user account, make sure it's disabled/passwordless
+
+  - name: Add the disabled user account 'webhook' with a specific uid and a primary group of 'webhook'
+    user:
+      name: wp-oracle
+      comment: WP-Oracle account for checking front-end logins.
+      password: '!'
+      shell: /bin/bash
+      uid: 1002
+      group: wp-oracle
+
+  - name: Template the wp-oracle.py file
     template:
-      src: "{{ role_path }}/oauth2-oracle.py.j2"
-      dest: /usr/local/bin/oauth2-oracle.py
-      owner: root
-      group: root
-      mode: '0755'
+      src: "{{ role_path }}/wp-oracle.py.j2"
+      dest: /usr/local/bin/wp-oracle.py
+      owner: wp-oracle
+      group: wp-oracle
+      mode: '0550'
+
+#  - name: Template the oauth2-oracle.py file
+#    template:
+#      src: "{{ role_path }}/oauth2-oracle.py.j2"
+#      dest: /usr/local/bin/oauth2-oracle.py
+#      owner: root
+#      group: root
+#      mode: '0750'
+
+# ensure ssh key created in /home/wp-oracle/.ssh/auth_{{ wp_url }}_ed25519
+
+  - name: Ensure the ~/.ssh directory exists on front-end wordpress site
+    delegate_to: "{{ wp_url }}"
+    file:
+      path: "/home/{{ wp_username }}/.ssh/"
+      state: directory
+      owner: wp-oracle
+      group: wp-oracle
+      mode: '0750'
+
+  - name: Generate OpenSSH key for AWX system backup
+    community.crypto.openssh_keypair:
+      path: '/home/wp-oracle/.ssh/wp-oracle_ed25519'
+      comment: 'WP-Oracle SSH key for {{ wp_url }}'
+      type: ed25519
+      owner: wp-oracle
+      group: wp-oracle
+      mode: '0600'
+
+# slurp up public_key value
+
+  - name: Collect SSH public key value
+    shell: cat /home/wp-oracle/.ssh/wp-oracle_ed25519.pub
+    register: public_key
+
+  - name: Update SSH config on AWX system
+    blockinfile:
+      path: /root/.ssh/config
+      create: yes
+      block: |
+        Host {{ wp_url }}
+            HostName {{ wp_url }}
+            Port 22
+            User {{ wp_username }}
+            IdentityFile /home/wp-oracle/.ssh/wp-oracle_ed25519
+            IdentitiesOnly=yes
+
+# add public key to front-end server /home/{{ wp_user }}/.ssh/authorized_keys
+
+  - name: Add wp-oracle public SSH key to the front-end wordpress site
+    delegate_to: "{{ wp_url }}"
+    lineinfile:
+      path: "/home/{{ wp_user }}/.ssh/authorized_keys"
+      line: "{{ public_key.stdout }}"
+      create: yes
+      owner: "{{ wp_username }}"
+      group: "{{ wp_username }}"
+      mode: '0600'
+
+# template wp-probe on the front-end site
+
+  - name: Template the wp-probe.sh file onto the front-end wordpress site
+    delegate_to: "{{ wp_url }}"
+    template:
+      src: "{{ role_path }}/wp-probe.sh.j2"
+      dest: "/home/{{ wp_username }}/wp-probe.sh"
+      owner: "{{ wp_username }}"
+      group: "{{ wp_username }}"
+      mode: '0550'
 
   - name: Install custom default config
     copy:
