@@ -21,6 +21,7 @@
     - unattended-upgrades
     - apt-listchanges
     - ansible
+    - rsync
 
 - name: Create swapfile with the right permissions
   command: 'fallocate -l 4G /swapfile'
@@ -186,3 +187,9 @@
 - name: Set hostname of the server
   command: |
     hostnamectl set-hostname {{ awx_url }}
+
+- name: Ensure group "webhook" exists
+  group:
+    name: webhook
+    gid: 1000
+    state: present
