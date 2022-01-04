@@ -3,7 +3,7 @@
 
 # Create a server
 
-Create a Debian 10 server and setup SSH access to root user.
+Create a Debian 10/11 server and setup SSH access to root user.
 ```
 $ ssh root@panel.example.org
 $ exit
@@ -66,14 +66,14 @@ Record these variables to ./inventory/host_vars/panel.example.org/vars.yml:
 - client_private_ssh_key_password 	(Strong password for this private key.)
 - vault_unlock_ssh_password:	(Strong password to vault the private_ssh_key_password.)
 
-If you will be using the Mailgun relay, also define:
+If you will be using the Mailgun relay, define:
 - mg_sender_email_address	(The Mailgun email address. eg: "user@mail.example.org")
 - mg_sender_domain		(The Mailgun email domain. eg: "mail.example.org"
 - mg_relay_host_name		(The Mailgun relay host name. eg: "smtp.mailgun.org")
 - mg_api_url			(The Mailgun API location. eg: "api.mailgun.net")
 - mg_private_api_key		(The Mailgun private API key.)
 
-If you will be using a backup server, also define:
+If you will be using a backup server, define:
 - backup_server_enabled		('true' if using a backup server, otherwise 'false')
 - backup_server_ip 		(IP address of the backup server.)
 - backup_server_hostname 	(The hostname of the backup server.)
@@ -86,18 +86,20 @@ If you will be using a backup server, also define:
 - backup_schedule_frequency	(The time period for schedules client backups, options are 'MINUTELY', 'HOURLY', 'DAILY', 'WEEKLY','MONTHLY')
 - backup_schedule_interval	(The number of minutes/hours/days/weeks/months to schedule client backups to.)
 
-If you will be using this setup commercially, also define:
-- radius_secret			(Strong password for authenticating AWX against FreeRadius.)
-- oauth_client_id		(client_id from WP Oauth Server WordPress plugin.)
-- oauth_client_secret		(client_secret from WP Oauth Server WordPress plugin.)
-- wp_url			(The URL of the front-end WordPress site.)
+If you want to spawn Matrix servers using DigitalOcean, define:
 - do_api_token 			(Your DigitalOcean API token/)
 - do_spaces_access_key 		(Your DigitalOcean Spaces Access Key.)
 - do_spaces_secret_key 		(Your DigitalOcean Spaces Secret Key.)
 - do_image_master 		(eg: debian-10-x64)
 
-Run the script:
+If you will be using this setup commercially, define:
+- radius_secret			(Strong password for authenticating AWX against FreeRadius.)
+- oauth_client_id		(client_id from WP Oauth Server WordPress plugin.)
+- oauth_client_secret		(client_secret from WP Oauth Server WordPress plugin.)
+- wp_url			(The URL of the front-end WordPress site.)
+- wp_username			(The front-end WordPress username you SSH into.)
 
+Run the script:
 `$ ansible-playbook -v -i ./inventory/hosts -t "setup,setup-monitor" pre_setup.yml`
 
 
