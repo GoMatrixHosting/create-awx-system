@@ -90,15 +90,15 @@
 - name: Just force systemd to daemon-reload
   systemd:
     daemon_reload: yes
-    
-- name: Make sure swatchdog service is started
-  systemd:
-    state: started
-    name: swatchdog
-    
+
 - name: Make sure swatchdog service is enabled
   systemd:
     enabled: yes
+    name: swatchdog
+
+- name: Make sure swatchdog service is restarted
+  systemd:
+    state: restarted
     name: swatchdog
 
 - name: Install awx.awx collection for ansible
