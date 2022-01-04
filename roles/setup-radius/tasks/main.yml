@@ -71,14 +71,14 @@
       gid: 1002
       state: present
 
-  - name: Add the disabled user account 'wp-oracle' with a specific uid and a primary group of 'webhook'
-    user:
-      name: wp-oracle
-      comment: "WP-Oracle account for checking front-end logins."
-      password: '!'
-      shell: /bin/bash
-      uid: 1002
-      group: wp-oracle
+#  - name: Add the disabled user account 'wp-oracle' with a specific uid and a primary group of 'webhook'
+#    user:
+#      name: wp-oracle
+#      comment: "WP-Oracle account for checking front-end logins."
+#      password: '!'
+#      shell: /bin/bash
+#      uid: 1002
+#      group: wp-oracle
 
   - name: Template the wp-oracle.py file
     template:
@@ -106,13 +106,23 @@
       state: directory
       mode: '0750'
 
+  - name: Ensure the ~/.ssh directory exists for the FreeRadius user on AWX
+    file:
+      path: "/home/{{ wp_username }}/.ssh/"
+      state: directory
+      owner: freerad
+      group: freerad
+      mode: '0750'
+
   - name: Generate OpenSSH key for wp-oracle user to connect to front-end
     #delegate_to: "{{ wp_url }}"
     #become: no
     community.crypto.openssh_keypair:
-      path: '/home/wp-oracle/.ssh/wp-oracle_ed25519'
+      path: '/etc/freeradius/.ssh/wp-oracle_ed25519'
       comment: 'WP-Oracle SSH key for {{ wp_url }}'
       type: ed25519
+      owner: freerad
+      group: freerad
       mode: '0600'
 
 # slurp up public_key value
@@ -121,20 +131,23 @@
     #delegate_to: "{{ wp_url }}"
     #become: no
     command: |
-        cat /home/wp-oracle/.ssh/wp-oracle_ed25519.pub
+        cat /etc/freeradius/.ssh/wp-oracle_ed25519.pub
     register: public_key
 
   - name: Update SSH config on AWX system
     blockinfile:
-      path: /home/wp-oracle/.ssh/config
+      path: /etc/freeradius/.ssh/config
       create: yes
       block: |
         Host {{ wp_url }}
             HostName {{ wp_url }}
             Port 22
             User {{ wp_username }}
-            IdentityFile /home/wp-oracle/.ssh/wp-oracle_ed25519
+            IdentityFile /etc/freeradius/.ssh/wp-oracle_ed25519
             IdentitiesOnly=yes
+      owner: freerad
+      group: freerad
+      mode: '0600'
 
 # add public key to front-end server /home/{{ wp_user }}/.ssh/authorized_keys
 
@@ -158,14 +171,14 @@
       dest: "/home/{{ wp_username }}/wp-probe.sh"
       mode: '0550'
 
-  - name: Setup custom sudoers file to allow freeradius > wp-oracle commands
-    blockinfile:
-      path: /etc/sudoers.d/50-freerad-wp
-      create: yes
-      block: |
-        # Allow freerad user to execute /usr/local/bin/wp-oracle, could definitely be tightened!!
-        freerad ALL=(ALL:ALL) NOPASSWD:ALL
-      mode: 600
+#  - name: Setup custom sudoers file to allow freeradius > wp-oracle commands
+#    blockinfile:
+#      path: /etc/sudoers.d/50-freerad-wp
+#      create: yes
+#      block: |
+#        # Allow freerad user to execute /usr/local/bin/wp-oracle, could definitely be tightened!!
+#        freerad ALL=(ALL:ALL) NOPASSWD:ALL
+#      mode: 600
 
   - name: Install custom default config
     copy:
