@@ -7,7 +7,7 @@
     - name: Launch the '00 - Bind Account' job template
       awx.awx.tower_job_launch:
         job_template: "00 - Bind Account"
-        {% raw %}extra_vars: "{{ lookup('file', '/tmp/bind_account.json') }}"
+        {% raw %}extra_vars: "{{ lookup('file', '/tmp/bind_user.json') }}"
 {% endraw %}
         tower_host: "https://{{ awx_url }}"
         tower_oauthtoken: "{{ webhook_session_token }}"
