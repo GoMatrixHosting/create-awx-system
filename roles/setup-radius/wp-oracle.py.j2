@@ -7,9 +7,9 @@ import subprocess
 def shellcmd(command):
   #print(command)
   rc = subprocess.run(command, universal_newlines=True, capture_output=True)
-  print(rc.returncode)
+  #print(rc.returncode)
   #print(rc.stdout)
-  print(rc.stderr)
+  #print(rc.stderr)
   return(rc)
 
 username = os.environ['USER_NAME'].strip('"')
@@ -32,19 +32,19 @@ rc = shellcmd(ansible_launch_command)
 #print("***rc code is: " + str(rc))
 #print("***rc.stdout is: " + str(rc.stdout))
 
-from time import gmtime, strftime
-t = strftime("%Y-%m-%dT%H:%M:%S+0000", gmtime())
+#from time import gmtime, strftime
+#t = strftime("%Y-%m-%dT%H:%M:%S+0000", gmtime())
 
 # Debugging, write output to logfile:
 
 if str(rc.stdout) == "0\n":
   print("success!")
-  with open('/tmp/test-radius-oracle.log', "a") as f:
-      f.write(t + ' ' + sys.argv[0] + ' login succeeded for: ' + username + '\n')
+  #with open('/tmp/test-radius-oracle.log', "a") as f:
+  #    f.write(t + ' ' + sys.argv[0] + ' login succeeded for: ' + username + '\n')
   sys.exit(0)
 elif str(rc.stdout) == "1\n":
   print("failure!")
-  with open('/tmp/test-radius-oracle.log', "a") as f:
-      f.write(t + ' ' + sys.argv[0] + ' login failed for: ' + username + '\n')
+  #with open('/tmp/test-radius-oracle.log', "a") as f:
+  #    f.write(t + ' ' + sys.argv[0] + ' login failed for: ' + username + '\n')
 
 sys.exit(1)
