@@ -106,11 +106,11 @@
       state: directory
       mode: '0750'
 
-  - name: Generate OpenSSH key for AWX system backup
-    delegate_to: "{{ wp_url }}"
-    become: no
+  - name: Generate OpenSSH key for wp-oracle user to connect to front-end
+    #delegate_to: "{{ wp_url }}"
+    #become: no
     community.crypto.openssh_keypair:
-      path: '/home/{{ wp_username }}/.ssh/wp-oracle_ed25519'
+      path: '/home/wp-oracle/.ssh/wp-oracle_ed25519'
       comment: 'WP-Oracle SSH key for {{ wp_url }}'
       type: ed25519
       mode: '0600'
@@ -118,15 +118,15 @@
 # slurp up public_key value
 
   - name: Collect SSH public key value
-    delegate_to: "{{ wp_url }}"
-    become: no
+    #delegate_to: "{{ wp_url }}"
+    #become: no
     command: |
-        cat /home/{{ wp_username }}/.ssh/wp-oracle_ed25519.pub
+        cat /home/wp-oracle/.ssh/wp-oracle_ed25519.pub
     register: public_key
 
   - name: Update SSH config on AWX system
     blockinfile:
-      path: /root/.ssh/config
+      path: /home/wp-oracle/.ssh/config
       create: yes
       block: |
         Host {{ wp_url }}
@@ -141,10 +141,11 @@
   - name: Add wp-oracle public SSH key to the front-end wordpress site
     delegate_to: "{{ wp_url }}"
     become: no
-    lineinfile:
+    blockinfile:
       path: "/home/{{ wp_username }}/.ssh/authorized_keys"
-      line: "{{ public_key.stdout }}"
       create: yes
+      block: |
+        {{ public_key.stdout }} command=/home/{{ wp_username }}/wp-probe.sh
       mode: '0660'
 
 # template wp-probe on the front-end site
@@ -156,6 +157,15 @@
       src: "{{ role_path }}/wp-probe.sh.j2"
       dest: "/home/{{ wp_username }}/wp-probe.sh"
       mode: '0550'
+
+  - name: Setup custom sudoers file to allow freeradius > wp-oracle commands
+    blockinfile:
+      path: /etc/sudoers.d/50-freerad-wp
+      create: yes
+      block: |
+        # Allow freerad user to execute /usr/local/bin/wp-oracle, could definitely be tightened!!
+        freerad ALL=(ALL:ALL) NOPASSWD:ALL
+      mode: 600
 
   - name: Install custom default config
     copy:
