@@ -1,15 +1,17 @@
 
 # GoMatrixHosting v0.6.8
 
-- Upgraded create-awx-system to run on Debian 11.
+- Upgraded create-awx-system to run on Debian 11. See [#26](https://gitlab.com/GoMatrixHosting/create-awx-system/-/issues/26).
 - Removed the old ansible-tower-cli components from the AWX system, and upgraded the webhook and swatchdog roles to use the awx.awx ansible collection instead.
 - Default to the hacks method to generate master token, the regular awx.awx modules are not reliable enough with AWX v0.17.1.
-- Removed the WPOAUTHServer plugin dependancy and improve panel login speed, we now auth directly against WordPress. See [#27](https://gitlab.com/GoMatrixHosting/create-awx-system/-/issues/27).
+- We now auth directly against WordPress, removing the WPOAUTHServer plugin dependancy and greatly improving the panels login speed. See [#27](https://gitlab.com/GoMatrixHosting/create-awx-system/-/issues/27)[#22](https://gitlab.com/GoMatrixHosting/create-awx-system/-/issues/22).
+
 
 # Upgrade Notes v0.6.8
 
-- Re-install AWX.
-- ??? Backup and recover the AWX system onto a Debian 11 host. (Take special care to observe the new variables/changes to the setup-radius role.)
+- To create-awx-system vars.yml add the following variable:
+`wp_username: username`
+- Re-install AWX. (Take care to observe the new variables/changes to the setup-radius role.)
 
 
 # GoMatrixHosting v0.6.7
