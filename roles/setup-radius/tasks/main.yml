@@ -53,8 +53,6 @@
       group: freerad
       state: link
 
-# need to ensure /run/freeradius or whatever exists! debian 11 bug :o
-
   - name: Ensure /var/run/freeradius directory exists, prevents this Debian 11 bug https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=954911
     file:
       path: '/var/run/freeradius'
@@ -63,23 +61,6 @@
       group: freerad
       mode: '0770'
 
-# create new wp-oracle user account, make sure it's disabled/passwordless
-
-  - name: Ensure group "wp-oracle" exists
-    group:
-      name: wp-oracle
-      gid: 1002
-      state: present
-
-#  - name: Add the disabled user account 'wp-oracle' with a specific uid and a primary group of 'webhook'
-#    user:
-#      name: wp-oracle
-#      comment: "WP-Oracle account for checking front-end logins."
-#      password: '!'
-#      shell: /bin/bash
-#      uid: 1002
-#      group: wp-oracle
-
   - name: Template the wp-oracle.py file
     template:
       src: "{{ role_path }}/wp-oracle.py.j2"
@@ -87,16 +68,6 @@
       owner: freerad
       group: freerad
       mode: '0555'
-
-#  - name: Template the oauth2-oracle.py file
-#    template:
-#      src: "{{ role_path }}/oauth2-oracle.py.j2"
-#      dest: /usr/local/bin/oauth2-oracle.py
-#      owner: root
-#      group: root
-#      mode: '0750'
-
-# ensure ssh key created in /home/wp-oracle/.ssh/auth_{{ wp_url }}_ed25519
 
   - name: Ensure the ~/.ssh directory exists on front-end wordpress site
     delegate_to: "{{ wp_url }}"
@@ -115,9 +86,7 @@
       group: freerad
       mode: '0750'
 
-  - name: Generate OpenSSH key for wp-oracle user to connect to front-end
-    #delegate_to: "{{ wp_url }}"
-    #become: no
+  - name: Generate OpenSSH key for freerad user to connect to the front-end WordPress site
     community.crypto.openssh_keypair:
       path: '/etc/freeradius/.ssh/wp-oracle_ed25519'
       comment: 'WP-Oracle SSH key for {{ wp_url }}'
@@ -126,11 +95,7 @@
       group: freerad
       mode: '0600'
 
-# slurp up public_key value
-
   - name: Collect SSH public key value
-    #delegate_to: "{{ wp_url }}"
-    #become: no
     command: |
         cat /etc/freeradius/.ssh/wp-oracle_ed25519.pub
     register: public_key
@@ -153,9 +118,7 @@
       group: freerad
       mode: '0600'
 
-# add public key to front-end server /home/{{ wp_user }}/.ssh/authorized_keys
-
-  - name: Add wp-oracle public SSH key to the front-end wordpress site
+  - name: Add wp-oracle public SSH key to the front-end WordPress site
     delegate_to: "{{ wp_url }}"
     become: no
     blockinfile:
@@ -165,24 +128,13 @@
         restrict,from={{ awx_url }},command=/home/{{ wp_username }}/wp-probe.sh {{ public_key.stdout }}
       mode: '0660'
 
-# template wp-probe on the front-end site
-
-  - name: Template the wp-probe.sh file onto the front-end wordpress site
+  - name: Template the wp-probe.sh file onto the front-end WordPress site
     delegate_to: "{{ wp_url }}"
     become: no
     template:
       src: "{{ role_path }}/wp-probe.sh.j2"
       dest: "/home/{{ wp_username }}/wp-probe.sh"
       mode: '0550'
-
-#  - name: Setup custom sudoers file to allow freeradius > wp-oracle commands
-#    blockinfile:
-#      path: /etc/sudoers.d/50-freerad-wp
-#      create: yes
-#      block: |
-#        # Allow freerad user to execute /usr/local/bin/wp-oracle, could definitely be tightened!!
-#        freerad ALL=(ALL:ALL) NOPASSWD:ALL
-#      mode: 600
 
   - name: Install custom default config
     copy:
