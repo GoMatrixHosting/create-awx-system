@@ -108,28 +108,6 @@
   ufw:
     state: enabled
 
-- name: Add the Apt signing key for Docker, will not download if present
-  apt_key:
-    id: 9DC858229FC7DD38854AE2D88D81803C0EBFCD88
-    url: https://download.docker.com/linux/debian/gpg
-    state: present
-
-- name: Add Docker repository into sources list (Debian 10)
-  apt_repository:
-    repo: 'deb [arch=amd64] https://download.docker.com/linux/debian buster stable'
-    state: present
-  when: buster_string in debian_version.stdout
-
-- name: Add Docker repository into sources list (Debian 11)
-  apt_repository:
-    repo: 'deb [arch=amd64] https://download.docker.com/linux/debian bullseye stable'
-    state: present
-  when: bullseye_string in debian_version.stdout
-
-- name: Update repositories cache
-  apt:
-    update_cache: yes
-    
 - name: Configure unattended-upgrades 1
   lineinfile:
     path: /etc/apt/apt.conf.d/50unattended-upgrades
@@ -157,6 +135,28 @@
     group: root
     mode: '0644'
 
+- name: Add the Apt signing key for Docker, will not download if present
+  apt_key:
+    id: 9DC858229FC7DD38854AE2D88D81803C0EBFCD88
+    url: https://download.docker.com/linux/debian/gpg
+    state: present
+
+- name: Add Docker repository into sources list (Debian 10)
+  apt_repository:
+    repo: 'deb [arch=amd64] https://download.docker.com/linux/debian buster stable'
+    state: present
+  when: buster_string in debian_version.stdout
+
+- name: Add Docker repository into sources list (Debian 11)
+  apt_repository:
+    repo: 'deb [arch=amd64] https://download.docker.com/linux/debian bullseye stable'
+    state: present
+  when: bullseye_string in debian_version.stdout
+
+- name: Update repositories cache
+  apt:
+    update_cache: yes
+
 - name: Install Docker packages
   apt:
     pkg:
@@ -171,19 +171,7 @@
     - git 
     - pwgen 
     - python3-docker
-
-- name: Install ansible package from backports (Debian 10)
-  apt:
-    pkg:
-     - python-pip
-    default_release: buster-backports
-  when: buster_string in debian_version.stdout
-
-- name: Install ansible package (Debian 11)
-  apt:
-    pkg:
-     - python3-pip
-  when: bullseye_string in debian_version.stdout 
+    - python3-pip 
 
 - name: Setup update-alternatives 1 (Debian 10)
   command: update-alternatives --install /usr/bin/python python /usr/bin/python2.7 1

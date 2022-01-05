@@ -28,12 +28,12 @@ pcadmin@backup-server:/mnt/backup-dir/extracted$ borg extract /mnt/backup-dir/AW
 Using the same vars.yml, follow the setup steps in Installation.md until the end of step 3.
 
 
-5) Ensure old backup repo is deleted/moved:
-
-pcadmin@backup-server:/mnt/backup-dir/AWX$ mv ./panel.example.org ./panel.example.org-old
+5) Check that AWX system is up and running.
 
 
-6) Check that AWX system is up and running.
+6) Ensure old backup repo is deleted/moved:
+
+pcadmin@backup-server:/mnt/backup-dir/AWX$ mv ./panel.example.org ./panel.example.orgpanel.topgunmatrix.com_2022_01_05
 
 
 7) Update the borg backup password in the create-awx-system inventory file (vars.yml):
