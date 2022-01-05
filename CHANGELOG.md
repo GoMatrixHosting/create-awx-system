@@ -12,6 +12,7 @@
 - To create-awx-system vars.yml add the following variable:
 `wp_username: username`
 - Re-install AWX. (Take care to observe the new variables/changes to the setup-radius role.)
+- Disable and remove the 'WP OAuth Server' plugin if you're using it, then cancel your subscription. :)
 
 
 # GoMatrixHosting v0.6.7
