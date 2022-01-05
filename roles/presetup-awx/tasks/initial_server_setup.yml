@@ -185,9 +185,9 @@
      - python3-pip
   when: bullseye_string in debian_version.stdout 
 
-- name: Install Requests python package on version 2.14.2
-  pip:
-    name: requests==2.14.2
+#- name: Install Requests python package on version 2.14.2
+#  pip:
+#    name: requests==2.14.2
 
 - name: Setup update-alternatives 1 (Debian 10)
   command: update-alternatives --install /usr/bin/python python /usr/bin/python2.7 1
