@@ -46,4 +46,3 @@ $ rsync -av ./awx panel.example.org:/root/
 ```
 
 6) Continue from step 4 of /docs/Installation_AWX.md.
-

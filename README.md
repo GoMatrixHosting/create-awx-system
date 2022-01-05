@@ -27,7 +27,7 @@ You can help contribute to this project in the following ways:
 - Purchase a subscription plan from https://www.gomatrixhosting.com, we don't take donations but you can pay us directly for a range of Matrix services.
 - Run our system yourself and start hosting Matrix services for others.
 - Write issue/bug reports to our GitLab: https://gitlab.com/groups/GoMatrixHosting/-/boards
-- Write us a PR if you have the know how.
+- Write us a PR if you have the know how!
 
 
 ## Forking Notes

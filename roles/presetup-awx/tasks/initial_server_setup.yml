@@ -22,7 +22,7 @@
     - apt-listchanges
     - rsync
 
-- name: Collect Debian version from Wireguard server
+- name: Collect Debian version from AWX server
   command: lsb_release -c
   register: debian_version
 
@@ -31,20 +31,20 @@
     buster_string: "buster"
     bullseye_string: "bullseye"
 
-- name: Add buster-backports repository into sources list for Debian 10
+- name: Add buster-backports repository into sources list (Debian 10)
   apt_repository:
     repo: deb http://deb.debian.org/debian buster-backports main
     state: present
   when: buster_string in debian_version.stdout
 
-- name: Install ansible from backports for Debian 10
+- name: Install ansible package from backports (Debian 10)
   apt:
     pkg:
      - ansible
     default_release: buster-backports
   when: buster_string in debian_version.stdout
 
-- name: Install ansible for Debian 11
+- name: Install ansible package (Debian 11)
   apt:
     pkg:
      - ansible
@@ -169,10 +169,22 @@
     pkg:
     - nodejs 
     - npm 
-    - git
-    - python3-pip 
+    - git 
     - pwgen 
     - python3-docker
+
+- name: Install ansible package from backports (Debian 10)
+  apt:
+    pkg:
+     - python-pip
+    default_release: buster-backports
+  when: buster_string in debian_version.stdout
+
+- name: Install ansible package (Debian 11)
+  apt:
+    pkg:
+     - python3-pip
+  when: bullseye_string in debian_version.stdout 
 
 - name: Install Requests python package on version 2.14.2
   pip:
@@ -186,9 +198,15 @@
   command: update-alternatives --install /usr/bin/python python /usr/bin/python3 2
   when: buster_string in debian_version.stdout
 
-- name: Install Docker Compose python package on version 1.21.0
+- name: Install Docker Compose python package on version 1.21.0 (Debian 10)
   pip:
     name: docker-compose==1.21.0
+  when: buster_string in debian_version.stdout
+
+- name: Install Docker Compose python package on version 1.29.2 (Debian 11)
+  pip:
+    name: docker-compose==1.29.2
+  when: bullseye_string in debian_version.stdout
 
 - name: Save docker config file, template
   template:

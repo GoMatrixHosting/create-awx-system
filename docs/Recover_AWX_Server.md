@@ -20,7 +20,7 @@ pcadmin@backup-server:~$ cd /mnt/backup-dir/extracted
 pcadmin@backup-server:/mnt/backup-dir/extracted$ borg extract /mnt/backup-dir/AWX/panel.example.org/::AWX-3-panel-2021-01-24T03:49:44 var/lib/awx/projects
 
 
-3) Change DNS entry for AWX to new IP. (panel.example.org and monitor.example.org)
+3) Change DNS A/AAAA records for the AWX system to new servers IP. (panel.example.org and monitor.example.org)
 
 
 4) Re-create AWX setup on the new server:
@@ -36,12 +36,17 @@ pcadmin@backup-server:/mnt/backup-dir/AWX$ mv ./panel.example.org ./panel.exampl
 6) Check that AWX system is up and running.
 
 
-7) Run post_setup.yml with only the 'setup-backup' tag:
+7) Update the borg backup password in the create-awx-system inventory file (vars.yml):
+
+`backup_awx_encryption_passphrase: uOTpX3pwh2zC04lNrLxe`
+
+
+8) Run post_setup.yml with only the 'setup-backup' tag:
 
 $ ansible-playbook -v -i ./inventory/hosts -t "setup-backup" post_setup.yml
 
 
-8) Restore /var/lib/awx/projects to new AWX system with correct permissions:
+9) Restore /var/lib/awx/projects to new AWX system with correct permissions:
 
 root@AWX-new:~# docker stop awx_task
 awx_task
@@ -68,7 +73,7 @@ chown root:webhook /var/lib/awx/projects/clients/*/organisation.yml;
 chmod 600 /var/lib/awx/projects/clients/*/*/*
 
 
-9) Run import on AWX tower:
+10) Run import on AWX tower:
 
 root@AWX-new:~# cp /var/lib/awx/projects/awx-dump.sql /root/.awx/pgdocker/12/data/
 root@AWX-new:~# docker exec -it awx_postgres /bin/bash
@@ -82,12 +87,12 @@ root@AWX-new:~# docker start awx_web
 awx_web
 
 
-10) Check if the data has been imported properly:
+11) Check if the data has been imported properly:
 
 Try login as a user account, looks good? :)
 
 
-11) Activate backup and complete installation:
+12) Activate backup and complete installation:
 
 $ ansible-playbook -v -i ./inventory/hosts -t "configure-awx,setup-webhooks,setup-radius,setup-swatchdog,enable-backup" post_setup.yml
 
