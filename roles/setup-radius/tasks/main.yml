@@ -136,10 +136,6 @@
       dest: "/home/{{ wp_username }}/wp-probe.sh"
       mode: '0550'
 
-  - name: Test and initialize new SSH tunnel, should produce the error 'Invalid user ID, email or login'
-    command: |
-      runuser -u freerad -- /usr/bin/ssh topgunmatrix.com ./wp-probe.sh admin test
-
   - name: Install custom default config
     copy:
       src: "{{ role_path }}/default"

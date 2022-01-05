@@ -3,7 +3,7 @@
 
 # Create a server
 
-Create a Debian 10/11 server and setup SSH access to root user.
+Create a Debian 10/11 server with at least 4GB or RAM and setup SSH access to root user.
 ```
 $ ssh root@panel.example.org
 $ exit
@@ -15,8 +15,6 @@ Create 2 A/AAAA records for panel.example.org and monitor.example.org pointing t
 
 
 # Installation
-
-Installation is broken up into 8 stages:
 
 1) Optionally, create a backup server. You should be able to access root using a IP that the AWX server can reach and the 'client_private_ssh_key', it should also contain a depriviledged user 'backup_server_user' and backup location 'backup_server_location'. Collect its SSH fingerprint and save it to 'backup_server_ssh_fingerprint', to collect it run this command:
 
@@ -147,15 +145,34 @@ Run the script:
 `$ ansible-playbook -v -i ./inventory/hosts -t "generate-token,configure-awx,setup-webhooks,setup-radius,setup-swatchdog,setup-backup,enable-backup" post_setup.yml`
 
 
-5) Perform initial SSH handshake from AWX to backup server.
+5) If using a backup server, perform the initial SSH handshake from AWX to backup server.
 
-Manually SSH into the AWX tower, then manually SSH into the backup server:
-`$ ssh {{ backup_server_hostname }}`
+From AWX:
+`# ssh {{ backup_server_hostname }}`
 
 Note the command-line here is restricted, so you won't be able to do anything besides connnect.
 
 
-6) Connect AWX to FreeRADIUS server
+6A) If using this setup commercially (with WordPress/MemberPress), perform the initial SSH handshake from AWX to the wordpress site:
+
+From AWX:
+`# runuser -u freerad -- /usr/bin/ssh {{ wp_url }} ./wp-probe.sh admin test`
+
+This should print the following error:
+```
+Error: Invalid user ID, email or login: 'admin'
+1
+```
+
+
+6B) If using this setup commercially (with WordPress/MemberPress), initialise??? The wp-probe mechanism by using it manually once:
+```
+# runuser -u freerad -- /usr/bin/ssh topgunmatrix.com ./wp-probe.sh bobfett@protonmail.com odwnZgGlpYrvxZLRcb
+0
+```
+
+
+7) Connect AWX to FreeRADIUS server
 
 In the 'Authentication' > 'Radius' page:
 
@@ -164,14 +181,14 @@ RADIUS PORT:	1812
 RADIUS SECRET:	"{{ radius_secret }}"
 
 
-7) Set base URL in AWX
+8) Set base URL in AWX
 
 Settings > Miscellaneous System Settings > Edit
 
 Change 'Base URL of the Tower host' to your AWX systems URL.
 
 
-8) Setup grafana.
+9) Setup grafana.
 
 The Grafana needs extra configuration to work, follow the [Grafana.md in the docs/ directory](docs/Grafana.md).
 
