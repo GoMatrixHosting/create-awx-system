@@ -66,14 +66,14 @@ Record these variables to ./inventory/host_vars/panel.example.org/vars.yml:
 - client_private_ssh_key_password 	(Strong password for this private key.)
 - vault_unlock_ssh_password:	(Strong password to vault the private_ssh_key_password.)
 
-If you will be using the Mailgun relay, define:
+If you will be using the Mailgun relay (recommended), define:
 - mg_sender_email_address	(The Mailgun email address. eg: "user@mail.example.org")
 - mg_sender_domain		(The Mailgun email domain. eg: "mail.example.org"
 - mg_relay_host_name		(The Mailgun relay host name. eg: "smtp.mailgun.org")
 - mg_api_url			(The Mailgun API location. eg: "api.mailgun.net")
 - mg_private_api_key		(The Mailgun private API key.)
 
-If you will be using a backup server, define:
+If you will be using a backup server (recommended), define:
 - backup_server_enabled		('true' if using a backup server, otherwise 'false')
 - backup_server_ip 		(IP address of the backup server.)
 - backup_server_hostname 	(The hostname of the backup server.)
@@ -92,7 +92,7 @@ If you want to spawn Matrix servers using DigitalOcean, define:
 - do_spaces_secret_key 		(Your DigitalOcean Spaces Secret Key.)
 - do_image_master 		(eg: debian-10-x64)
 
-If you will be using this setup commercially, define:
+If you will be using this setup commercially (with WordPress/MemberPress), define:
 - radius_secret			(Strong password for authenticating AWX against FreeRadius.)
 - oauth_client_id		(client_id from WP Oauth Server WordPress plugin.)
 - oauth_client_secret		(client_secret from WP Oauth Server WordPress plugin.)
