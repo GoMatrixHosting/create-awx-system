@@ -153,7 +153,7 @@ From AWX:
 Note the command-line here is restricted, so you won't be able to do anything besides connnect.
 
 
-6A) If using this setup commercially (with WordPress/MemberPress), perform the initial SSH handshake from AWX to the wordpress site:
+6) If using this setup commercially (with WordPress/MemberPress), perform the initial SSH handshake from AWX to the wordpress site:
 
 From AWX:
 `# runuser -u freerad -- /usr/bin/ssh {{ wp_url }} ./wp-probe.sh admin test`
@@ -162,13 +162,6 @@ This should print the following error:
 ```
 Error: Invalid user ID, email or login: 'admin'
 1
-```
-
-
-6B) If using this setup commercially (with WordPress/MemberPress), initialise??? The wp-probe mechanism by using it manually once:
-```
-# runuser -u freerad -- /usr/bin/ssh topgunmatrix.com ./wp-probe.sh bobfett@protonmail.com odwnZgGlpYrvxZLRcb
-0
 ```
 
 
