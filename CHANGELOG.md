@@ -14,7 +14,7 @@
 - Re-install AWX. (Take care to observe the new variables/changes to the setup-radius role.)
 - Disable and remove the 'WP OAuth Server' plugin if you're using it, then cancel your subscription. :)
 
-- *Recommended: A full backup and recovery of your AWX system to Debian 11.
+- Recommended: A full backup and recovery of your AWX system to Debian 11.
 
 
 # GoMatrixHosting v0.6.7
