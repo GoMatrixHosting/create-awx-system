@@ -5,7 +5,7 @@
 - Removed the old ansible-tower-cli components from the AWX system, and upgraded the webhook and swatchdog roles to use the awx.awx ansible collection instead.
 - Default to the hacks method to generate master token, the regular awx.awx modules are not reliable enough with AWX v0.17.1.
 - We now auth directly against WordPress, removing the WPOAUTHServer plugin dependancy and greatly improving the panels login speed. See [#27](https://gitlab.com/GoMatrixHosting/create-awx-system/-/issues/27)[#22](https://gitlab.com/GoMatrixHosting/create-awx-system/-/issues/22).
-- Added a 'Contributing' section to the create-awx-system [README.md](https://gitlab.com/GoMatrixHosting/create-awx-system/-/blob/master/README.md#contributing).
+- Added a [Contributing section to the create-awx-system README.md](https://gitlab.com/GoMatrixHosting/create-awx-system/-/blob/master/README.md#contributing).
 
 
 # Upgrade Notes v0.6.8

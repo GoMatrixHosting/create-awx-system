@@ -92,9 +92,4 @@ awx_web
 Try login as a user account, looks good? :)
 
 
-12) Activate backup and complete installation:
-
-$ ansible-playbook -v -i ./inventory/hosts -t "configure-awx,setup-webhooks,setup-radius,setup-swatchdog,enable-backup" post_setup.yml
-
-*Follow the rest of Installation.md from step 5.
-
+12) Complete the rest of Installation.md from step 4.
