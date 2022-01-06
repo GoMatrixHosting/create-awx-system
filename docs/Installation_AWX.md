@@ -153,7 +153,7 @@ From AWX:
 Note the command-line here is restricted, so you won't be able to do anything besides connnect.
 
 
-6) If using this setup commercially (with WordPress/MemberPress), perform the initial SSH handshake from AWX to the wordpress site:
+6A) If using this setup commercially (with WordPress/MemberPress), perform the initial SSH handshake from AWX to the wordpress site:
 
 From AWX:
 `# runuser -u freerad -- /usr/bin/ssh {{ wp_url }} ./wp-probe.sh admin test`
@@ -162,6 +162,14 @@ This should print the following error:
 ```
 Error: Invalid user ID, email or login: 'admin'
 1
+```
+
+6B) check webhook.service status:
+```
+# systemctl status webhook.service 
+● webhook.service
+     Loaded: loaded (/etc/systemd/system/webhook.service; enabled; vendor preset: enabled)
+     Active: active (running) since Thu 2022-01-06 00:35:33 UTC; 10min ag
 ```
 
 
