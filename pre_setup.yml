@@ -5,7 +5,4 @@
 
   roles:
     - presetup-awx
-    - setup-webhooks
     - setup-monitor
-
-

@@ -1,17 +1,36 @@
 
 - block:
-  - name: Add buster-backports repository into sources list
+  - name: Collect Debian version from AWX server
+    command: lsb_release -c
+    register: debian_version
+
+  - name: Setting facts for checking the release
+    set_fact:
+      buster_string: "buster"
+      bullseye_string: "bullseye"
+
+  - name: Add buster-backports repository into sources list for Debian 10
     apt_repository:
       repo: deb http://deb.debian.org/debian buster-backports main
       state: present
+    when: buster_string in debian_version.stdout
 
-  - name: Install FreeRADIUS packages
+  - name: Install FreeRADIUS packages for Debian 10
     apt:
       pkg:
        - freeradius
        - freeradius-python3
        - python3-requests-oauthlib
       default_release: buster-backports
+    when: buster_string in debian_version.stdout
+
+  - name: Install FreeRADIUS packages for Debian 11
+    apt:
+      pkg:
+       - freeradius
+       - freeradius-python3
+       - python3-requests-oauthlib
+    when: bullseye_string in debian_version.stdout
 
   - name: Force FreeRADIUS auth-type PAP
     lineinfile:
@@ -34,13 +53,88 @@
       group: freerad
       state: link
 
-  - name: Template the oauth2-oracle.py file
+  - name: Ensure /var/run/freeradius directory exists, prevents this Debian 11 bug https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=954911
+    file:
+      path: '/var/run/freeradius'
+      state: directory
+      owner: freerad
+      group: freerad
+      mode: '0770'
+
+  - name: Template the wp-oracle.py file
     template:
-      src: "{{ role_path }}/oauth2-oracle.py.j2"
-      dest: /usr/local/bin/oauth2-oracle.py
-      owner: root
-      group: root
-      mode: '0755'
+      src: "{{ role_path }}/wp-oracle.py.j2"
+      dest: /usr/local/bin/wp-oracle.py
+      owner: freerad
+      group: freerad
+      mode: '0555'
+
+  - name: Ensure the ~/.ssh directory exists on front-end wordpress site
+    delegate_to: "{{ wp_url }}"
+    become: no
+    file:
+      path: "/home/{{ wp_username }}/.ssh/"
+      state: directory
+      mode: '0750'
+
+  - name: Ensure the ~/.ssh/sockets directory exists for the FreeRadius user on AWX
+    file:
+      path: "/etc/freeradius/.ssh/sockets"
+      state: directory
+      recurse: yes
+      owner: freerad
+      group: freerad
+      mode: '0750'
+
+  - name: Generate OpenSSH key for freerad user to connect to the front-end WordPress site
+    community.crypto.openssh_keypair:
+      path: '/etc/freeradius/.ssh/wp-oracle_ed25519'
+      comment: 'WP-Oracle SSH key for {{ wp_url }}'
+      type: ed25519
+      owner: freerad
+      group: freerad
+      mode: '0600'
+
+  - name: Collect SSH public key value
+    command: |
+        cat /etc/freeradius/.ssh/wp-oracle_ed25519.pub
+    register: public_key
+
+  - name: Update SSH config on AWX system
+    blockinfile:
+      path: /etc/freeradius/.ssh/config
+      create: yes
+      block: |
+        Host {{ wp_url }}
+            HostName {{ wp_url }}
+            Port 22
+            User {{ wp_username }}
+            IdentityFile /etc/freeradius/.ssh/wp-oracle_ed25519
+            IdentitiesOnly=yes
+            ControlMaster auto
+            ControlPath  ~/.ssh/sockets/%r@%h-%p
+            ControlPersist 600
+      owner: freerad
+      group: freerad
+      mode: '0600'
+
+  - name: Add wp-oracle public SSH key to the front-end WordPress site
+    delegate_to: "{{ wp_url }}"
+    become: no
+    blockinfile:
+      path: "/home/{{ wp_username }}/.ssh/authorized_keys"
+      create: yes
+      block: |
+        {{ public_key.stdout }} restrict,from={{ awx_url }},command=/home/{{ wp_username }}/wp-probe.sh
+      mode: '0660'
+
+  - name: Template the wp-probe.sh file onto the front-end WordPress site
+    delegate_to: "{{ wp_url }}"
+    become: no
+    template:
+      src: "{{ role_path }}/wp-probe.sh.j2"
+      dest: "/home/{{ wp_username }}/wp-probe.sh"
+      mode: '0550'
 
   - name: Install custom default config
     copy:

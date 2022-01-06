@@ -1,6 +1,7 @@
 import sys
 import json
 import subprocess
+from pathlib import Path
 
 def shellcmd(command):
   print(command)
@@ -50,14 +51,21 @@ for line in client_file_contents_lines:
 
 print("Member_id is: " + member_id)
 
-extra_vars = {}
-extra_vars['member_id']=member_id
-extra_vars['client_email']=client_email
-awx_job_launch_command = ["runuser", "-u", "swatchdog", "--", "awx-cli", "job", "launch", "-J", "00 - Bind User Account"]
-# passing extra_vars requires AWX's "PROMPT ON LAUNCH" to be enabled
-extravars = '--extra-vars=' + json.JSONEncoder().encode(extra_vars)
-awx_job_launch_command = awx_job_launch_command + [ extravars ]
-shellcmd(awx_job_launch_command)
+# Touch the extra-vars file
+Path('/tmp/bind_user.json').touch()
+ 
+# Clear the extra-vars file
+open('/tmp/bind_user.json', 'w').close()
+  
+# Write the extra-vars file
+extra_vars_json = {"member_id": member_id, "client_email": client_email}
+with open('/tmp/bind_user.json', 'w') as extra_vars_file:
+  json.dump(extra_vars_json, extra_vars_file)
+extra_vars_file.close()
+
+# Launch the ansible playbook
+ansible_launch_command = ["/usr/bin/ansible-playbook", "-v", "/usr/local/bin/bind-user.yml"]
+shellcmd(ansible_launch_command)
 
 # if it does not, bind that user to the team, then add ',binded' to the end of that line
 

@@ -4,7 +4,7 @@ How to install this AWX setup without a front-end wordpress site, digitalocean s
 
 # Create a server
 
-Create a Debian 10 server and setup SSH access to root user.
+Create a Debian 10/11 server with at least 4GB or RAM and setup SSH access to root user.
 ```
 $ ssh root@panel.example.org
 $ exit
@@ -12,12 +12,10 @@ $ exit
 
 # Setup DNS entry for it:
 
-Map an A record for panel.example.org to the servers IP.
+Map an A/AAAA record for panel.example.org to the servers IP.
 
 
 # Installation
-
-Installation is broken up into 5 stages:
 
 1) Pre-setup, setup before the awx playbook is run, installs Docker and sets up TLS proxy for AWX, optionally website hooks and grafana are also setup.
 
@@ -54,28 +52,17 @@ Record these variables to ./inventory/host_vars/panel.example.org/vars.yml:
 - client_private_ssh_key_password 	(Strong password for this private key.)
 - vault_unlock_ssh_password:	(Strong password to vault the private_ssh_key_password.)
 
-If you will be using a backup server, also define:
-- backup_server_enabled		('true' if using a backup server, otherwise 'false')
-If not you can skip these:
-- backup_server_ip 		(IP address of the backup server.)
-- backup_server_hostname 	(The hostname of the backup server.)
-- backup_server_user 		(The username of the backup server.)
-- backup_server_directory 	(The directory to backup to on the backup server.)
-- backup_server_location:	(The location of the backup server.)
-- backup_awx_encryption_passphrase 	(Strong password for the AWX borg backup.)
-- backup_server_ssh_fingerprint (The host SSH fingerprint of your backup server.)
-- backup_schedule_start		(The start time for scheduled client backups in 'YYYYMMDDTHHMMSS' format, for example '20211030T080000' which means the 30th of October 2021 at 8AM.)
-- backup_schedule_frequency	(The time period for scheduled client backups, options are 'MINUTELY', 'HOURLY', 'DAILY', 'WEEKLY','MONTHLY')
-- backup_schedule_interval	(The number of minutes/hours/days/weeks/months to schedule client backups to.)
+Since you won't be using a backup server, also define:
+- backup_server_enabled		('false')
 
-If using the Mailgun relay define these values, if not then enter placeholder values (eg: 1234): 
+If using the Mailgun relay define these values: 
 - mg_sender_email_address	(The Mailgun email address. eg: "user@mail.example.org")
 - mg_sender_domain		(The Mailgun email domain. eg: "mail.example.org"
 - mg_relay_host_name		(The Mailgun relay host name. eg: "smtp.mailgun.org")
 - mg_api_url			(The Mailgun API location. eg: "api.mailgun.net")
 - mg_private_api_key		(The Mailgun private API key.)
 
-Also add placeholder values to the following (eg: 1234), these won't be used:
+If using DigitalOcean define these values:
 - do_api_token 			(Your DigitalOcean API token/)
 - do_spaces_access_key 		(Your DigitalOcean Spaces Access Key.)
 - do_spaces_secret_key 		(Your DigitalOcean Spaces Secret Key.)
@@ -130,15 +117,7 @@ Run the script:
 `$ ansible-playbook -v -i ./inventory/hosts -t "generate-token,configure-awx" post_setup.yml`
 
 
-4) Optionally, perform initial SSH handshake from AWX to backup server.
-
-Manually SSH into the AWX tower, then manually SSH into the backup server:
-`$ ssh {{ backup_server_hostname }}`
-
-Note the command-line here is restricted, so you won't be able to do anything besides connnect.
-
-
-5) Set base URL in AWX
+4) Set base URL in AWX
 
 Settings > Miscellaneous System Settings > Edit
 

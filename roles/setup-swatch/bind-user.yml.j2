@@ -1,0 +1,14 @@
+- name: "Launches the '00 - Bind User Account' job template"
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  tasks:
+    - name: Launch the '00 - Bind User Account' job template
+      awx.awx.tower_job_launch:
+        job_template: "00 - Bind User Account"
+        {% raw %}extra_vars: "{{ lookup('file', '/tmp/bind_user.json') }}"
+{% endraw %}
+        tower_host: "https://{{ awx_url }}"
+        tower_oauthtoken: "{{ webhook_session_token }}"
+        validate_certs: yes

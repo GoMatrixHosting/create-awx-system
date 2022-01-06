@@ -1,4 +1,23 @@
 
+# GoMatrixHosting v0.6.8
+
+- Upgraded create-awx-system to run on Debian 11. See [#26](https://gitlab.com/GoMatrixHosting/create-awx-system/-/issues/26).
+- Removed the old ansible-tower-cli components from the AWX system, and upgraded the webhook and swatchdog roles to use the awx.awx ansible collection instead.
+- Default to the hacks method to generate master token, the regular awx.awx modules are not reliable enough with AWX v0.17.1.
+- We now auth directly against WordPress, removing the WPOAUTHServer plugin dependancy and greatly improving the panels login speed. See [#27](https://gitlab.com/GoMatrixHosting/create-awx-system/-/issues/27)[#22](https://gitlab.com/GoMatrixHosting/create-awx-system/-/issues/22).
+- Added a [Contributing section to the create-awx-system README.md](https://gitlab.com/GoMatrixHosting/create-awx-system/-/blob/master/README.md#contributing).
+
+
+# Upgrade Notes v0.6.8
+
+- To the create-awx-system inventory file (vars.yml) add the following variable:
+  `wp_username: username`
+- Re-install AWX. (Take care to observe the new variables/changes to the setup-radius role.)
+- Disable and remove the 'WP OAuth Server' plugin if you're using it, then cancel your subscription. :)
+
+- Recommended: A full backup and recovery of your AWX system to Debian 11.
+
+
 # GoMatrixHosting v0.6.7
 
 - Major updates to the [recover-matrix-server](https://gitlab.com/GoMatrixHosting/gmhosting-external-tools/-/tree/main/recover-matrix-server) tool that automatically recover Matrix servers connected to AWx. See [#1](https://gitlab.com/GoMatrixHosting/gmhosting-external-tools/-/issues/1) tool. It's now faster and allows:
@@ -12,6 +31,12 @@
 
 # Upgrade Notes v0.6.7
 
+- Edit matrix_vars.yml of every subscription so that:
+```
+awx_janitor_user_created: false
+awx_dimension_user_created: false
+awx_mjolnir_user_created: false
+```
 - Deploy/update all servers.
 
 

@@ -5,6 +5,7 @@
 
   roles:
     - configure-awx
+    - setup-webhooks
     - setup-radius
     - setup-swatch
     - setup-backup

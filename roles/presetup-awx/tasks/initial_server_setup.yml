@@ -17,9 +17,37 @@
     - curl
     - gnupg2
     - software-properties-common
-    - python-pip
     - unattended-upgrades
     - apt-listchanges
+    - rsync
+
+- name: Collect Debian version from AWX server
+  command: lsb_release -c
+  register: debian_version
+
+- name: Setting facts for checking the release
+  set_fact:
+    buster_string: "buster"
+    bullseye_string: "bullseye"
+
+- name: Add buster-backports repository into sources list (Debian 10)
+  apt_repository:
+    repo: deb http://deb.debian.org/debian buster-backports main
+    state: present
+  when: buster_string in debian_version.stdout
+
+- name: Install ansible package from backports (Debian 10)
+  apt:
+    pkg:
+     - ansible
+    default_release: buster-backports
+  when: buster_string in debian_version.stdout
+
+- name: Install ansible package (Debian 11)
+  apt:
+    pkg:
+     - ansible
+  when: bullseye_string in debian_version.stdout
 
 - name: Create swapfile with the right permissions
   command: 'fallocate -l 4G /swapfile'
@@ -80,21 +108,6 @@
   ufw:
     state: enabled
 
-- name: Add the Apt signing key for Docker, will not download if present
-  apt_key:
-    id: 9DC858229FC7DD38854AE2D88D81803C0EBFCD88
-    url: https://download.docker.com/linux/debian/gpg
-    state: present
-
-- name: Add Docker repository into sources list
-  apt_repository:
-    repo: 'deb [arch=amd64] https://download.docker.com/linux/debian buster stable'
-    state: present
-
-- name: Update repositories cache
-  apt:
-    update_cache: yes
-    
 - name: Configure unattended-upgrades 1
   lineinfile:
     path: /etc/apt/apt.conf.d/50unattended-upgrades
@@ -122,6 +135,28 @@
     group: root
     mode: '0644'
 
+- name: Add the Apt signing key for Docker, will not download if present
+  apt_key:
+    id: 9DC858229FC7DD38854AE2D88D81803C0EBFCD88
+    url: https://download.docker.com/linux/debian/gpg
+    state: present
+
+- name: Add Docker repository into sources list (Debian 10)
+  apt_repository:
+    repo: 'deb [arch=amd64] https://download.docker.com/linux/debian buster stable'
+    state: present
+  when: buster_string in debian_version.stdout
+
+- name: Add Docker repository into sources list (Debian 11)
+  apt_repository:
+    repo: 'deb [arch=amd64] https://download.docker.com/linux/debian bullseye stable'
+    state: present
+  when: bullseye_string in debian_version.stdout
+
+- name: Update repositories cache
+  apt:
+    update_cache: yes
+
 - name: Install Docker packages
   apt:
     pkg:
@@ -133,24 +168,28 @@
     pkg:
     - nodejs 
     - npm 
-    - git
-    - python3-pip 
+    - git 
     - pwgen 
     - python3-docker
+    - python3-pip 
 
-- name: Install Requests python package on version 2.14.2
-  pip:
-    name: requests==2.14.2
-
-- name: Setup update-alternatives 1
+- name: Setup update-alternatives 1 (Debian 10)
   command: update-alternatives --install /usr/bin/python python /usr/bin/python2.7 1
-
-- name: Setup update-alternatives 2
+  when: buster_string in debian_version.stdout
+  
+- name: Setup update-alternatives 2 (Debian 10)
   command: update-alternatives --install /usr/bin/python python /usr/bin/python3 2
+  when: buster_string in debian_version.stdout
 
-- name: Install Docker Compose python package on version 1.21.0
+- name: Install Docker Compose python package on version 1.21.0 (Debian 10)
   pip:
     name: docker-compose==1.21.0
+  when: buster_string in debian_version.stdout
+
+- name: Install Docker Compose python package on version 1.29.2 (Debian 11)
+  pip:
+    name: docker-compose==1.29.2
+  when: bullseye_string in debian_version.stdout
 
 - name: Save docker config file, template
   template:
@@ -164,3 +203,12 @@
     special_time: daily
     job: "sudo journalctl --vacuum-time=28d"
 
+- name: Set hostname of the server
+  command: |
+    hostnamectl set-hostname {{ awx_url }}
+
+- name: Ensure group "webhook" exists
+  group:
+    name: webhook
+    gid: 1000
+    state: present

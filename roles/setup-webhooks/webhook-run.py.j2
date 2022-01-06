@@ -3,11 +3,7 @@
 import json
 import os
 import subprocess
-
-with open(os.environ['HOOK_PAYLOAD'], "r") as f:
-  # returns JSON object as a dictionary
-  # If the data being deserialized is not a valid JSON document, a JSONDecodeError will be raised
-  data = json.load(f)
+from pathlib import Path
 
 def shellcmd(command):
   print(command)
@@ -17,18 +13,13 @@ def shellcmd(command):
   print(rc.stderr)
   return(rc)
 
-#########################################
-# Hard Coded AWX/Tower Credentials      #
-create_account_job_template = "00 - Create Account"
-create_subscription_job_template = "00 - Create MP Subscription"
-delete_subscription_job_template = "00 - Delete Subscription"
-#########################################
+with open(os.environ['HOOK_PAYLOAD'], "r") as f:
+  # returns JSON object as a dictionary
+  # If the data being deserialized is not a valid JSON document, a JSONDecodeError will be raised
+  data = json.load(f)
 
 #print(data)
 print(json.dumps(data, indent = 1))
-
-# Launch Tower Job Template Example
-# $ ~/.local/bin/awx job launch -J "00 - Create Subscription" --monitor --extra-vars='first_name="Freddy" last_name="Kreuger" email="user@example.com" subscr_id="mp-sub-5f83bf681654b" plan_title="Medium Server"'
 
 event_type = str(data['event'])
 print("Event type is: " + event_type)
@@ -38,14 +29,23 @@ if event_type == "member-added":
   print("Client Email: " + client_email)
   member_id = str(data['data']['id'])
   print("Member ID: " + member_id)
-  extra_vars = {}
-  extra_vars['client_email']=client_email
-  extra_vars['member_id']=member_id
-  awx_job_launch_command = ["awx-cli", "job", "launch", "-J", create_account_job_template]
-  # passing extra_vars requires AWX's "PROMPT ON LAUNCH" to be enabled
-  extravars = '--extra-vars=' + json.JSONEncoder().encode(extra_vars)
-  awx_job_launch_command = awx_job_launch_command + [ extravars ]
-  shellcmd(awx_job_launch_command)
+  
+  # Touch the extra-vars file
+  Path('/tmp/create_account.json').touch()
+  
+  # Clear the extra-vars file
+  open('/tmp/create_account.json', 'w').close()
+  
+  # Write the extra-vars file
+  extra_vars_json = {"member_id": member_id, "client_email": client_email}
+  with open('/tmp/create_account.json', 'w') as extra_vars_file:
+    json.dump(extra_vars_json, extra_vars_file)
+  extra_vars_file.close()
+  
+  # Launch the ansible playbook
+  ansible_launch_command = ["/usr/bin/ansible-playbook", "-v", "/usr/local/bin/webhook-create-account.yml"]
+  shellcmd(ansible_launch_command)
+  
   # Add client entry to client-list file
   client_file_path = "/var/lib/awx/projects/clients/client-list"
   client_file = open(client_file_path,'a')
@@ -73,35 +73,45 @@ elif event_type == "recurring-transaction-completed":
   print("Clients first name is: " + client_first_name)
   client_last_name = str(data['data']['member']['last_name'])
   print("Clients last name is:  " + client_last_name)
-  awx_job_launch_command = ["awx-cli", "job", "launch", "-J", create_subscription_job_template]
-  # passing extra_vars requires AWX's "PROMPT ON LAUNCH" to be enabled
-  extra_vars = {}
-#  client_first_name="Robert'); DROP TABLE Students; override --"; client_last_name='Sploits-override'
-  extra_vars['client_first_name']=client_first_name
-  extra_vars['client_last_name']=client_last_name
-  extra_vars['client_email']=client_email
-  extra_vars['subscription_id']=subscription_id
-  extra_vars['member_id']=member_id
-  extra_vars['plan_title']=plan_title
-  extravars = '--extra-vars=' + json.JSONEncoder().encode(extra_vars)
-  awx_job_launch_command = awx_job_launch_command + [ extravars ]
-  shellcmd(awx_job_launch_command)
+  
+  # Touch the extra-vars file
+  Path('/tmp/create_subscription.json').touch()
+  
+  # Clear the extra-vars file
+  open('/tmp/create_subscription.json', 'w').close()
+  
+  # Write the extra-vars file
+  extra_vars_json = {"plan_title": plan_title, "subscription_id": subscription_id, "member_id": member_id, "client_email": client_email, "client_first_name": client_first_name, "client_last_name": client_last_name}
+  with open('/tmp/create_subscription.json', 'w') as extra_vars_file:
+    json.dump(extra_vars_json, extra_vars_file)
+  extra_vars_file.close()
+
+  # Launch the ansible playbook
+  ansible_launch_command = ["/usr/bin/ansible-playbook", "-v", "/usr/local/bin/webhook-create-subscription.yml"]
+  shellcmd(ansible_launch_command)
 
 elif event_type == "subscription-expired":
   subscription_id = str(data['data']['subscr_id'])
   print("Subscription ID: " + subscription_id)
   member_id = str(data['data']['member']['id'])
   print("Member ID: " + member_id)
-
-  extra_vars = {}
-  extra_vars['subscription_id']=subscription_id
-  extra_vars['member_id']=member_id
-  awx_job_launch_command = ["awx-cli", "job", "launch", "-J", delete_subscription_job_template]
-  # passing extra_vars requires AWX's "PROMPT ON LAUNCH" to be enabled
-  extravars = '--extra-vars=' + json.JSONEncoder().encode(extra_vars)
-  awx_job_launch_command = awx_job_launch_command + [ extravars ]
-  shellcmd(awx_job_launch_command)
   
+  # Touch the extra-vars file
+  Path('/tmp/delete_subscription.json').touch()
+  
+  # Clear the extra-vars file
+  open('/tmp/delete_subscription.json', 'w').close()
+  
+  # Write the extra-vars file
+  extra_vars_json = {"subscription_id": subscription_id, "member_id": member_id}
+  with open('/tmp/delete_subscription.json', 'w') as extra_vars_file:
+    json.dump(extra_vars_json, extra_vars_file)
+  extra_vars_file.close()
+  
+  # Launch the ansible playbook
+  ansible_launch_command = ["/usr/bin/ansible-playbook", "-v", "/usr/local/bin/webhook-create-subscription.yml"]
+  shellcmd(ansible_launch_command)
+ 
 # Collect that usernames ID using awxkit
 # ~/.local/bin/awx --conf.host https://panel.example.org --conf.username admin --conf.password xxxxxxxxxxxxxxx user list
 
@@ -114,7 +124,8 @@ elif event_type == "member-account-updated":
   client_email = str(data['data']['email'])
   print("Client email is: " + client_email)
   old_client_email = ""
-  # collect old email from /var/lib/awx/projects/clients/member_id/organisation.yml
+  
+  # Collect old email from /var/lib/awx/projects/clients/member_id/organisation.yml
   org_file_path = '/var/lib/awx/projects/clients/' + member_id + '/organisation.yml'
   org_file = open(org_file_path,'r')
   for line in org_file.readlines():
@@ -126,6 +137,8 @@ elif event_type == "member-account-updated":
   org_file = open(org_file_path,'r')
   org_file_contents = org_file.read()
   org_file.close()
+  
+  # Use awxkit to create a list of user accounts in AWX
   awxkit_list_command = "/home/webhook/.local/bin/awx --conf.host https://{{ awx_url }} --conf.username admin --conf.password {{ admin_password }} user list"
   list_process = subprocess.check_output(awxkit_list_command, universal_newlines=True, shell=True)
   final_id = 'none'
@@ -140,6 +153,8 @@ elif event_type == "member-account-updated":
   if final_id == 'none':
     print('Email not found, exiting now..')
     sys.exit()
+    
+  # Use awxkit to modify user account on AWX to have the new email address
   awxkit_username_command = "/home/webhook/.local/bin/awx --conf.host https://{{ awx_url }} --conf.username admin --conf.password {{ admin_password }} user modify " + final_id + " --username " + client_email
   username_process = subprocess.check_output(awxkit_username_command, universal_newlines=True, shell=True)
   print("Old org file contents: \n\n" + org_file_contents)
@@ -148,6 +163,8 @@ elif event_type == "member-account-updated":
   org_file = open(org_file_path,'w')
   org_file.write(new_org_file_contents)
   org_file.close()
+  
+  # Edit the client-list file and update the users entry
   client_list_path = '/var/lib/awx/projects/clients/client-list'
   client_list = open(client_list_path,'r')
   client_list_contents = client_list.read()
@@ -167,3 +184,7 @@ elif event_type == "member-account-updated":
   # Probe that members account to get their previous email (current AWX username)
   # Call the 2 awxkit commands, like so: https://www.reddit.com/r/awx/comments/kwucrn/how_to_change_a_username_on_awx/
   # Change the value in that original file.
+  
+# Notes on old ansible-tower-cli method:
+# Launch Tower Job Template Example
+# $ ~/.local/bin/awx job launch -J "00 - Create Subscription" --monitor --extra-vars='first_name="Freddy" last_name="Kreuger" email="user@example.com" subscr_id="mp-sub-5f83bf681654b" plan_title="Medium Server"'

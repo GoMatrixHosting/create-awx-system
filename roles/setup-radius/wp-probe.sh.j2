@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# wp-probe.sh - checks user login against wordpress
+
+# first move to the wordpress sites directory
+cd /home/{{ wp_username }}/{{ wp_url }}/
+# run `wp user check-password username password` to verify the password
+wp user check-password $1 $2
+# print result
+echo $?

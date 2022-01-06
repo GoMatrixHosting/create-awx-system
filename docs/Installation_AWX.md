@@ -3,7 +3,7 @@
 
 # Create a server
 
-Create a Debian 10 server and setup SSH access to root user.
+Create a Debian 10/11 server with at least 4GB or RAM and setup SSH access to root user.
 ```
 $ ssh root@panel.example.org
 $ exit
@@ -15,8 +15,6 @@ Create 2 A/AAAA records for panel.example.org and monitor.example.org pointing t
 
 
 # Installation
-
-Installation is broken up into 8 stages:
 
 1) Optionally, create a backup server. You should be able to access root using a IP that the AWX server can reach and the 'client_private_ssh_key', it should also contain a depriviledged user 'backup_server_user' and backup location 'backup_server_location'. Collect its SSH fingerprint and save it to 'backup_server_ssh_fingerprint', to collect it run this command:
 
@@ -66,14 +64,14 @@ Record these variables to ./inventory/host_vars/panel.example.org/vars.yml:
 - client_private_ssh_key_password 	(Strong password for this private key.)
 - vault_unlock_ssh_password:	(Strong password to vault the private_ssh_key_password.)
 
-If you will be using the Mailgun relay, also define:
+If you will be using the Mailgun relay (recommended), define:
 - mg_sender_email_address	(The Mailgun email address. eg: "user@mail.example.org")
 - mg_sender_domain		(The Mailgun email domain. eg: "mail.example.org"
 - mg_relay_host_name		(The Mailgun relay host name. eg: "smtp.mailgun.org")
 - mg_api_url			(The Mailgun API location. eg: "api.mailgun.net")
 - mg_private_api_key		(The Mailgun private API key.)
 
-If you will be using a backup server, also define:
+If you will be using a backup server (recommended), define:
 - backup_server_enabled		('true' if using a backup server, otherwise 'false')
 - backup_server_ip 		(IP address of the backup server.)
 - backup_server_hostname 	(The hostname of the backup server.)
@@ -86,19 +84,21 @@ If you will be using a backup server, also define:
 - backup_schedule_frequency	(The time period for schedules client backups, options are 'MINUTELY', 'HOURLY', 'DAILY', 'WEEKLY','MONTHLY')
 - backup_schedule_interval	(The number of minutes/hours/days/weeks/months to schedule client backups to.)
 
-If you will be using this setup commercially, also define:
-- radius_secret			(Strong password for authenticating AWX against FreeRadius.)
-- oauth_client_id		(client_id from WP Oauth Server WordPress plugin.)
-- oauth_client_secret		(client_secret from WP Oauth Server WordPress plugin.)
-- wp_url			(The URL of the front-end WordPress site.)
+If you want to spawn Matrix servers using DigitalOcean, define:
 - do_api_token 			(Your DigitalOcean API token/)
 - do_spaces_access_key 		(Your DigitalOcean Spaces Access Key.)
 - do_spaces_secret_key 		(Your DigitalOcean Spaces Secret Key.)
 - do_image_master 		(eg: debian-10-x64)
 
-Run the script:
+If you will be using this setup commercially (with WordPress/MemberPress), define:
+- radius_secret			(Strong password for authenticating AWX against FreeRadius.)
+- oauth_client_id		(client_id from WP Oauth Server WordPress plugin.)
+- oauth_client_secret		(client_secret from WP Oauth Server WordPress plugin.)
+- wp_url			(The URL of the front-end WordPress site.)
+- wp_username			(The front-end WordPress username you SSH into.)
 
-`$ ansible-playbook -v -i ./inventory/hosts -t "setup,setup-monitor,setup-webhooks" pre_setup.yml`
+Run the script:
+`$ ansible-playbook -v -i ./inventory/hosts -t "setup,setup-monitor" pre_setup.yml`
 
 
 3) Run the AWX deployment script.
@@ -142,18 +142,38 @@ Install prerequisite packages for ansible on the controller:
 
 Run the script:
 
-`$ ansible-playbook -v -i ./inventory/hosts -t "generate-token,configure-awx,setup-radius,setup-swatchdog,setup-backup,enable-backup" post_setup.yml`
+`$ ansible-playbook -v -i ./inventory/hosts -t "generate-token,configure-awx,setup-webhooks,setup-radius,setup-swatchdog,setup-backup,enable-backup" post_setup.yml`
 
 
-5) Perform initial SSH handshake from AWX to backup server.
+5) If using a backup server, perform the initial SSH handshake from AWX to backup server.
 
-Manually SSH into the AWX tower, then manually SSH into the backup server:
-`$ ssh {{ backup_server_hostname }}`
+From AWX:
+`# ssh {{ backup_server_hostname }}`
 
 Note the command-line here is restricted, so you won't be able to do anything besides connnect.
 
 
-6) Connect AWX to FreeRADIUS server
+6A) If using this setup commercially (with WordPress/MemberPress), perform the initial SSH handshake from AWX to the wordpress site:
+
+From AWX:
+`# runuser -u freerad -- /usr/bin/ssh {{ wp_url }} ./wp-probe.sh admin test`
+
+This should print the following error:
+```
+Error: Invalid user ID, email or login: 'admin'
+1
+```
+
+6B) check webhook.service status:
+```
+# systemctl status webhook.service 
+● webhook.service
+     Loaded: loaded (/etc/systemd/system/webhook.service; enabled; vendor preset: enabled)
+     Active: active (running) since Thu 2022-01-06 00:35:33 UTC; 10min ag
+```
+
+
+7) Connect AWX to FreeRADIUS server
 
 In the 'Authentication' > 'Radius' page:
 
@@ -162,14 +182,14 @@ RADIUS PORT:	1812
 RADIUS SECRET:	"{{ radius_secret }}"
 
 
-7) Set base URL in AWX
+8) Set base URL in AWX
 
 Settings > Miscellaneous System Settings > Edit
 
 Change 'Base URL of the Tower host' to your AWX systems URL.
 
 
-8) Setup grafana.
+9) Setup grafana.
 
 The Grafana needs extra configuration to work, follow the [Grafana.md in the docs/ directory](docs/Grafana.md).
 

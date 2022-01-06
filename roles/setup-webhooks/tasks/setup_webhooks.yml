@@ -1,5 +1,4 @@
 
-
 - name: Update repositories and all packages on target machine
   apt:
     name: "*"
@@ -9,7 +8,6 @@
   apt:
     pkg:
      - etckeeper
-     - ansible-tower-cli
      - webhook
 
 - name: Ensure group "webhook" exists
@@ -55,31 +53,60 @@
   template:
     src: '{{ role_path }}/webhook-run.py.j2'
     dest: '/usr/local/bin/webhook-run.py'
-    owner: root
-    group: root
-    mode: '0755'
+    owner: webhook
+    group: webhook
+    mode: '0550'
+
+- name: Fetch the awx_tokens.yml variable from AWX again
+  fetch:
+    src: /var/lib/awx/projects/hosting/awx_tokens.yml
+    dest: /tmp/awx_tokens.yml
+    flat: yes
+
+- name: Include AWX master token from awx_tokens.yml
+  include_vars:
+    file: /tmp/awx_tokens.yml
+  no_log: True
+
+- name: Save webhook-create-account.yml template
+  template:
+    src: '{{ role_path }}/webhook-create-account.yml.j2'
+    dest: '/usr/local/bin/webhook-create-account.yml'
+    owner: webhook
+    group: webhook
+    mode: '0550'
+
+- name: Save webhook-create-subscription.yml template
+  template:
+    src: '{{ role_path }}/webhook-create-subscription.yml.j2'
+    dest: '/usr/local/bin/webhook-create-subscription.yml'
+    owner: webhook
+    group: webhook
+    mode: '0550'
+
+- name: Save webhook-delete-subscription.yml template
+  template:
+    src: '{{ role_path }}/webhook-delete-subscription.yml.j2'
+    dest: '/usr/local/bin/webhook-delete-subscription.yml'
+    owner: webhook
+    group: webhook
+    mode: '0550'
 
 - name: Restart service webhook, in all cases
   service:
     name: webhook
     state: restarted
-    
+
+- name: Install awx.awx collection for ansible
+  command: |
+    runuser -u webhook -- bash -c 'ansible-galaxy collection install --force awx.awx:17.1.0'
+
 - name: Install awxkit for webhook user
   command: |
-    sudo -H -u webhook bash -c 'pip3 install awxkit==15.0.1'
+    runuser -u webhook -- bash -c 'pip3 install awxkit==17.1.0'
 
-- name: Configure awx-cli host
+- name: Configure awxkit host, username and password
   command: |
-    sudo -H -u webhook bash -c 'awx-cli config host {{ awx_url }}'
-
-- name: Configure awx-cli username
-  command: |
-    sudo -H -u webhook bash -c 'awx-cli config username admin'
-
-- name: Configure awx-cli password
-  command: |
-    sudo -H -u webhook bash -c 'awx-cli config password {{ admin_password }}'
-
-
-
-
+    runuser -u webhook -- bash -c '/home/webhook/.local/bin/awx --conf.host https://{{ awx_url }} --conf.username admin --conf.password {{ admin_password }}'
+  register: awkkit_config
+  failed_when: "'/{/}' in awkkit_config.stdout"

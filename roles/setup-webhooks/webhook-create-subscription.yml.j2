@@ -1,0 +1,15 @@
+
+- name: "Launches the '00 - Create MP Subscription' job template"
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  tasks:
+    - name: Launches the '00 - Create MP Subscription' job template
+      awx.awx.tower_job_launch:
+        job_template: "00 - Create MP Subscription"
+        {% raw %}extra_vars: "{{ lookup('file', '/tmp/create_subscription.json') }}"
+{% endraw %}
+        tower_host: "https://{{ awx_url }}"
+        tower_oauthtoken: "{{ webhook_session_token }}"
+        validate_certs: yes

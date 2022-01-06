@@ -67,6 +67,7 @@ radius_secret: << strong-password >>
 oauth_client_id: << from wp-oath-provider >>
 oauth_client_secret: << from wp-oath-provider >>
 wp_url: example.org
+wp_username: username
 
 # DigitalOcean Settings
 do_api_token: << do_api_token >>

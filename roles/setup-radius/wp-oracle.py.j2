@@ -1,0 +1,50 @@
+#!/usr/bin/python3
+
+import os
+import sys
+import subprocess
+
+def shellcmd(command):
+  #print(command)
+  rc = subprocess.run(command, universal_newlines=True, capture_output=True)
+  #print(rc.returncode)
+  #print(rc.stdout)
+  #print(rc.stderr)
+  return(rc)
+
+username = "\"" + os.environ['USER_NAME'].strip('"') + "\""
+password = "\"" + os.environ['USER_PASSWORD'].strip('"') + "\""
+
+# To address strange behaviour where AWX constantly tries to auth against admin user.
+if username == "admin":
+  sys.exit(5)
+
+# Launch the command to check login remotely with wp-cli
+ansible_launch_command = ["/usr/bin/ssh", "topgunmatrix.com", "./wp-probe.sh", username, password, "--escape-chars"]
+rc = shellcmd(ansible_launch_command)
+
+# returns 0 if success, 1 if failure:
+# $ /usr/bin/ssh topgunmatrix.com ./wp-probe.sh joebiden@protonmail.com odwnZgGlpYrvxZLRca
+# 1
+# $ /usr/bin/ssh topgunmatrix.com ./wp-probe.sh joebiden@protonmail.com odwnZgGlpYrvxZLRcb
+# 0
+
+#print("***rc code is: " + str(rc))
+#print("***rc.stdout is: " + str(rc.stdout))
+
+#from time import gmtime, strftime
+#t = strftime("%Y-%m-%dT%H:%M:%S+0000", gmtime())
+
+# Debugging, write output to logfile:
+
+if str(rc.stdout) == "0\n":
+  print("success!")
+  #with open('/tmp/test-radius-oracle.log', "a") as f:
+  #    f.write(t + ' ' + sys.argv[0] + ' login succeeded for: ' + username + '\n')
+  sys.exit(0)
+elif str(rc.stdout) == "1\n":
+  print("failure!")
+  #with open('/tmp/test-radius-oracle.log', "a") as f:
+  #    f.write(t + ' ' + sys.argv[0] + ' login failed for: ' + username + '\n')
+
+sys.exit(1)

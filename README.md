@@ -20,19 +20,21 @@ To configure and install this AWX setup on your own server, follow the [Installa
 For a simpler installation guide that's perfect for first time users see [Installation_Minimal_AWX.md in the docs/ directory](docs/Installation_Minimal_AWX.md).
 
 
-## Deficiencies
+## Contributing
 
-This Ansible playbook can be improved in the following ways:
+You can help contribute to this project in the following ways:
 
-- Can be expanded to include other sections of the original playbook, like bridges.
-- Someone should fork it! :)
+- Purchase a subscription plan from https://www.gomatrixhosting.com, we don't take donations but you can pay us directly for a range of Matrix services.
+- Run our system yourself and start hosting Matrix services for others.
+- Write issue/bug reports to our GitLab: https://gitlab.com/groups/GoMatrixHosting/-/boards
+- Write us a PR if you have the know how!
 
 
 ## Forking Notes
 
 If you're forking this software please follow our [gitlab.com repositories](https://gitlab.com/GoMatrixHosting), our github.com mirrors are not as accurate.
 
-Also be sure to follow the [Upgrade Notes](https://gitlab.com/GoMatrixHosting/create-awx-system/-/blob/master/CHANGELOG.md) that are published for every release, if you don't do this you'll encounter a lot of strange errors we probably won't help you with.
+Also be sure to follow the [Upgrade Notes](https://gitlab.com/GoMatrixHosting/create-awx-system/-/blob/master/CHANGELOG.md) that are published for every release, if you don't do this you'll encounter a lot of strange errors.
 
 
 ## Contact Us
