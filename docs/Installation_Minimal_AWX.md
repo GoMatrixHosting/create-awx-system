@@ -21,10 +21,6 @@ Map an A/AAAA record for panel.example.org to the servers IP.
 
 `$ git clone https://gitlab.com/GoMatrixHosting/create-awx-system.git`
 
-Install prerequisite packages for ansible on the controller:
-
-`$ ansible-galaxy collection install community.grafana`
-
 Edit host into: ./inventory/hosts
 
 Create folder for host at: ./inventory/host_vars/panel.example.org/
@@ -47,9 +43,19 @@ Record these variables to ./inventory/host_vars/panel.example.org/vars.yml:
 - provision_branch		(Branch of this repository to use.)
 - deploy_source			(Repository URL for 'matrix-docker-ansible-deploy'.)
 - deploy_branch			(Branch of this repository to use.)
-- client_public_ssh_key 	(Location of public client key AWX will use.)
-- client_private_ssh_key 	(Location of private client key AWX will use.)
-- client_private_ssh_key_password 	(Strong password for this private key.)
+
+Generate a SSH key for dialing into client servers, ensure it has a strong password:
+```
+$ ssh-keygen -t ed25519 -f '/home/username/.ssh/example_clients' -C "Example AWX to Client Key"
+Generating public/private ed25519 key pair.
+Enter passphrase (empty for no passphrase): 
+Enter same passphrase again:
+```
+
+Fill in the 'SSH Keys' section:
+- client_public_ssh_key		(The location of the public key file you just created.)
+- client_private_ssh_key:	(The location of the private key file you just created.)
+- client_private_ssh_key_password	(The strong password for these SSH keys.)
 - vault_unlock_ssh_password:	(Strong password to vault the private_ssh_key_password.)
 
 Since you won't be using a backup server, also define:
@@ -76,9 +82,9 @@ Run the script:
 2) Run the AWX deployment script.
 ```
 $ cd ..
-$ wget https://github.com/ansible/awx/archive/17.1.0.tar.gz
-$ tar -xf 17.1.0.tar.gz
-$ cd ./awx-17.1.0/
+$ wget https://github.com/ansible/awx/archive/refs/tags/19.5.0.tar.gz
+$ tar -xf 19.5.0.tar.gz
+$ cd ./awx-19.5.0/
 ```
 
 From the above variables, copy the following:

@@ -14,12 +14,14 @@
     - ufw
     - apt-transport-https
     - ca-certificates
-    - curl
+#    - curl
     - gnupg2
     - software-properties-common
     - unattended-upgrades
     - apt-listchanges
     - rsync
+    - git
+    - make
 
 - name: Collect Debian version from AWX server
   command: lsb_release -c
@@ -135,66 +137,89 @@
     group: root
     mode: '0644'
 
-- name: Add the Apt signing key for Docker, will not download if present
-  apt_key:
-    id: 9DC858229FC7DD38854AE2D88D81803C0EBFCD88
-    url: https://download.docker.com/linux/debian/gpg
-    state: present
+- name: Copy k3.sh script
+  copy:
+    src: '{{ role_path }}/scripts/k3s.sh'
+    dest: /root/k3s.sh
+    owner: root
+    group: root
+    mode: '0600'
 
-- name: Add Docker repository into sources list (Debian 10)
-  apt_repository:
-    repo: 'deb [arch=amd64] https://download.docker.com/linux/debian buster stable'
-    state: present
-  when: buster_string in debian_version.stdout
+- name: Run k3.sh script
+  command: |
+      sh -s /root/k3s.sh --write-kubeconfig-mode 644
 
-- name: Add Docker repository into sources list (Debian 11)
-  apt_repository:
-    repo: 'deb [arch=amd64] https://download.docker.com/linux/debian bullseye stable'
-    state: present
-  when: bullseye_string in debian_version.stdout
+- name: Git checkout awx-operator
+  git:
+    repo: 'https://github.com/ansible/awx-operator.git'
+    dest: /root/
+    version: 0.15.0
 
-- name: Update repositories cache
-  apt:
-    update_cache: yes
+- name: Make an awx-operator instance
+  command: |
+      export NAMESPACE=awx; make deploy
 
-- name: Install Docker packages
-  apt:
-    pkg:
-    - docker-ce
-    - docker-compose
+- name: Extract awx-on-k3s repo
+  unarchive:
+    src: '{{ role_path }}/repos/awx-on-k3s.tar.gz'
+    dest: /root/awx-on-k3s/
 
-- name: Install Node.js pre-requisite packages
-  apt:
-    pkg:
-    - nodejs 
-    - npm 
-    - git 
-    - pwgen 
-    - python3-docker
-    - python3-pip 
+#- name: Make an SSH key for it
+#  command: |
+#      AWX_HOST="{{ awx_url }}"; openssl req -x509 -nodes -days 3650 -newkey rsa:2048 -out ./base/tls.crt -keyout ./base/tls.key -subj "/CN=${AWX_HOST}/O=${AWX_HOST}" -addext "subjectAltName = DNS:${AWX_HOST}"
 
-- name: Setup update-alternatives 1 (Debian 10)
-  command: update-alternatives --install /usr/bin/python python /usr/bin/python2.7 1
-  when: buster_string in debian_version.stdout
-  
-- name: Setup update-alternatives 2 (Debian 10)
-  command: update-alternatives --install /usr/bin/python python /usr/bin/python3 2
-  when: buster_string in debian_version.stdout
+#NEED TO GENERATE PROPER LETSENCRYPT KEY AND ROTATION
 
-- name: Install Docker Compose python package on version 1.21.0 (Debian 10)
-  pip:
-    name: docker-compose==1.21.0
-  when: buster_string in debian_version.stdout
-
-- name: Install Docker Compose python package on version 1.29.2 (Debian 11)
-  pip:
-    name: docker-compose==1.29.2
-  when: bullseye_string in debian_version.stdout
-
-- name: Save docker config file, template
+- name: Template base/awx.yml
   template:
-    src: '{{ role_path }}/templates/daemon.json.j2'
-    dest: '/etc/docker/daemon.json'
+    src: '{{ role_path }}/templates/awx.yml.j2'
+    dest: /root/awx-on-k3s/base/awx.yml
+    owner: root
+    group: root
+    mode: '0640'
+    
+- name: Template base/kustomization.yml
+  template:
+    src: '{{ role_path }}/templates/kustomization.yml.j2'
+    dest: /root/awx-on-k3s/base/kustomization.yml
+    owner: root
+    group: root
+    mode: '0640'
+
+- name: Create /data/postgres directory if it does not exist
+  file:
+    path: /data/postgres
+    state: directory
+    mode: '0755'
+
+- name: Create /data/projects directory if it does not exist
+  file:
+    path: /data/projects
+    state: directory
+    owner: 1000
+    group: 0
+    mode: '0755'
+
+# mkdir -p /data/postgres
+# mkdir -p /data/projects
+# chown 1000:0 /data/projects
+
+- name: Deploy AWX
+  command: |
+      kubectl apply -k base
+
+# kubectl -n awx logs --tail=10 deployments/awx-operator-controller-manager -c awx-manager
+
+
+#----- Ansible Task Status Event StdOut (awx.ansible.com/v1beta1, Kind=AWX, awx/awx) -----
+#
+#
+#PLAY RECAP *********************************************************************
+#localhost                  : ok=63   changed=0    unreachable=0    failed=0    skipped=42   #rescued=0    ignored=0   
+#
+#
+#----------
+
 
 - name: Creates a crontab entry for trimming systemd logs"
   cron:
