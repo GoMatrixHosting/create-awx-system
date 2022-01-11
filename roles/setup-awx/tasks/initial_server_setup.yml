@@ -21,7 +21,7 @@
     - apt-listchanges
     - rsync
     - git
-#    - make
+    - make
 
 - name: Collect Debian version from AWX server
   command: lsb_release -c
