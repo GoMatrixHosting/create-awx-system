@@ -1,7 +1,7 @@
 
-- name: Ensure /var/lib/awx has correct permissions for webhook user
+- name: Ensure /data/ has correct permissions for webhook user
   file:
-    path: '/var/lib/awx'
+    path: '/data/'
     owner: root
     group: root
     mode: '0755'
@@ -9,7 +9,7 @@
 
 - name: Fetch the awx_tokens.yml variable from AWX again
   fetch:
-    src: /var/lib/awx/projects/hosting/awx_tokens.yml
+    src: /data/projects/hosting/awx_tokens.yml
     dest: /tmp/awx_tokens.yml
     flat: yes
 
@@ -154,7 +154,7 @@
 - name: Copy vaulted_ssh_password.yml to the AWX hosting folder
   copy:
     src: /tmp/vaulted_ssh_password.yml
-    dest: /var/lib/awx/projects/hosting/vaulted_ssh_password.yml
+    dest: /data/projects/hosting/vaulted_ssh_password.yml
     decrypt: no
     owner: root
     group: root

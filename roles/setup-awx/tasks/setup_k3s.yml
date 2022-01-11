@@ -1,0 +1,148 @@
+
+- name: Copy k3.sh script
+  copy:
+    src: '{{ role_path }}/scripts/k3s.sh'
+    dest: /root/k3s.sh
+    owner: root
+    group: root
+    mode: '0600'
+
+- name: Run k3.sh script
+  command: |
+      sh /root/k3s.sh --write-kubeconfig-mode 644
+
+- name: Git checkout awx-operator
+  git:
+    repo: 'https://github.com/ansible/awx-operator.git'
+    dest: /root/awx-operator/
+    version: 0.15.0
+    force: yes
+
+- name: Make an awx-operator instance
+  shell: |
+      export 'NAMESPACE=awx' && make deploy --directory=/root/awx-operator/
+
+#- name: Create /root/awx-on-k3s/ directory if it does not exist
+#  file:
+#    path: /root/awx-on-k3s/
+#    state: directory
+#    mode: '0755'
+
+- name: Extract awx-on-k3s repo
+  unarchive:
+    src: '{{ role_path }}/repos/awx-on-k3s.tar.xz'
+    dest: /root/
+
+#- name: Make an SSH key for it
+#  command: |
+#      AWX_HOST="{{ awx_url }}"; openssl req -x509 -nodes -days 3650 -newkey rsa:2048 -out ./base/tls.crt -keyout ./base/tls.key -subj "/CN=${AWX_HOST}/O=${AWX_HOST}" -addext "subjectAltName = DNS:${AWX_HOST}"
+
+#NEED TO GENERATE PROPER LETSENCRYPT KEY AND ROTATION
+
+- name: Template base/awx.yml
+  template:
+    src: '{{ role_path }}/templates/awx.yaml.j2'
+    dest: /root/awx-on-k3s/base/awx.yaml
+    owner: root
+    group: root
+    mode: '0640'
+    
+- name: Template base/kustomization.yml
+  template:
+    src: '{{ role_path }}/templates/kustomization.yaml.j2'
+    dest: /root/awx-on-k3s/base/kustomization.yaml
+    owner: root
+    group: root
+    mode: '0640'
+
+#- name: Link letsencrypt certificate into /awx-on-k3s directory 1
+#  file:
+#    src: '/etc/letsencrypt/live/{{ awx_url }}/cert.pem'
+#    dest: /root/awx-on-k3s/base/tls.crt
+#    mode: '0777'
+#    state: link
+
+#- name: Link letsencrypt certificate into /awx-on-k3s directory 2
+#  file:
+#    src: '/etc/letsencrypt/live/{{ awx_url }}/privkey.pem'
+#    dest: /root/awx-on-k3s/base/tls.key
+#    mode: '0777'
+#    state: link
+
+- name: TESTING copy SSL cert 1
+  command: |
+      cp /etc/letsencrypt/live/{{ awx_url }}/cert.pem /root/awx-on-k3s/base/tls.crt
+
+- name: TESTING copy SSL cert 2
+  command: |
+      cp /etc/letsencrypt/live/{{ awx_url }}/privkey.pem /root/awx-on-k3s/base/tls.key
+
+- name: Create /data/postgres directory if it does not exist
+  file:
+    path: /data/postgres
+    state: directory
+    mode: '0755'
+
+- name: Create /data/projects directory if it does not exist
+  file:
+    path: /data/projects
+    state: directory
+    owner: 1000
+    group: 0
+    mode: '0755'
+
+# mkdir -p /data/postgres
+# mkdir -p /data/projects
+# chown 1000:0 /data/projects
+
+- name: Copy base/middleware.yaml
+  template:
+    src: '{{ role_path }}/templates/middleware.yaml'
+    dest: /root/awx-on-k3s/base/middleware.yaml
+    owner: root
+    group: root
+    mode: '0640'
+
+
+#- name: Apply middleware.yaml to 
+#  command: |
+#      kubectl -n default apply -f middleware.yaml
+
+#- name: Apply middleware.yaml to 
+#  command: |
+#      kubectl -n default get middleware
+
+#root@panel:~/awx-on-k3s/base# kubectl -n default apply -f middleware.yaml
+#middleware.traefik.containo.us/redirect created
+#root@panel:~/awx-on-k3s/base# kubectl -n default get middleware
+#NAME       AGE
+#redirect   6s
+
+- name: Deploy AWX
+  command: |
+      kubectl apply -k /root/awx-on-k3s/base
+
+
+# kubectl -n awx logs --tail=10 deployments/awx-operator-controller-manager -c awx-manager
+
+
+#----- Ansible Task Status Event StdOut (awx.ansible.com/v1beta1, Kind=AWX, awx/awx) -----
+#
+#
+#PLAY RECAP *********************************************************************
+#localhost                  : ok=63   changed=0    unreachable=0    failed=0    skipped=42   #rescued=0    ignored=0   
+#
+#
+#----------
+
+- name: Retry checking AWX build for 15 minutes
+  command: |
+      kubectl -n awx logs --tail=10 deployments/awx-operator-controller-manager -c awx-manager
+  register: result
+  until: result.stdout.find("failed=0") != -1
+  retries: 30
+  delay: 30
+
+- name: Required objects has been deployed next to AWX Operator in awx namespace.
+  command: |
+      kubectl -n awx get awx,all,ingress,secrets

@@ -1,7 +1,7 @@
 
 - name: Ensure /projects/hosting/awx_tokens.yml file exists
   file:
-    path: '/var/lib/awx/projects/hosting/awx_tokens.yml'
+    path: '/data/projects/hosting/awx_tokens.yml'
     owner: root
     group: root
     mode: '0600'
@@ -9,7 +9,7 @@
 
 - name: Insert '#AWX Token' spacer to awx_tokens.yml
   lineinfile:
-    path: /var/lib/awx/projects/hosting/awx_tokens.yml
+    path: /data/projects/hosting/awx_tokens.yml
     line: '#AWX Token'
     owner: root
     group: root
@@ -17,7 +17,7 @@
 
 - name: Fetch the awx_tokens.yml variable from AWX
   fetch:
-    src: /var/lib/awx/projects/hosting/awx_tokens.yml
+    src: /data/projects/hosting/awx_tokens.yml
     dest: /tmp/awx_tokens.yml
     flat: yes
 
@@ -63,7 +63,7 @@
 
 - name: Add awx_master_token line to awx_tokens.yml file on AWX
   lineinfile:
-    path: '/var/lib/awx/projects/hosting/awx_tokens.yml'
+    path: '/data/projects/hosting/awx_tokens.yml'
     insertafter: '# AWX Token'
     regexp: "^#? *{{ item.key | regex_escape() }}:"
     line: "{{ item.key }}: {{ item.value }}"
@@ -75,7 +75,7 @@
 
 - name: Add awx_master_token_id line to awx_tokens.yml file on AWX
   lineinfile:
-    path: '/var/lib/awx/projects/hosting/awx_tokens.yml'
+    path: '/data/projects/hosting/awx_tokens.yml'
     insertafter: '# AWX Token'
     regexp: "^#? *{{ item.key | regex_escape() }}:"
     line: "{{ item.key }}: {{ item.value }}"
@@ -88,7 +88,7 @@
 
 - name: Add webhook_session_token line to awx_tokens.yml file on AWX
   lineinfile:
-    path: '/var/lib/awx/projects/hosting/awx_tokens.yml'
+    path: '/data/projects/hosting/awx_tokens.yml'
     insertafter: '# AWX Token'
     regexp: "^#? *{{ item.key | regex_escape() }}:"
     line: "{{ item.key }}: {{ item.value }}"
