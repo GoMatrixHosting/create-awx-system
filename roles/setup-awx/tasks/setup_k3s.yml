@@ -103,14 +103,13 @@
     group: root
     mode: '0640'
 
+- name: Apply middleware.yaml to 
+  command: |
+      kubectl -n default apply -f /root/awx-on-k3s/base/middleware.yaml
 
-#- name: Apply middleware.yaml to 
-#  command: |
-#      kubectl -n default apply -f middleware.yaml
-
-#- name: Apply middleware.yaml to 
-#  command: |
-#      kubectl -n default get middleware
+- name: Apply middleware.yaml to 
+  command: |
+      kubectl -n default get middleware
 
 #root@panel:~/awx-on-k3s/base# kubectl -n default apply -f middleware.yaml
 #middleware.traefik.containo.us/redirect created
