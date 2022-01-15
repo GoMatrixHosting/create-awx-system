@@ -125,7 +125,7 @@
       path: "/home/{{ wp_username }}/.ssh/authorized_keys"
       create: yes
       block: |
-        {{ public_key.stdout }} restrict,from={{ awx_url }},command=/home/{{ wp_username }}/wp-probe.sh
+        restrict {{ public_key.stdout }}
       mode: '0660'
 
   - name: Template the wp-probe.sh file onto the front-end WordPress site

@@ -2,9 +2,12 @@
 
 # wp-probe.sh - checks user login against wordpress
 
+#echo "${USER_NAME@Q}"
+#echo "${USER_PASSWORD@Q}"
+
 # first move to the wordpress sites directory
 cd /home/{{ wp_username }}/{{ wp_url }}/
 # run `wp user check-password username password` to verify the password
-wp user check-password $1 $2
+wp user check-password "$USER_NAME" "$USER_PASSWORD" --escape-chars
 # print result
 echo $?
