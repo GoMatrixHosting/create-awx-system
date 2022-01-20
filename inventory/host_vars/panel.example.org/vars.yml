@@ -6,6 +6,7 @@ org_name: ExampleOrg
 hosting_url: example.org
 awx_url: panel.example.org
 grafana_url: monitor.example.org
+rancher_url: rancher.example.org
 certbot_email: letsencrypt@protonmail.com
 
 # Cloudflare

@@ -14,3 +14,7 @@
 # Setup hosting files for AWX
 - import_tasks: "{{ role_path }}/tasks/setup_hosting_files.yml"
   tags: setup
+
+# Setup Rancher
+- import_tasks: "{{ role_path }}/tasks/setup_rancher.yml"
+  tags: setup-rancher
