@@ -6,7 +6,11 @@ org_name: ExampleOrg
 hosting_url: example.org
 awx_url: panel.example.org
 grafana_url: monitor.example.org
-certbot_email: myemail@protonmail.com
+certbot_email: letsencrypt@protonmail.com
+
+# Cloudflare
+cloudflare_api_key: << cloudflare API key >>
+cloudflare_email: cloudflareaccount@protonmail.com
 
 # Grafana Settings
 grafana_admin_password: << strong-password >>

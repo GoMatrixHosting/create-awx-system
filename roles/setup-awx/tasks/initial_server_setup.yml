@@ -51,32 +51,32 @@
      - ansible
   when: bullseye_string in debian_version.stdout
 
-- name: Create swapfile with the right permissions
-  command: 'fallocate -l 4G /swapfile'
-  register: swapfile_new
-  args:
-    creates: /swapfile
+# - name: Create swapfile with the right permissions
+#   command: 'fallocate -l 4G /swapfile'
+#   register: swapfile_new
+#   args:
+#     creates: /swapfile
     
-- name: Set correct permissions on swapfile
-  command: 'chmod 600 /swapfile'
-  when: swapfile_new.delta is defined
+# - name: Set correct permissions on swapfile
+#   command: 'chmod 600 /swapfile'
+#   when: swapfile_new.delta is defined
 
-- name: Make swapfile
-  command: 'mkswap /swapfile'
-  when: swapfile_new.delta is defined
+# - name: Make swapfile
+#   command: 'mkswap /swapfile'
+#   when: swapfile_new.delta is defined
   
-- name: Make swapfile
-  command: 'swapon /swapfile'
-  when: swapfile_new.delta is defined
+# - name: Make swapfile
+#   command: 'swapon /swapfile'
+#   when: swapfile_new.delta is defined
 
-- name: Make swapfile permanent in /etc/fstab
-  mount: name=none
-    src=/swapfile
-    fstype=swap
-    opts=sw
-    passno=0
-    dump=0
-    state=present
+# - name: Make swapfile permanent in /etc/fstab
+#   mount: name=none
+#     src=/swapfile
+#     fstype=swap
+#     opts=sw
+#     passno=0
+#     dump=0
+#     state=present
 
 - name: Allow all access to TCP port 80 with UFW
   ufw:

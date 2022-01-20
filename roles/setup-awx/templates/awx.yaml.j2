@@ -33,6 +33,7 @@ spec:
   task_resource_requirements: {}
   ee_resource_requirements: {}
 
-  # To enable HTTP > HTTPS redirects
+  # To enable HTTP > HTTPS redirects + specify cert-manager to issue SSL
   ingress_annotations: |
     traefik.ingress.kubernetes.io/router.middlewares: default-redirect@kubernetescrd
+    cert-manager.io/issuer: awx-issuer
