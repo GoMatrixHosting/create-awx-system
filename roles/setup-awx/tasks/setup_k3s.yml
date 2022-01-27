@@ -11,6 +11,14 @@
   shell: |
       sh /root/k3s.sh --write-kubeconfig-mode 644
 
+- name: Ensure kube directory exists
+  file:
+    path: /root/.kube
+    state: directory
+    mode: 0700
+    owner: root
+    group: root
+
 - name: Set up kubeconfig
   copy:
     src: /etc/rancher/k3s/k3s.yaml
@@ -33,6 +41,7 @@
     src: /usr/local/src/cmctl
     dest: /usr/local/bin/cmctl
     remote_src: yes
+    mode: 0755
 
 - name: Download k9s
   get_url:
@@ -50,6 +59,7 @@
     src: /usr/local/src/k9s
     dest: /usr/local/bin/k9s
     remote_src: yes
+    mode: 0755
 
 - name: Git - Check out awx-operator
   git:
