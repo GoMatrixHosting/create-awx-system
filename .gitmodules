@@ -1,0 +1,3 @@
+[submodule "roles/setup-awx/repos/awx-on-k3s"]
+	path = roles/setup-awx/repos/awx-on-k3s
+	url = https://gitlab.com/GoMatrixHosting/awx-on-k3s.git

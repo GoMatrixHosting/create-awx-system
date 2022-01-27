@@ -4,5 +4,10 @@
   become: true
 
   roles:
-    - presetup-awx
+    - setup-awx
     - setup-monitor
+    - configure-awx
+    - setup-webhooks
+    - setup-radius
+    - setup-swatch
+    - setup-backup

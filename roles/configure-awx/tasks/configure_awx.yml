@@ -1,7 +1,7 @@
 
-- name: Ensure /var/lib/awx has correct permissions for webhook user
+- name: Ensure /data/ has correct permissions for webhook user
   file:
-    path: '/var/lib/awx'
+    path: '/data/'
     owner: root
     group: root
     mode: '0755'
@@ -9,7 +9,7 @@
 
 - name: Fetch the awx_tokens.yml variable from AWX again
   fetch:
-    src: /var/lib/awx/projects/hosting/awx_tokens.yml
+    src: /data/projects/hosting/awx_tokens.yml
     dest: /tmp/awx_tokens.yml
     flat: yes
 
@@ -25,8 +25,9 @@
     state: present
     tower_host: "https://{{ awx_url }}"
     tower_oauthtoken: "{{ awx_master_token }}"
+    validate_certs: no
   register: awx_session_token
-  no_log: True
+#  no_log: True
 
 - name: Remove 'Demo Job Template' job template
   awx.awx.tower_job_template:
@@ -37,8 +38,8 @@
     state: absent
     tower_host: "https://{{ awx_url }}"
     tower_oauthtoken: "{{ awx_session_token.ansible_facts.tower_token.token }}"
-    validate_certs: yes
-  ignore_errors: yes
+    validate_certs: no
+#  ignore_errors: yes
 
 - name: Remove 'Demo Project' project from 'Default' organisation
   awx.awx.tower_project:
@@ -47,7 +48,7 @@
     state: absent
     tower_host: "https://{{ awx_url }}"
     tower_oauthtoken: "{{ awx_session_token.ansible_facts.tower_token.token }}"
-    validate_certs: yes
+    validate_certs: no
   ignore_errors: yes
 
 - name: Remove 'Demo Inventory'
@@ -57,18 +58,18 @@
     state: absent
     tower_host: "https://{{ awx_url }}"
     tower_oauthtoken: "{{ awx_session_token.ansible_facts.tower_token.token }}"
-    validate_certs: yes
+    validate_certs: no
   ignore_errors: yes
 
 - name: Remove 'Demo Credential' credential
   awx.awx.tower_credential:
     name: "Demo Credential"
     user: "admin"
-    kind: ssh
+    credential_type: ssh
     state: absent
     tower_host: "https://{{ awx_url }}"
     tower_oauthtoken: "{{ awx_session_token.ansible_facts.tower_token.token }}"
-    validate_certs: yes
+    validate_certs: no
   ignore_errors: yes
 
 - name: Remove 'Default' organisation
@@ -77,7 +78,7 @@
     state: absent
     tower_host: "https://{{ awx_url }}"
     tower_oauthtoken: "{{ awx_session_token.ansible_facts.tower_token.token }}"
-    validate_certs: yes
+    validate_certs: no
   ignore_errors: yes
 
 - name: Create the admin organisation
@@ -87,7 +88,7 @@
     state: present
     tower_host: "https://{{ awx_url }}"
     tower_oauthtoken: "{{ awx_session_token.ansible_facts.tower_token.token }}"
-    validate_certs: yes
+    validate_certs: no
 
 - name: Add admin user to their organisation
   awx.awx.tower_role:
@@ -96,7 +97,7 @@
     role: member
     tower_host: "https://{{ awx_url }}"
     tower_oauthtoken: "{{ awx_session_token.ansible_facts.tower_token.token }}"
-    validate_certs: yes
+    validate_certs: no
 
 - name: Add inventory to the admins organisation
   awx.awx.tower_inventory:
@@ -106,7 +107,7 @@
     state: present
     tower_host: "https://{{ awx_url }}"
     tower_oauthtoken: "{{ awx_session_token.ansible_facts.tower_token.token }}"
-    validate_certs: yes
+    validate_certs: no
 
 - name: Allow admin account to administrate/use this inventory
   awx.awx.tower_role:
@@ -116,7 +117,7 @@
     state: present
     tower_host: "https://{{ awx_url }}"
     tower_oauthtoken: "{{ awx_session_token.ansible_facts.tower_token.token }}"
-    validate_certs: yes
+    validate_certs: no
 
 - name: Add localhost to the admins inventory
   awx.awx.tower_host:
@@ -128,7 +129,7 @@
       ansible_connection: local
     tower_host: "https://{{ awx_url }}"
     tower_oauthtoken: "{{ awx_session_token.ansible_facts.tower_token.token }}"
-    validate_certs: yes
+    validate_certs: no
 
 - name: Set vault_unlock_ssh_password key file
   delegate_to: 127.0.0.1
@@ -154,7 +155,7 @@
 - name: Copy vaulted_ssh_password.yml to the AWX hosting folder
   copy:
     src: /tmp/vaulted_ssh_password.yml
-    dest: /var/lib/awx/projects/hosting/vaulted_ssh_password.yml
+    dest: /data/projects/hosting/vaulted_ssh_password.yml
     decrypt: no
     owner: root
     group: root
@@ -189,7 +190,7 @@
       vault_password: "{{ vault_unlock_ssh_password }}"
     tower_host: "https://{{ awx_url }}"
     tower_oauthtoken: "{{ awx_session_token.ansible_facts.tower_token.token }}"
-    validate_certs: yes
+    validate_certs: no
 
 - name: Add 'Ansible Create Delete Subscription Membership' project to AWX admins organisation
   awx.awx.tower_project:
@@ -204,7 +205,7 @@
     state: present
     tower_host: "https://{{ awx_url }}"
     tower_oauthtoken: "{{ awx_session_token.ansible_facts.tower_token.token }}"
-    validate_certs: yes
+    validate_certs: no
 
 - name: Update 'Ansible Create Delete Subscription Membership' project
   awx.awx.tower_project_update:
@@ -212,7 +213,7 @@
     timeout: 300
     tower_host: "https://{{ awx_url }}"
     tower_oauthtoken: "{{ awx_session_token.ansible_facts.tower_token.token }}"
-    validate_certs: yes
+    validate_certs: no
 
 # This module is renamed to awx.awx.inventory_source_update in AWX v19
 
@@ -230,7 +231,7 @@
     verbosity: 1
     tower_host: "https://{{ awx_url }}"
     tower_oauthtoken: "{{ awx_session_token.ansible_facts.tower_token.token }}"
-    validate_certs: yes
+    validate_certs: no
 
 - name: Create '00 - Create Manual Subscription' job template
   awx.awx.tower_job_template:
@@ -249,7 +250,7 @@
     job_tags: manual-subscription
     tower_host: "https://{{ awx_url }}"
     tower_oauthtoken: "{{ awx_session_token.ansible_facts.tower_token.token }}"
-    validate_certs: yes
+    validate_certs: no
 
 - name: Create '00 - Create MP Subscription' job template
   awx.awx.tower_job_template:
@@ -267,7 +268,7 @@
     skip_tags: manual-subscription
     tower_host: "https://{{ awx_url }}"
     tower_oauthtoken: "{{ awx_session_token.ansible_facts.tower_token.token }}"
-    validate_certs: yes
+    validate_certs: no
 
 - name: Create '00 - Create Wireguard Server' job template
   awx.awx.tower_job_template:
@@ -283,7 +284,7 @@
     verbosity: 1
     tower_host: "https://{{ awx_url }}"
     tower_oauthtoken: "{{ awx_session_token.ansible_facts.tower_token.token }}"
-    validate_certs: yes
+    validate_certs: no
 
 - name: Create '00 - Delete Membership' job template
   awx.awx.tower_job_template:
@@ -300,7 +301,7 @@
     job_tags: delete-membership
     tower_host: "https://{{ awx_url }}"
     tower_oauthtoken: "{{ awx_session_token.ansible_facts.tower_token.token }}"
-    validate_certs: yes
+    validate_certs: no
 
 - name: Create '00 - Delete Subscription' job template
   awx.awx.tower_job_template:
@@ -317,7 +318,7 @@
     job_tags: schedule-delete-subscription
     tower_host: "https://{{ awx_url }}"
     tower_oauthtoken: "{{ awx_session_token.ansible_facts.tower_token.token }}"
-    validate_certs: yes
+    validate_certs: no
 
 - name: Create '00 - Cleanup Deletion Template' job template
   awx.awx.tower_job_template:
@@ -331,7 +332,7 @@
     verbosity: 1
     tower_host: "https://{{ awx_url }}"
     tower_oauthtoken: "{{ awx_session_token.ansible_facts.tower_token.token }}"
-    validate_certs: yes
+    validate_certs: no
 
 - name: Create '00 - Deploy/Update All Servers' job template
   awx.awx.tower_job_template:
@@ -347,7 +348,7 @@
     verbosity: 1
     tower_host: "https://{{ awx_url }}"
     tower_oauthtoken: "{{ awx_session_token.ansible_facts.tower_token.token }}"
-    validate_certs: yes
+    validate_certs: no
 
 - name: Create '00 - Backup All Servers' job template
   awx.awx.tower_job_template:
@@ -361,7 +362,7 @@
     verbosity: 1
     tower_host: "https://{{ awx_url }}"
     tower_oauthtoken: "{{ awx_session_token.ansible_facts.tower_token.token }}"
-    validate_certs: yes
+    validate_certs: no
   when: backup_server_enabled|bool
 
 - name: Create '00 - Reprovision All Servers' job template
@@ -376,7 +377,7 @@
     verbosity: 1
     tower_host: "https://{{ awx_url }}"
     tower_oauthtoken: "{{ awx_session_token.ansible_facts.tower_token.token }}"
-    validate_certs: yes
+    validate_certs: no
 
 - name: Collect timezone of AWX server (Debian and derivatives only)
   command: cat /etc/timezone
@@ -384,7 +385,8 @@
 
 - name: Create an rrule string for '00 - Backup All Servers'
   set_fact:
-    rrule_line_daily: "DTSTART;TZID={{ timezone_output.stdout }}:{{ backup_schedule_start }} RRULE:FREQ={{ backup_schedule_frequency }};INTERVAL={{ backup_schedule_interval }}"
+    rrule_line_backup: "DTSTART;TZID={{ timezone_output.stdout }}:{{ backup_schedule_start }} RRULE:FREQ={{ backup_schedule_frequency }};INTERVAL={{ backup_schedule_interval }}"
+  when: backup_server_enabled | bool
 
 - name: Build a schedule for '00 - Backup All Servers' job template
   awx.awx.tower_schedule:
@@ -392,27 +394,27 @@
     enabled: yes
     state: present
     unified_job_template: "00 - Backup All Servers"
-    rrule: "{{ rrule_line_daily }}"
+    rrule: "{{ rrule_line_backup }}"
     tower_host: "https://{{ awx_url }}"
     tower_oauthtoken: "{{ awx_session_token.ansible_facts.tower_token.token }}"
-    validate_certs: yes
+    validate_certs: no
   when: backup_server_enabled | bool
 
 - name: Disable the schedule for '00 - Backup All Servers' if backups are disabled
   awx.awx.tower_schedule:
     name: "00 - Backup All Servers Schedule"
-    enabled: no
-    state: present
-    unified_job_template: "00 - Backup All Servers"
-    rrule: "{{ rrule_line_daily }}"
+    #enabled: no
+    state: absent
+    #unified_job_template: "00 - Backup All Servers"
+    #rrule: "DTSTART;TZID=America/New_York:20180310T130000 RRULE:FREQ=DAILY;INTERVAL=1;COUNT=5"
     tower_host: "https://{{ awx_url }}"
     tower_oauthtoken: "{{ awx_session_token.ansible_facts.tower_token.token }}"
-    validate_certs: yes
+    validate_certs: no
   when: not backup_server_enabled | bool
 
 - name: Create an rrule string for the '00 - Deploy/Update All Servers'
   set_fact:
-    rrule_line_hourly: "DTSTART;TZID={{ timezone_output.stdout }}:{{ update_schedule_start }} RRULE:FREQ={{ update_schedule_frequency }};INTERVAL={{ update_schedule_interval }}"
+    rrule_line_update: "DTSTART;TZID={{ timezone_output.stdout }}:{{ update_schedule_start }} RRULE:FREQ={{ update_schedule_frequency }};INTERVAL={{ update_schedule_interval }}"
 
 - name: Build a schedule for '00 - Deploy/Update All Servers' job template
   awx.awx.tower_schedule:
@@ -421,10 +423,10 @@
     state: present
     unified_job_template: "00 - Deploy/Update All Servers"
     extra_data: "{{ lookup('file', '{{ role_path }}/extra-vars/deploy_update_all.json') }}"
-    rrule: "{{ rrule_line_hourly }}"
+    rrule: "{{ rrule_line_update }}"
     tower_host: "https://{{ awx_url }}"
     tower_oauthtoken: "{{ awx_session_token.ansible_facts.tower_token.token }}"
-    validate_certs: yes
+    validate_certs: no
 
 - name: Create '00 - Self-Check All Servers' job template
   awx.awx.tower_job_template:
@@ -438,7 +440,7 @@
     verbosity: 1
     tower_host: "https://{{ awx_url }}"
     tower_oauthtoken: "{{ awx_session_token.ansible_facts.tower_token.token }}"
-    validate_certs: yes
+    validate_certs: no
 
 - name: Create '00 - Restore and Import Postgresql Dump' job template
   awx.awx.tower_job_template:
@@ -455,7 +457,7 @@
     job_tags: import-postgres, import-awx
     tower_host: "https://{{ awx_url }}"
     tower_oauthtoken: "{{ awx_session_token.ansible_facts.tower_token.token }}"
-    validate_certs: yes
+    validate_certs: no
 
 - name: Create '00 - Bind User Account' job template
   awx.awx.tower_job_template:
@@ -471,7 +473,7 @@
     verbosity: 1
     tower_host: "https://{{ awx_url }}"
     tower_oauthtoken: "{{ awx_session_token.ansible_facts.tower_token.token }}"
-    validate_certs: yes
+    validate_certs: no
 
 - name: Create '00 - Rotate SSH Keys' job template
   awx.awx.tower_job_template:
@@ -486,7 +488,7 @@
     verbosity: 1
     tower_host: "https://{{ awx_url }}"
     tower_oauthtoken: "{{ awx_session_token.ansible_facts.tower_token.token }}"
-    validate_certs: yes
+    validate_certs: no
 
 - name: Delete the AWX session token for executing modules
   awx.awx.tower_token:
@@ -496,15 +498,26 @@
     existing_token_id: "{{ awx_session_token.ansible_facts.tower_token.id }}"
     tower_host: "https://{{ awx_url }}"
     tower_oauthtoken: "{{ awx_session_token.ansible_facts.tower_token.token }}"
+    validate_certs: no
 
-# pin to v17.1.0 https://github.com/ansible/awx/tree/devel/awx_collection
-- name: Install awx.awx collection in AWX docker
-  command: docker exec awx_task /bin/bash -l -c "ansible-galaxy collection install --force awx.awx:17.1.0"
+#- name: "Collect AWX K3s pod name"
+#  shell: |
+#      kubectl get pods --namespace=awx | grep -v 'NAME\|awx-operator\|awx-postgres' | awk '{print $1}'
+#  register: awx_pod
+
+# pin to v19.4.0 https://github.com/ansible/awx/tree/devel/awx_collection
+#- name: Install awx.awx collection in K3s
+#  command: |
+#      kubectl exec -n awx -i -t {{ awx_pod.stdout }} --container awx-task -- /bin/bash -c 'ansible-galaxy collection install --force awx.awx:19.4.0'
+
+#root@panel:~# kubectl exec -n awx -i -t awx-ff5bd7695-x6kgf --container awx-task -- /bin/bash -c 'ansible-galaxy collection install --force awx.awx:19.4.0'
+#/bin/bash: ansible-galaxy: command not found
+#command terminated with exit code 127
 
 # v1.10.0 is known good https://github.com/ansible-collections/community.digitalocean/releases/tag/1.10.0 , testing 1.11.0 release
-- name: Install community.digitalocean collection in AWX docker
-  command: docker exec awx_task /bin/bash -l -c "ansible-galaxy collection install --force community.digitalocean"
+#- name: Install community.digitalocean collection in AWX docker
+#  command: kubectl exec -n awx -i -t {{ awx_pod.stdout }} --container awx-task -- /bin/bash -c "ansible-galaxy collection install --force community.digitalocean"
 
 # v1.9.4 is known good https://github.com/ansible-collections/community.crypto/tags
-- name: Install community.crypto collection in AWX docker
-  command: docker exec awx_task /bin/bash -l -c "ansible-galaxy collection install --force community.crypto"
+#- name: Install community.crypto collection in AWX docker
+#  command: kubectl exec -n awx -i -t {{ awx_pod.stdout }} --container awx-task -- /bin/bash -c "ansible-galaxy collection install --force community.crypto"

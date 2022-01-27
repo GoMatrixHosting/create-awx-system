@@ -1,7 +1,7 @@
 
 - name: Ensure /projects/hosting/awx_tokens.yml file exists
   file:
-    path: '/var/lib/awx/projects/hosting/awx_tokens.yml'
+    path: '/data/projects/hosting/awx_tokens.yml'
     owner: root
     group: root
     mode: '0600'
@@ -9,7 +9,7 @@
 
 - name: Insert '#AWX Token' spacer to awx_tokens.yml
   lineinfile:
-    path: /var/lib/awx/projects/hosting/awx_tokens.yml
+    path: /data/projects/hosting/awx_tokens.yml
     line: '#AWX Token'
     owner: root
     group: root
@@ -17,7 +17,7 @@
 
 - name: Fetch the awx_tokens.yml variable from AWX
   fetch:
-    src: /var/lib/awx/projects/hosting/awx_tokens.yml
+    src: /data/projects/hosting/awx_tokens.yml
     dest: /tmp/awx_tokens.yml
     flat: yes
 
@@ -35,9 +35,23 @@
 #    tower_password: "{{ admin_password }}"
 #  when: awx_master_token_id is defined
 
-- name: "Collect AWX admin token the hacks way!"
+#root@panel:~# kubectl get pods --namespace=awx 
+#NAME                                               READY   STATUS    RESTARTS   AGE
+#awx-operator-controller-manager-647f4c5c7d-mnr49   2/2     Running   0          57m
+#awx-postgres-0                                     1/1     Running   0          55m
+#awx-ff5bd7695-x6kgf                                4/4     Running   0          55m
+
+#root@panel:~# kubectl get pods --namespace=awx | grep -E -v 'NAME|awx-operator|awx-postgres' | awk '{print $1}'
+#awx-ff5bd7695-x6kgf
+
+- name: "Collect AWX admin token the hacks way! 1"
+  shell: |
+      kubectl get pods --namespace=awx | grep -v 'NAME\|awx-operator\|awx-postgres' | awk '{print $1}'
+  register: awx_pod
+
+- name: "Collect AWX admin token the hacks way! 2"
   command: |
-      docker exec awx_task /bin/bash -c 'awx-manage create_oauth2_token --user admin'
+      kubectl exec -n awx -i -t {{ awx_pod.stdout }} --container awx-task -- /bin/bash -c 'awx-manage create_oauth2_token --user admin'
   register: awx_token
   no_log: True
 
@@ -52,18 +66,20 @@
 #  register: awx_master_token_creation
 
 - name: Create a AWX session token for the webhook user/role
-  awx.awx.tower_token:
+#  awx.awx.tower_token:
+  awx.awx.token:
     description: 'AWX Session Token'
     scope: "write"
     state: present
     tower_host: "https://{{ awx_url }}"
     #tower_oauthtoken: "{{ awx_master_token_creation.ansible_facts.tower_token.token }}"
     tower_oauthtoken: "{{ awx_token.stdout }}"
+    validate_certs: no
   register: webhook_session_token_creation
 
 - name: Add awx_master_token line to awx_tokens.yml file on AWX
   lineinfile:
-    path: '/var/lib/awx/projects/hosting/awx_tokens.yml'
+    path: '/data/projects/hosting/awx_tokens.yml'
     insertafter: '# AWX Token'
     regexp: "^#? *{{ item.key | regex_escape() }}:"
     line: "{{ item.key }}: {{ item.value }}"
@@ -75,7 +91,7 @@
 
 - name: Add awx_master_token_id line to awx_tokens.yml file on AWX
   lineinfile:
-    path: '/var/lib/awx/projects/hosting/awx_tokens.yml'
+    path: '/data/projects/hosting/awx_tokens.yml'
     insertafter: '# AWX Token'
     regexp: "^#? *{{ item.key | regex_escape() }}:"
     line: "{{ item.key }}: {{ item.value }}"
@@ -88,7 +104,7 @@
 
 - name: Add webhook_session_token line to awx_tokens.yml file on AWX
   lineinfile:
-    path: '/var/lib/awx/projects/hosting/awx_tokens.yml'
+    path: '/data/projects/hosting/awx_tokens.yml'
     insertafter: '# AWX Token'
     regexp: "^#? *{{ item.key | regex_escape() }}:"
     line: "{{ item.key }}: {{ item.value }}"

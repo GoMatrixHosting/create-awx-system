@@ -1,0 +1,51 @@
+
+- name: "Checks user login against wp-probe.sh script on the front-end site."
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  tasks:
+{% raw %}
+#    - name: Print USER_NAME environment variable
+#      debug:
+#        msg: "USER_NAME: {{ lookup('env', 'USER_NAME') }}"
+
+#    - name: Print USER_PASSWORD environment variable
+#      debug:
+#        msg: "USER_PASSWORD: {{ lookup('env', 'USER_PASSWORD') }}"
+
+    - name: Set fact for 'admin_username'
+      set_fact:
+        admin_username: "admin"
+
+    - name: Set fact for 'username'
+      set_fact:
+        username: "{{ lookup('env', 'USER_NAME') }}"
+
+    - name: Fail playbook if the username provided is "admin"
+      debug:
+        msg: "FAILED! - admin user, exiting..."
+      when: username == '"admin"'
+      failed_when: username == '"admin"'
+
+    - name: Set fact for 'password'
+      set_fact:
+        password: "{{ lookup('env', 'USER_PASSWORD') }}"
+{% endraw %}
+    - name: Run wp-probe.sh command remotely
+      delegate_to: topgunmatrix.com
+      command: |
+        /usr/bin/ssh {{ wp_url }} ./wp-probe.sh {% raw %}{{ username }} {{ password }}{% endraw %}
+      register: command_output
+
+    - name: Fail playbook if script returns "1" instead of "0"
+      debug:
+        msg: "FAILED! - incorrect password, exiting..."
+      failed_when: command_output.stdout | int != 0
+
+#exec {
+#	wait = yes
+#	timeout = 5
+#	input_pairs = request
+#        program = "/usr/bin/ansible-playbook /usr/local/bin/wp-oracle.yml"
+#}

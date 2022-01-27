@@ -1,15 +1,16 @@
 
 - name: Ensure /projects/hosting/ directory exists for the AWX setup
   file:
-    path: '/var/lib/awx/projects/hosting/'
+    path: '/data/projects/hosting/'
     owner: root
     group: root
-    mode: '0740'
+    mode: '0755'
+    # used to be 740 :P
     state: directory
 
 - name: Ensure /projects/backups/ directory exists for the AWX setup
   file:
-    path: '/var/lib/awx/projects/backups/'
+    path: '/data/projects/backups/'
     owner: root
     group: root
     mode: '0740'
@@ -17,7 +18,7 @@
 
 - name: Ensure /projects/clients/ directory exists for the AWX setup
   file:
-    path: '/var/lib/awx/projects/clients/'
+    path: '/data/projects/clients/'
     owner: root
     group: root
     mode: '0711'
@@ -25,26 +26,28 @@
 
 - name: Save new 'hosting_vars.yml' config file if backup enabled, template
   template:
-    src: './roles/presetup-awx/templates/hosting_vars.yml.j2'
-    dest: '/var/lib/awx/projects/hosting/hosting_vars.yml'
+    src: './roles/setup-awx/templates/hosting_vars.yml.j2'
+    dest: '/data/projects/hosting/hosting_vars.yml'
     owner: root
     group: root
-    mode: '0600'
+    mode: '0644'
+    # used to be 0600! what user is k3s running as?
   when: backup_server_enabled|bool
   
 - name: Save new 'hosting_vars.yml' config file if backup disabled, template
   template:
-    src: './roles/presetup-awx/templates/hosting_vars_2.yml.j2'
-    dest: '/var/lib/awx/projects/hosting/hosting_vars.yml'
+    src: './roles/setup-awx/templates/hosting_vars_2.yml.j2'
+    dest: '/data/projects/hosting/hosting_vars.yml'
     owner: root
     group: root
-    mode: '0600'
+    mode: '0644'
+    # used to be 0600! what user is k3s running as?
   when: not backup_server_enabled|bool
 
 - name: Copy private SSH key to hosting directory for the AWX setup
   copy:
     src: '{{ client_private_ssh_key }}'
-    dest: /var/lib/awx/projects/hosting/client_private.key
+    dest: /data/projects/hosting/client_private.key
     owner: root
     group: root
     mode: '0600'
@@ -52,7 +55,7 @@
 - name: Copy public SSH key to hosting directory for the AWX setup
   copy:
     src: '{{ client_public_ssh_key }}'
-    dest: /var/lib/awx/projects/hosting/client_public.key
+    dest: /data/projects/hosting/client_public.key
     owner: root
     group: root
     mode: '0600'

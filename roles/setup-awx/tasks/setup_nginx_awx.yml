@@ -5,20 +5,22 @@
     - nginx
     - certbot
 
+# probably need to collect info about where k3s is putting the non-encrypted service
+
 - name: Save new 'awx' nginx config file, template
   template:
-    src: './roles/presetup-awx/templates/awx.j2'
+    src: './roles/setup-awx/templates/awx.j2'
     dest: '/etc/nginx/sites-available/awx'
 
-- name: Create a symbolic link to enable the config
-  file:
-    src: /etc/nginx/sites-available/awx
-    dest: /etc/nginx/sites-enabled/awx
-    owner: root
-    group: root
-    state: link
+#- name: Create a symbolic link to enable the config
+#  file:
+#    src: /etc/nginx/sites-available/awx
+#    dest: /etc/nginx/sites-enabled/awx
+#    owner: root
+#    group: root
+#    state: link
 
-- name: Generate Diffie-Hellman parameters with the default size (4096 bits)
+- name: Generate Diffie-Hellman parameters with size 2048 bits
   openssl_dhparam:
     path: '/etc/ssl/awx_dhparam.pem'
     size: 2048
@@ -34,9 +36,9 @@
     state: stopped
   when: not stat_result.stat.exists
 
-- name: Generate letsencrypt certificate for AWX if not found
-  command: certbot certonly  --noninteractive --standalone --agree-tos -m {{ certbot_email }} -d {{ awx_url }}
-  when: not stat_result.stat.exists
+#- name: Generate letsencrypt certificate for AWX if not found
+#  command: certbot certonly  --noninteractive --standalone --agree-tos -m {{ certbot_email }} -d {{ awx_url }}
+#  when: not stat_result.stat.exists
 
 - name: Creates a crontab entry to renew certbot"
   cron:
@@ -54,6 +56,3 @@
   service:
     name: nginx
     state: started
-
-
-

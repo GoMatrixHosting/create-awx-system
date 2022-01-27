@@ -1,3 +1,4 @@
 
 [awx_servers]
-panel.example.org ansible_host=panel.example.org ansible_ssh_user=root
+#panel.chatoasis.com ansible_host=panel.chatoasis.com ansible_ssh_user=root
+panel.gomatrixhostingforever.xyz ansible_host=panel.gomatrixhostingforever.xyz ansible_ssh_user=root

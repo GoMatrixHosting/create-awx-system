@@ -17,13 +17,16 @@ Map an A/AAAA record for panel.example.org to the servers IP.
 
 # Installation
 
-1) Pre-setup, setup before the awx playbook is run, installs Docker and sets up TLS proxy for AWX, optionally website hooks and grafana are also setup.
+
+1) Install prerequisite packages for ansible on the controller:
+
+`$ ansible-galaxy collection install community.crypto`
+`$ ansible-galaxy collection install --force awx.awx:19.4.0`
+
+
+2) Pre-setup, setup before the awx playbook is run, installs Docker and sets up TLS proxy for AWX, optionally website hooks and grafana are also setup.
 
 `$ git clone https://gitlab.com/GoMatrixHosting/create-awx-system.git`
-
-Install prerequisite packages for ansible on the controller:
-
-`$ ansible-galaxy collection install community.grafana`
 
 Edit host into: ./inventory/hosts
 
@@ -47,9 +50,19 @@ Record these variables to ./inventory/host_vars/panel.example.org/vars.yml:
 - provision_branch		(Branch of this repository to use.)
 - deploy_source			(Repository URL for 'matrix-docker-ansible-deploy'.)
 - deploy_branch			(Branch of this repository to use.)
-- client_public_ssh_key 	(Location of public client key AWX will use.)
-- client_private_ssh_key 	(Location of private client key AWX will use.)
-- client_private_ssh_key_password 	(Strong password for this private key.)
+
+Generate a SSH key for dialing into client servers, ensure it has a strong password:
+```
+$ ssh-keygen -t ed25519 -f '/home/username/.ssh/example_clients' -C "Example AWX to Client Key"
+Generating public/private ed25519 key pair.
+Enter passphrase (empty for no passphrase): 
+Enter same passphrase again:
+```
+
+Fill in the 'SSH Keys' section:
+- client_public_ssh_key		(The location of the public key file you just created.)
+- client_private_ssh_key:	(The location of the private key file you just created.)
+- client_private_ssh_key_password	(The strong password for these SSH keys.)
 - vault_unlock_ssh_password:	(Strong password to vault the private_ssh_key_password.)
 
 Since you won't be using a backup server, also define:
@@ -70,51 +83,12 @@ If using DigitalOcean define these values:
 
 Run the script:
 
-`$ ansible-playbook -v -i ./inventory/hosts -t "setup" pre_setup.yml`
+`$ ansible-playbook -v -i ./inventory/hosts -t "setup,generate-token,configure-awx" setup.yml`
 
 
-2) Run the AWX deployment script.
-```
-$ cd ..
-$ wget https://github.com/ansible/awx/archive/17.1.0.tar.gz
-$ tar -xf 17.1.0.tar.gz
-$ cd ./awx-17.1.0/
-```
-
-From the above variables, copy the following:
-- secret_key
-- pg_password
-- admin_password
-
-^ Edit these into ./installer/inventory, also add project_data_dir line and change host_port:
-```
-host_port=8080
-#host_port_ssl=443
-...
-project_data_dir=/var/lib/awx/projects
-```
-
-Next comment out the first line and edit the awx_url into ./installer/inventory
-```
-#localhost ansible_connection=local ansible_python_interpreter="/usr/bin/env python3"
-panel.example.org
-```
-
-Next, run the playbook to install the Ansible AWX with the following command:
-
-`$ ansible-playbook -i ./installer/inventory ./installer/install.yml`
 
 
 3) Post-setup, configures existing AWX system and adds community packages if 'configure-awx' tag set, also configures the AWX systems backup if 'setup-backup' and 'enable-backup' tag is included. Note that the backup machine will need SSH access to root.
-
-Install prerequisite packages for ansible on the controller:
-
-`$ ansible-galaxy collection install community.crypto`
-`$ ansible-galaxy collection install --force awx.awx:17.1.0`
-
-Run the script:
-
-`$ ansible-playbook -v -i ./inventory/hosts -t "generate-token,configure-awx" post_setup.yml`
 
 
 4) Set base URL in AWX

@@ -1,0 +1,27 @@
+---
+- name: Ensure snapd is installed
+  package:
+    name: snapd
+    state: present
+
+- name: Install Helm snap
+  snap:
+    name: helm
+    classic: yes
+
+- name: Create the namespace cattle-system
+  shell: |
+      kubectl create namespace cattle-system --dry-run=client -o yaml | kubectl apply -f -
+
+- name: Add the helm repo
+  command: |
+      /snap/bin/helm repo add rancher-stable https://releases.rancher.com/server-charts/stable
+
+- name: Deploy Rancher
+  shell: |
+      /snap/bin/helm install rancher rancher-stable/rancher \
+        --namespace cattle-system \
+        --set hostname={{ rancher_url }} \
+        --set bootstrapPassword={{ rancher_password }} \
+        --set ingress.tls.source=letsEncrypt \
+        --set letsEncrypt.email={{ certbot_email }}

@@ -14,12 +14,14 @@
     - ufw
     - apt-transport-https
     - ca-certificates
-    - curl
+#    - curl
     - gnupg2
     - software-properties-common
     - unattended-upgrades
     - apt-listchanges
     - rsync
+    - git
+    - make
 
 - name: Collect Debian version from AWX server
   command: lsb_release -c
@@ -49,32 +51,32 @@
      - ansible
   when: bullseye_string in debian_version.stdout
 
-- name: Create swapfile with the right permissions
-  command: 'fallocate -l 4G /swapfile'
-  register: swapfile_new
-  args:
-    creates: /swapfile
+# - name: Create swapfile with the right permissions
+#   command: 'fallocate -l 4G /swapfile'
+#   register: swapfile_new
+#   args:
+#     creates: /swapfile
     
-- name: Set correct permissions on swapfile
-  command: 'chmod 600 /swapfile'
-  when: swapfile_new.delta is defined
+# - name: Set correct permissions on swapfile
+#   command: 'chmod 600 /swapfile'
+#   when: swapfile_new.delta is defined
 
-- name: Make swapfile
-  command: 'mkswap /swapfile'
-  when: swapfile_new.delta is defined
+# - name: Make swapfile
+#   command: 'mkswap /swapfile'
+#   when: swapfile_new.delta is defined
   
-- name: Make swapfile
-  command: 'swapon /swapfile'
-  when: swapfile_new.delta is defined
+# - name: Make swapfile
+#   command: 'swapon /swapfile'
+#   when: swapfile_new.delta is defined
 
-- name: Make swapfile permanent in /etc/fstab
-  mount: name=none
-    src=/swapfile
-    fstype=swap
-    opts=sw
-    passno=0
-    dump=0
-    state=present
+# - name: Make swapfile permanent in /etc/fstab
+#   mount: name=none
+#     src=/swapfile
+#     fstype=swap
+#     opts=sw
+#     passno=0
+#     dump=0
+#     state=present
 
 - name: Allow all access to TCP port 80 with UFW
   ufw:
@@ -134,67 +136,6 @@
     owner: root
     group: root
     mode: '0644'
-
-- name: Add the Apt signing key for Docker, will not download if present
-  apt_key:
-    id: 9DC858229FC7DD38854AE2D88D81803C0EBFCD88
-    url: https://download.docker.com/linux/debian/gpg
-    state: present
-
-- name: Add Docker repository into sources list (Debian 10)
-  apt_repository:
-    repo: 'deb [arch=amd64] https://download.docker.com/linux/debian buster stable'
-    state: present
-  when: buster_string in debian_version.stdout
-
-- name: Add Docker repository into sources list (Debian 11)
-  apt_repository:
-    repo: 'deb [arch=amd64] https://download.docker.com/linux/debian bullseye stable'
-    state: present
-  when: bullseye_string in debian_version.stdout
-
-- name: Update repositories cache
-  apt:
-    update_cache: yes
-
-- name: Install Docker packages
-  apt:
-    pkg:
-    - docker-ce
-    - docker-compose
-
-- name: Install Node.js pre-requisite packages
-  apt:
-    pkg:
-    - nodejs 
-    - npm 
-    - git 
-    - pwgen 
-    - python3-docker
-    - python3-pip 
-
-- name: Setup update-alternatives 1 (Debian 10)
-  command: update-alternatives --install /usr/bin/python python /usr/bin/python2.7 1
-  when: buster_string in debian_version.stdout
-  
-- name: Setup update-alternatives 2 (Debian 10)
-  command: update-alternatives --install /usr/bin/python python /usr/bin/python3 2
-  when: buster_string in debian_version.stdout
-
-- name: Install Docker Compose python package on version 1.21.0 (Debian 10)
-  pip:
-    name: docker-compose==1.21.0
-  when: buster_string in debian_version.stdout
-
-- name: Install Docker Compose python package on version 1.29.2 (Debian 11)
-  pip:
-    name: docker-compose==1.29.2
-  when: bullseye_string in debian_version.stdout
-
-- name: Save docker config file, template
-  template:
-    src: '{{ role_path }}/templates/daemon.json.j2'
-    dest: '/etc/docker/daemon.json'
 
 - name: Creates a crontab entry for trimming systemd logs"
   cron:
