@@ -24,4 +24,5 @@
         --set hostname={{ rancher_url }} \
         --set bootstrapPassword={{ rancher_password }} \
         --set ingress.tls.source=letsEncrypt \
-        --set letsEncrypt.email={{ certbot_email }}
+        --set letsEncrypt.email={{ certbot_email }} \
+        --kubeconfig /etc/rancher/k3s/k3s.yaml
