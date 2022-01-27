@@ -8,7 +8,8 @@
     mode: '0600'
 
 - name: Run k3s.sh script
-  command: |
+#      INSTALL_K3S_VERSION=v1.21.8+k3s2 sh /root/k3s.sh --write-kubeconfig-mode 644
+  shell: |
       sh /root/k3s.sh --write-kubeconfig-mode 644
 
 - name: Git checkout awx-operator
@@ -97,9 +98,9 @@
     group: root
     mode: '0640'
 
-- name: Apply cloudflare key
-  command: |
-      kubectl apply -f /root/cloudflare-key.yaml
+#- name: Apply cloudflare key
+#  command: |
+#      kubectl apply -f /root/cloudflare-key.yaml
 
 # Don't deploy the issuer until cert manager has deployed
 #TASK [setup-awx : Template issuer.yaml] ***************************************************************************************************************************************************************************
