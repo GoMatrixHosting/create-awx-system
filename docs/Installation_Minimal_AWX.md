@@ -1,6 +1,6 @@
 # GoMatrixHosting AWX Setup - Minimal Installation Instructions
 
-How to install this AWX setup without a front-end wordpress site, digitalocean service, graphana monitor, or backup server.
+How to install this AWX setup without a front-end wordpress site, digitalocean service, grafana monitor, or backup server.
 
 # Create a server
 

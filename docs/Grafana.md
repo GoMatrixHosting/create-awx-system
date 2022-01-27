@@ -4,11 +4,11 @@
 1) Import Dashboards:
 
 https://monitor.example.org/dashboard/import
-Click 'Upload JSON file' > Select the /graphana/synapse.json file from this repo
+Click 'Upload JSON file' > Select the /grafana/synapse.json file from this repo
 Select prometheus source 'local_prometheus' > Click 'Import'
 
 Also import this template using 'Upload JSON file': 
-Click 'Upload JSON file' > Select the /graphana/node-exporter-full.json file from this repo
+Click 'Upload JSON file' > Select the /grafana/node-exporter-full.json file from this repo
 Select prometheus source 'local_prometheus' > Click 'Import'
 
 2) Set 'Access' on Prometheus Data Source:
