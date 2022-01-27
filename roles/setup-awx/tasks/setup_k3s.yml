@@ -7,10 +7,26 @@
     group: root
     mode: '0600'
 
-- name: Run k3s.sh script
-#      INSTALL_K3S_VERSION=v1.21.8+k3s2 sh /root/k3s.sh --write-kubeconfig-mode 644
+- name: Run k3s.sh to install k3s
   shell: |
       sh /root/k3s.sh --write-kubeconfig-mode 644
+
+- name: Download cmctl
+  get_url:
+    url: https://github.com/jetstack/cert-manager/releases/latest/download/cmctl-linux-amd64.tar.gz
+    dest: /usr/local/src/cmctl.tar.gz
+
+- name: Extract cmctl
+  unarchive:
+    src: /usr/local/src/cmctl.tar.gz
+    dest: /usr/local/src
+    remote_src: yes
+
+- name: Install cmctl
+  copy:
+    src: /usr/local/src/cmctl
+    dest: /usr/local/bin/cmctl
+    remote_src: yes
 
 - name: Git checkout awx-operator
   git:
@@ -89,6 +105,14 @@
 #cert-manager-55658cdf68-rfqmf             1/1     Running   0          21h
 #cert-manager-cainjector-967788869-xnq2n   1/1     Running   0          21h
 #cert-manager-webhook-6668fbb57d-r9dmj     1/1     Running   0          21h
+
+- name: Check the cert-manager API until it's ready
+  command: |
+      cmctl check api --kubeconfig /etc/rancher/k3s/k3s.yaml
+  register: result
+  until: result.stdout.find("The cert-manager API is ready") != -1
+  retries: 30
+  delay: 30
 
 - name: Template cloudflare-key.yaml
   template:
