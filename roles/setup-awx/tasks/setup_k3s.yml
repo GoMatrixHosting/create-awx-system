@@ -28,33 +28,21 @@
     dest: /usr/local/bin/cmctl
     remote_src: yes
 
-- name: Git checkout awx-operator
+- name: Git - Check out awx-operator
   git:
     repo: 'https://github.com/ansible/awx-operator.git'
     dest: /root/awx-operator/
     version: 0.15.0
     force: yes
 
-- name: Make an awx-operator instance
+- name: Deploy awx-operator
   shell: |
       export 'NAMESPACE=awx' && make deploy --directory=/root/awx-operator/
-
-#- name: Create /root/awx-on-k3s/ directory if it does not exist
-#  file:
-#    path: /root/awx-on-k3s/
-#    state: directory
-#    mode: '0755'
 
 - name: Extract awx-on-k3s repo
   unarchive:
     src: '{{ role_path }}/repos/awx-on-k3s.tar.xz'
     dest: /root/
-
-#- name: Make an SSH key for it
-#  command: |
-#      AWX_HOST="{{ awx_url }}"; openssl req -x509 -nodes -days 3650 -newkey rsa:2048 -out ./base/tls.crt -keyout ./base/tls.key -subj "/CN=${AWX_HOST}/O=${AWX_HOST}" -addext "subjectAltName = DNS:${AWX_HOST}"
-
-#NEED TO GENERATE PROPER LETSENCRYPT KEY AND ROTATION
 
 - name: Template base/awx.yml
   template:
@@ -94,17 +82,9 @@
     group: root
     mode: '0640'
 
-- name: Apply cert-manager.yaml to 
+- name: Apply cert-manager.yaml manifest
   command: |
       kubectl apply -f /root/cert-manager.yaml
-
-#Ensure the pods in cert-manager namespace are running.
-#
-#$ kubectl -n cert-manager get pod
-#NAME                                      READY   STATUS    RESTARTS   AGE
-#cert-manager-55658cdf68-rfqmf             1/1     Running   0          21h
-#cert-manager-cainjector-967788869-xnq2n   1/1     Running   0          21h
-#cert-manager-webhook-6668fbb57d-r9dmj     1/1     Running   0          21h
 
 - name: Check the cert-manager API until it's ready
   command: |
@@ -114,26 +94,6 @@
   retries: 30
   delay: 30
 
-- name: Template cloudflare-key.yaml
-  template:
-    src: '{{ role_path }}/templates/cloudflare-key.yaml.j2'
-    dest: /root/cloudflare-key.yaml
-    owner: root
-    group: root
-    mode: '0640'
-
-#- name: Apply cloudflare key
-#  command: |
-#      kubectl apply -f /root/cloudflare-key.yaml
-
-# Don't deploy the issuer until cert manager has deployed
-#TASK [setup-awx : Template issuer.yaml] ***************************************************************************************************************************************************************************
-#changed: [panel.gomatrixhostingforever.xyz] => {"changed": true, "checksum": "f54d2d68f43f8fd2e708f577fae60ba5d6199070", "dest": "/root/awx-on-k3s/acme/issuer.yaml", "gid": 0, "group": "root", "md5sum": "35b8ef09b99880a24d06cd6b8296b027", "mode": "0640", "owner": "root", "size": 826, "src": "/root/.ansible/tmp/ansible-tmp-1642645725.4154944-24648-177232755379702/source", "state": "file", "uid": 0}
-
-#TASK [setup-awx : Deploy the Issuer] ******************************************************************************************************************************************************************************
-#fatal: [panel.gomatrixhostingforever.xyz]: FAILED! => {"changed": true, "cmd": ["kubectl", "apply", "-k", "/root/awx-on-k3s/acme"], "delta": "0:00:01.873827", "end": "2022-01-20 02:28:49.395880", "msg": "non-zero return code", "rc": 1, "start": "2022-01-20 02:28:47.522053", "stderr": "Error from server (InternalError): error when creating \"/root/awx-on-k3s/acme\": Internal error occurred: failed calling webhook \"webhook.cert-manager.io\": failed to call webhook: Post \"https://cert-manager-webhook.cert-manager.svc:443/mutate?timeout=10s\": dial tcp 10.43.17.81:443: connect: connection refused", "stderr_lines": ["Error from server (InternalError): error when creating \"/root/awx-on-k3s/acme\": Internal error occurred: failed calling webhook \"webhook.cert-manager.io\": failed to call webhook: Post \"https://cert-manager-webhook.cert-manager.svc:443/mutate?timeout=10s\": dial tcp 10.43.17.81:443: connect: connection refused"], "stdout": "namespace/awx configured\nsecret/azuredns-config created", "stdout_lines": ["namespace/awx configured", "secret/azuredns-config created"]}
-
-
 - name: Template issuer.yaml
   template:
     src: '{{ role_path }}/templates/issuer.yaml.j2'
@@ -142,15 +102,9 @@
     group: root
     mode: '0640'
 
-- name: Deploy the Issuer
+- name: Deploy the issuer
   command: |
       kubectl apply -k /root/awx-on-k3s/acme
-
-#Ensure your Issuer exists in awx namespace.
-#
-#$ kubectl -n awx get issuer
-#NAME         READY   AGE
-#awx-issuer   True    21h
 
 - name: Copy base/middleware.yaml
   template:
@@ -160,39 +114,15 @@
     group: root
     mode: '0640'
 
-- name: Apply middleware.yaml to 
+- name: Apply middleware.yaml to redirect HTTP to HTTPS
   command: |
       kubectl -n default apply -f /root/awx-on-k3s/base/middleware.yaml
-
-#- name: Apply middleware.yaml to 
-#  command: |
-#      kubectl -n default get middleware
-# USE NGINX OLD SCHOOL
-
-#root@panel:~/awx-on-k3s/base# kubectl -n default apply -f middleware.yaml
-#middleware.traefik.containo.us/redirect created
-#root@panel:~/awx-on-k3s/base# kubectl -n default get middleware
-#NAME       AGE
-#redirect   6s
 
 - name: Deploy AWX
   command: |
       kubectl apply -k /root/awx-on-k3s/base
 
-
-# kubectl -n awx logs --tail=10 deployments/awx-operator-controller-manager -c awx-manager
-
-
-#----- Ansible Task Status Event StdOut (awx.ansible.com/v1beta1, Kind=AWX, awx/awx) -----
-#
-#
-#PLAY RECAP *********************************************************************
-#localhost                  : ok=63   changed=0    unreachable=0    failed=0    skipped=42   #rescued=0    ignored=0   
-#
-#
-#----------
-
-- name: Retry checking AWX build for 15 minutes
+- name: Check if AWX is deployed (for up to 15 minutes)
   command: |
       kubectl -n awx logs --tail=10 deployments/awx-operator-controller-manager -c awx-manager
   register: result
@@ -200,6 +130,7 @@
   retries: 30
   delay: 30
 
-- name: Required objects has been deployed next to AWX Operator in awx namespace.
+- name: Required objects have been deployed with the AWX Operator in the awx namespace.
   command: |
       kubectl -n awx get awx,all,ingress,secrets
+
