@@ -1,28 +1,14 @@
----
+--- 
 apiVersion: cert-manager.io/v1
-kind: Issuer
-metadata:
-  name: awx-issuer
-  namespace: awx
-spec:
-  acme:
-    # The email address to be registered with ACME CA
+kind: ClusterIssuer
+metadata: 
+  name: letsencrypt-prod
+spec: 
+  acme: 
     email: {{ certbot_email }}
-
-    # The URL of the ACME API endpoint.
-    # In Let's Encrypt, this is one of the following:
-    #   Production: https://acme-v02.api.letsencrypt.org/directory
-    #   Staging   : https://acme-staging-v02.api.letsencrypt.org/directory
-    #server: https://acme-staging-v02.api.letsencrypt.org/directory
-    server: https://acme-v02.api.letsencrypt.org/directory
-
-    privateKeySecretRef:
-      name: awx-issuer-account-secret
-
+    privateKeySecretRef: 
+      name: letsencrypt-prod
+    server: "https://acme-v02.api.letsencrypt.org/directory"
     solvers:
-      - dns01:
-          cloudflare:
-            email: {{ cloudflare_email }}
-            apiKeySecretRef:
-              name: cloudflare-api-key-secret
-              key: api-key
+    - http01:
+        ingress: { }
