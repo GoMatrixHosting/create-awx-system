@@ -11,6 +11,12 @@
   shell: |
       sh /root/k3s.sh --write-kubeconfig-mode 644
 
+- name: Set up kubeconfig
+  copy:
+    src: /etc/rancher/k3s/k3s.yaml
+    dest: /root/.kube/config
+    remote_src: yes
+
 - name: Download cmctl
   get_url:
     url: https://github.com/jetstack/cert-manager/releases/latest/download/cmctl-linux-amd64.tar.gz
