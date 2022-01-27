@@ -28,6 +28,23 @@
     dest: /usr/local/bin/cmctl
     remote_src: yes
 
+- name: Download k9s
+  get_url:
+    url: https://github.com/derailed/k9s/releases/download/v0.25.18/k9s_Linux_x86_64.tar.gz
+    dest: /usr/local/src/k9s.tar.gz
+
+- name: Extract k9s
+  unarchive:
+    src: /usr/local/src/k9s.tar.gz
+    dest: /usr/local/src
+    remote_src: yes
+
+- name: Install k9s
+  copy:
+    src: /usr/local/src/k9s
+    dest: /usr/local/bin/k9s
+    remote_src: yes
+
 - name: Git - Check out awx-operator
   git:
     repo: 'https://github.com/ansible/awx-operator.git'
