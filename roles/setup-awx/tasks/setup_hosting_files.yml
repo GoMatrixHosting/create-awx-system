@@ -1,61 +1,126 @@
 
+- name: Collect username of user running this playbook
+  set_fact:
+    controller_username: "{{ lookup('env', 'USER') }}"
+
+- name: Clone projects folder repo to AWX instance
+  delegate_to: localhost
+  become_user: '{{ controller_username }}'
+  git:
+    repo: '{{ projects_folder_source }}'
+    dest: /tmp/projects/
+
 - name: Ensure /projects/hosting/ directory exists for the AWX setup
+  delegate_to: localhost
+  become_user: '{{ controller_username }}'
   file:
-    path: '/data/projects/hosting/'
-    owner: root
-    group: root
+    path: '/tmp/projects/hosting/'
+    #owner: root
+    #group: root
     mode: '0755'
     # used to be 740 :P
     state: directory
 
 - name: Ensure /projects/backups/ directory exists for the AWX setup
+  delegate_to: localhost
+  become_user: '{{ controller_username }}'
   file:
-    path: '/data/projects/backups/'
-    owner: root
-    group: root
+    path: '/tmp/projects/backups/'
+    #owner: root
+    #group: root
     mode: '0740'
     state: directory
 
 - name: Ensure /projects/clients/ directory exists for the AWX setup
+  delegate_to: localhost
+  become_user: '{{ controller_username }}'
   file:
-    path: '/data/projects/clients/'
-    owner: root
-    group: root
+    path: '/tmp/projects/clients/'
+    #owner: root
+    #group: root
     mode: '0711'
     state: directory
 
 - name: Save new 'hosting_vars.yml' config file if backup enabled, template
+  delegate_to: localhost
+  become_user: '{{ controller_username }}'
   template:
     src: './roles/setup-awx/templates/hosting_vars.yml.j2'
-    dest: '/data/projects/hosting/hosting_vars.yml'
-    owner: root
-    group: root
+    dest: '/tmp/projects/hosting/hosting_vars.yml'
+    #owner: root
+    #group: root
     mode: '0644'
     # used to be 0600! what user is k3s running as?
   when: backup_server_enabled|bool
   
 - name: Save new 'hosting_vars.yml' config file if backup disabled, template
+  delegate_to: localhost
+  become_user: '{{ controller_username }}'
   template:
     src: './roles/setup-awx/templates/hosting_vars_2.yml.j2'
-    dest: '/data/projects/hosting/hosting_vars.yml'
-    owner: root
-    group: root
+    dest: '/tmp/projects/hosting/hosting_vars.yml'
+    #owner: root
+    #group: root
     mode: '0644'
     # used to be 0600! what user is k3s running as?
   when: not backup_server_enabled|bool
 
 - name: Copy private SSH key to hosting directory for the AWX setup
+  delegate_to: localhost
+  become_user: '{{ controller_username }}'
   copy:
     src: '{{ client_private_ssh_key }}'
-    dest: /data/projects/hosting/client_private.key
-    owner: root
-    group: root
+    dest: /tmp/projects/hosting/client_private.key
+    #owner: root
+    #group: root
     mode: '0600'
 
 - name: Copy public SSH key to hosting directory for the AWX setup
+  delegate_to: localhost
+  become_user: '{{ controller_username }}'
   copy:
     src: '{{ client_public_ssh_key }}'
-    dest: /data/projects/hosting/client_public.key
-    owner: root
-    group: root
+    dest: /tmp/projects/hosting/client_public.key
+    #owner: root
+    #group: root
     mode: '0600'
+
+- name: Git Add files for projects folder repo
+  delegate_to: localhost
+  become_user: '{{ controller_username }}'
+  shell: "git add *"
+  args:
+    chdir: /tmp/projects
+  register: gitadd
+
+- debug:
+    var: gitadd.cmd
+
+- name: Git Commit for projects folder repo
+  delegate_to: localhost
+  become_user: '{{ controller_username }}'
+  shell: git commit -m "Ansible Backup"
+  args:
+    chdir: /tmp/projects
+  ignore_errors: yes
+  register: gitcommit
+
+# Will fail if no updates are found
+
+#TASK [setup-awx : Git Commit for projects folder repo] ****************************************************************
+#fatal: [panel.chatoasis.com]: FAILED! => {"changed": true, "cmd": "git commit -m \"Ansible Backup\"", "delta": "0:00:00.002987", "end": "2022-01-27 12:32:25.481962", "msg": "non-zero return code", "rc": 1, "start": "2022-01-27 12:32:25.478975", "stderr": "", "stderr_lines": [], "stdout": "On branch main\nYour branch is up to date with 'origin/main'.\n\nnothing to commit, working tree clean", "stdout_lines": ["On branch main", "Your branch is up to date with 'origin/main'.", "", "nothing to commit, working tree clean"]}
+
+- debug:
+    var: gitcommit.stdout
+
+- name: Git Push for projects folder repo
+  delegate_to: localhost
+  become_user: '{{ controller_username }}'
+  shell: git push
+  args:
+    chdir: /tmp/projects
+  when: gitcommit.stdout.find("nothing to commit") == -1
+  register: gitpush
+
+- debug:
+    var: gitpush

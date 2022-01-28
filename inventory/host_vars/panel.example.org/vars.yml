@@ -13,6 +13,9 @@ certbot_email: letsencrypt@protonmail.com
 cloudflare_api_key: << cloudflare API key >>
 cloudflare_email: cloudflareaccount@protonmail.com
 
+# Rancher settings
+rancher_password: << strong-password >>
+
 # Grafana Settings
 grafana_admin_password: << strong-password >>
 prometheus_days_retention: 28
@@ -30,6 +33,8 @@ update_schedule_frequency: 'HOURLY'
 update_schedule_interval: 1
 
 # Repository Settings
+projects_folder_source: https://gitlab.com/GoMatrixHosting/vars_panel.example.org
+projects_folder_branch: master
 create_delete_source: https://gitlab.com/GoMatrixHosting/ansible-create-delete-subscription-membership.git
 create_delete_branch: master
 provision_source: https://gitlab.com/GoMatrixHosting/ansible-provision-server.git
@@ -78,5 +83,5 @@ wp_username: username
 do_api_token: << do_api_token >>
 do_spaces_access_key: << do_spaces_access_key >>
 do_spaces_secret_key: << do_spaces_secret_key >>
-do_image_master: debian-10-x64
+do_image_master: debian-11-x64
 
