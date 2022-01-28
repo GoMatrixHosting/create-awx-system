@@ -2,17 +2,21 @@
 
 How to install this AWX setup without a front-end wordpress site, digitalocean service, grafana monitor, or backup server.
 
+
 # Create a server
 
-Create a Debian 10/11 server with at least 4GB or RAM and setup SSH access to root user.
+Create a Debian 11 server with at least 8GB or RAM and setup SSH access to root user.
 ```
 $ ssh root@panel.example.org
 $ exit
 ```
 
+
 # Setup DNS entry for it:
 
 Map an A/AAAA record for panel.example.org to the servers IP.
+
+Map a CNAME record for rancher.example.org to panel.example.org.
 
 
 # Installation
@@ -84,8 +88,6 @@ If using DigitalOcean define these values:
 Run the script:
 
 `$ ansible-playbook -v -i ./inventory/hosts -t "setup,generate-token,configure-awx" setup.yml`
-
-
 
 
 3) Post-setup, configures existing AWX system and adds community packages if 'configure-awx' tag set, also configures the AWX systems backup if 'setup-backup' and 'enable-backup' tag is included. Note that the backup machine will need SSH access to root.
