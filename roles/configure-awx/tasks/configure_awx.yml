@@ -1,21 +1,33 @@
+- name: Collect username of user running this playbook
+  set_fact:
+    controller_username: "{{ lookup('env', 'USER') }}"
 
-- name: Ensure /data/ has correct permissions for webhook user
-  file:
-    path: '/data/'
-    owner: root
-    group: root
-    mode: '0755'
-    state: directory
+- name: Clone projects folder repo to local controller
+  delegate_to: localhost
+  become: false
+  git:
+    repo: '{{ projects_folder_source }}'
+    dest: /tmp/projects/
 
-- name: Fetch the awx_tokens.yml variable from AWX again
-  fetch:
-    src: /data/projects/hosting/awx_tokens.yml
-    dest: /tmp/awx_tokens.yml
-    flat: yes
+#- name: Ensure /data/ has correct permissions for webhook user
+#  file:
+#    path: '/data/'
+#    owner: root
+#    group: root
+#    mode: '0755'
+#    state: directory
+
+#- name: Fetch the awx_tokens.yml variable from AWX again
+#  fetch:
+#    src: /data/projects/hosting/awx_tokens.yml
+#    dest: /tmp/awx_tokens.yml
+#    flat: yes
 
 - name: Include AWX master token from awx_tokens.yml
+  delegate_to: localhost
+  become: false
   include_vars:
-    file: /tmp/awx_tokens.yml
+    file: /tmp/projects/hosting/awx_tokens.yml
   no_log: True
 
 - name: Create a AWX session token for executing modules
@@ -153,12 +165,14 @@
   no_log: true
 
 - name: Copy vaulted_ssh_password.yml to the AWX hosting folder
+  delegate_to: localhost
+  become: false
   copy:
     src: /tmp/vaulted_ssh_password.yml
-    dest: /data/projects/hosting/vaulted_ssh_password.yml
+    dest: /tmp/projects/hosting/vaulted_ssh_password.yml
     decrypt: no
-    owner: root
-    group: root
+    #owner: root
+    #group: root
     mode: '0600'
 
 - name: Shred the vault_unlock_ssh_password key file
@@ -499,6 +513,47 @@
     tower_host: "https://{{ awx_url }}"
     tower_oauthtoken: "{{ awx_session_token.ansible_facts.tower_token.token }}"
     validate_certs: no
+
+- name: Git Add files for projects folder repo
+  delegate_to: localhost
+  become: false
+  shell: "git add *"
+  args:
+    chdir: /tmp/projects
+  register: gitadd
+
+- debug:
+    var: gitadd.cmd
+
+- name: Git Commit for projects folder repo
+  delegate_to: localhost
+  become: false
+  shell: git commit -m "Ansible Backup"
+  args:
+    chdir: /tmp/projects
+  ignore_errors: yes
+  register: gitcommit
+
+# Will fail if no updates are found
+
+#TASK [setup-awx : Git Commit for projects folder repo] ****************************************************************
+#fatal: [panel.chatoasis.com]: FAILED! => {"changed": true, "cmd": "git commit -m \"Ansible Backup\"", "delta": "0:00:00.002987", "end": "2022-01-27 12:32:25.481962", "msg": "non-zero return code", "rc": 1, "start": "2022-01-27 12:32:25.478975", "stderr": "", "stderr_lines": [], "stdout": "On branch main\nYour branch is up to date with 'origin/main'.\n\nnothing to commit, working tree clean", "stdout_lines": ["On branch main", "Your branch is up to date with 'origin/main'.", "", "nothing to commit, working tree clean"]}
+
+- debug:
+    var: gitcommit.stdout
+
+- name: Git Push for projects folder repo
+  delegate_to: localhost
+  become: false
+  shell: git push
+  args:
+    chdir: /tmp/projects
+  when: gitcommit.stdout.find("nothing to commit") == -1
+  register: gitpush
+
+- debug:
+    var: gitpush
+
 
 #- name: "Collect AWX K3s pod name"
 #  shell: |

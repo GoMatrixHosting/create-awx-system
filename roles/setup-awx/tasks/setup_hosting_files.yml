@@ -5,14 +5,14 @@
 
 - name: Clone projects folder repo to AWX instance
   delegate_to: localhost
-  become_user: '{{ controller_username }}'
+  become: false
   git:
     repo: '{{ projects_folder_source }}'
     dest: /tmp/projects/
 
 - name: Ensure /projects/hosting/ directory exists for the AWX setup
   delegate_to: localhost
-  become_user: '{{ controller_username }}'
+  become: false
   file:
     path: '/tmp/projects/hosting/'
     #owner: root
@@ -23,7 +23,7 @@
 
 - name: Ensure /projects/backups/ directory exists for the AWX setup
   delegate_to: localhost
-  become_user: '{{ controller_username }}'
+  become: false
   file:
     path: '/tmp/projects/backups/'
     #owner: root
@@ -33,7 +33,7 @@
 
 - name: Ensure /projects/clients/ directory exists for the AWX setup
   delegate_to: localhost
-  become_user: '{{ controller_username }}'
+  become: false
   file:
     path: '/tmp/projects/clients/'
     #owner: root
@@ -43,7 +43,7 @@
 
 - name: Save new 'hosting_vars.yml' config file if backup enabled, template
   delegate_to: localhost
-  become_user: '{{ controller_username }}'
+  become: false
   template:
     src: './roles/setup-awx/templates/hosting_vars.yml.j2'
     dest: '/tmp/projects/hosting/hosting_vars.yml'
@@ -55,7 +55,7 @@
   
 - name: Save new 'hosting_vars.yml' config file if backup disabled, template
   delegate_to: localhost
-  become_user: '{{ controller_username }}'
+  become: false
   template:
     src: './roles/setup-awx/templates/hosting_vars_2.yml.j2'
     dest: '/tmp/projects/hosting/hosting_vars.yml'
@@ -67,7 +67,7 @@
 
 - name: Copy private SSH key to hosting directory for the AWX setup
   delegate_to: localhost
-  become_user: '{{ controller_username }}'
+  become: false
   copy:
     src: '{{ client_private_ssh_key }}'
     dest: /tmp/projects/hosting/client_private.key
@@ -77,7 +77,7 @@
 
 - name: Copy public SSH key to hosting directory for the AWX setup
   delegate_to: localhost
-  become_user: '{{ controller_username }}'
+  become: false
   copy:
     src: '{{ client_public_ssh_key }}'
     dest: /tmp/projects/hosting/client_public.key
@@ -87,7 +87,7 @@
 
 - name: Git Add files for projects folder repo
   delegate_to: localhost
-  become_user: '{{ controller_username }}'
+  become: false
   shell: "git add *"
   args:
     chdir: /tmp/projects
@@ -98,7 +98,7 @@
 
 - name: Git Commit for projects folder repo
   delegate_to: localhost
-  become_user: '{{ controller_username }}'
+  become: false
   shell: git commit -m "Ansible Backup"
   args:
     chdir: /tmp/projects
@@ -115,7 +115,7 @@
 
 - name: Git Push for projects folder repo
   delegate_to: localhost
-  become_user: '{{ controller_username }}'
+  become: false
   shell: git push
   args:
     chdir: /tmp/projects

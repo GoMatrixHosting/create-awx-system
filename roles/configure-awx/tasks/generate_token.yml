@@ -5,14 +5,14 @@
 
 - name: Clone projects folder repo to local controller
   delegate_to: localhost
-  become_user: '{{ controller_username }}'
+  become: false
   git:
     repo: '{{ projects_folder_source }}'
     dest: /tmp/projects/
 
 - name: Ensure /projects/hosting/awx_tokens.yml file exists
   delegate_to: localhost
-  become_user: '{{ controller_username }}'
+  become: false
   file:
     path: '/tmp/projects/hosting/awx_tokens.yml'
     #owner: root
@@ -22,7 +22,7 @@
 
 - name: Insert '#AWX Token' spacer to awx_tokens.yml
   delegate_to: localhost
-  become_user: '{{ controller_username }}'
+  become: false
   lineinfile:
     path: /tmp/projects/hosting/awx_tokens.yml
     line: '#AWX Token'
@@ -32,7 +32,7 @@
 
 - name: Include AWX master token from awx_tokens.yml
   delegate_to: localhost
-  become_user: '{{ controller_username }}'
+  become: false
   include_vars:
     file: /tmp/projects/hosting/awx_tokens.yml
   #no_log: True
@@ -90,7 +90,7 @@
 
 - name: Add awx_master_token line to awx_tokens.yml file
   delegate_to: localhost
-  become_user: '{{ controller_username }}'
+  become: false
   lineinfile:
     path: '/tmp/projects/hosting/awx_tokens.yml'
     insertafter: '# AWX Token'
@@ -104,7 +104,7 @@
 
 - name: Add awx_master_token_id line to awx_tokens.yml file
   delegate_to: localhost
-  become_user: '{{ controller_username }}'
+  become: false
   lineinfile:
     path: '/tmp/projects/hosting/awx_tokens.yml'
     insertafter: '# AWX Token'
@@ -119,7 +119,7 @@
 
 - name: Add webhook_session_token line to awx_tokens.yml file
   delegate_to: localhost
-  become_user: '{{ controller_username }}'
+  become: false
   lineinfile:
     path: '/tmp/projects/hosting/awx_tokens.yml'
     insertafter: '# AWX Token'
@@ -132,7 +132,7 @@
 
 - name: Git Add files for projects folder repo
   delegate_to: localhost
-  become_user: '{{ controller_username }}'
+  become: false
   shell: "git add *"
   args:
     chdir: /tmp/projects
@@ -143,7 +143,7 @@
 
 - name: Git Commit for projects folder repo
   delegate_to: localhost
-  become_user: '{{ controller_username }}'
+  become: false
   shell: git commit -m "Ansible Backup"
   args:
     chdir: /tmp/projects
@@ -160,7 +160,7 @@
 
 - name: Git Push for projects folder repo
   delegate_to: localhost
-  become_user: '{{ controller_username }}'
+  become: false
   shell: git push
   args:
     chdir: /tmp/projects
