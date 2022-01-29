@@ -33,7 +33,7 @@ update_schedule_frequency: 'HOURLY'
 update_schedule_interval: 1
 
 # Repository Settings
-projects_folder_source: https://gitlab.com/GoMatrixHosting/vars_panel.example.org
+projects_folder_source: git@gitlab.com:GoMatrixHosting/vars_panel.example.org.git
 projects_folder_branch: master
 create_delete_source: https://gitlab.com/GoMatrixHosting/ansible-create-delete-subscription-membership.git
 create_delete_branch: master

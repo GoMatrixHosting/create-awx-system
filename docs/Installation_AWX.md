@@ -3,7 +3,7 @@
 
 # Create a server
 
-Create a Debian 10/11 server with at least 4GB or RAM and setup SSH access to root user.
+Create a Debian 11 server with at least 8GB or RAM and setup SSH access to root user.
 ```
 $ ssh root@panel.example.org
 $ exit
@@ -11,7 +11,11 @@ $ exit
 
 # Setup DNS entry for it:
 
-Create 2 A/AAAA records for panel.example.org and monitor.example.org pointing to the AWX servers IP.
+Map an A/AAAA record for panel.example.org to the servers IP.
+
+Optionally:
+Map a CNAME record for rancher.example.org to panel.example.org.
+Map a CNAME record for monitor.example.org to panel.example.org.
 
 
 # Installation
@@ -32,6 +36,8 @@ Install prometheus-node-exporter and export port 9100 on the backup server.
 
 Install prerequisite packages for ansible on the controller:
 
+`$ ansible-galaxy collection install community.crypto`
+`$ ansible-galaxy collection install --force awx.awx:19.4.0`
 `$ ansible-galaxy collection install community.grafana`
 
 Edit host into: ./inventory/hosts
@@ -98,54 +104,11 @@ If you will be using this setup commercially (with WordPress/MemberPress), defin
 - wp_username			(The front-end WordPress username you SSH into.)
 
 Run the script:
-`$ ansible-playbook -v -i ./inventory/hosts -t "setup,setup-monitor" pre_setup.yml`
+
+`$ ansible-playbook -v -i ./inventory/hosts -t "setup,setup-rancher,setup-monitor,generate-token,configure-awx,setup-webhooks,setup-radius,setup-swatchdog,setup-backup,enable-backup" post_setup.yml`
 
 
-3) Run the AWX deployment script.
-```
-$ cd ..
-$ wget https://github.com/ansible/awx/archive/17.1.0.tar.gz
-$ tar -xf 17.1.0.tar.gz
-$ cd ./awx-17.1.0/
-```
-
-From the above variables, copy the following:
-- secret_key
-- pg_password
-- admin_password
-
-^ Edit these into ./installer/inventory, also add project_data_dir line and change host_port:
-```
-host_port=8080
-#host_port_ssl=443
-...
-project_data_dir=/var/lib/awx/projects
-```
-
-Next comment out the first line and edit the awx_url into ./installer/inventory
-```
-#localhost ansible_connection=local ansible_python_interpreter="/usr/bin/env python3"
-panel.example.org
-```
-
-Next, run the playbook to install the Ansible AWX with the following command:
-
-`$ ansible-playbook -i ./installer/inventory ./installer/install.yml`
-
-
-4) Post-setup, configures existing AWX system and adds community packages if 'configure-awx' tag set, also configures the AWX systems backup if 'setup-backup' and 'enable-backup' tag is included. Note that the backup machine will need SSH access to root.
-
-Install prerequisite packages for ansible on the controller:
-
-`$ ansible-galaxy collection install community.crypto`
-`$ ansible-galaxy collection install --force awx.awx:17.1.0`
-
-Run the script:
-
-`$ ansible-playbook -v -i ./inventory/hosts -t "generate-token,configure-awx,setup-webhooks,setup-radius,setup-swatchdog,setup-backup,enable-backup" post_setup.yml`
-
-
-5) If using a backup server, perform the initial SSH handshake from AWX to backup server.
+3) If using a backup server, perform the initial SSH handshake from AWX to backup server.
 
 From AWX:
 `# ssh {{ backup_server_hostname }}`
@@ -153,7 +116,7 @@ From AWX:
 Note the command-line here is restricted, so you won't be able to do anything besides connnect.
 
 
-6A) If using this setup commercially (with WordPress/MemberPress), perform the initial SSH handshake from AWX to the wordpress site:
+4A) If using this setup commercially (with WordPress/MemberPress), perform the initial SSH handshake from AWX to the wordpress site:
 
 From AWX:
 `# runuser -u freerad -- /usr/bin/ssh {{ wp_url }} ./wp-probe.sh admin test`
@@ -164,7 +127,7 @@ Error: Invalid user ID, email or login: 'admin'
 1
 ```
 
-6B) check webhook.service status:
+4B) check webhook.service status:
 ```
 # systemctl status webhook.service 
 ● webhook.service
@@ -173,7 +136,7 @@ Error: Invalid user ID, email or login: 'admin'
 ```
 
 
-7) Connect AWX to FreeRADIUS server
+5) Connect AWX to FreeRADIUS server
 
 In the 'Authentication' > 'Radius' page:
 
@@ -182,14 +145,14 @@ RADIUS PORT:	1812
 RADIUS SECRET:	"{{ radius_secret }}"
 
 
-8) Set base URL in AWX
+6) Set base URL in AWX
 
 Settings > Miscellaneous System Settings > Edit
 
 Change 'Base URL of the Tower host' to your AWX systems URL.
 
 
-9) Setup grafana.
+7) Setup grafana.
 
 The Grafana needs extra configuration to work, follow the [Grafana.md in the docs/ directory](docs/Grafana.md).
 

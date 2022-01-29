@@ -16,8 +16,6 @@ $ exit
 
 Map an A/AAAA record for panel.example.org to the servers IP.
 
-Map a CNAME record for rancher.example.org to panel.example.org.
-
 
 # Installation
 

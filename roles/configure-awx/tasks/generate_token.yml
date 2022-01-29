@@ -1,30 +1,41 @@
 
+- name: Collect username of user running this playbook
+  set_fact:
+    controller_username: "{{ lookup('env', 'USER') }}"
+
+- name: Clone projects folder repo to local controller
+  delegate_to: localhost
+  become_user: '{{ controller_username }}'
+  git:
+    repo: '{{ projects_folder_source }}'
+    dest: /tmp/projects/
+
 - name: Ensure /projects/hosting/awx_tokens.yml file exists
+  delegate_to: localhost
+  become_user: '{{ controller_username }}'
   file:
-    path: '/data/projects/hosting/awx_tokens.yml'
-    owner: root
-    group: root
+    path: '/tmp/projects/hosting/awx_tokens.yml'
+    #owner: root
+    #group: root
     mode: '0600'
     state: touch
 
 - name: Insert '#AWX Token' spacer to awx_tokens.yml
+  delegate_to: localhost
+  become_user: '{{ controller_username }}'
   lineinfile:
-    path: /data/projects/hosting/awx_tokens.yml
+    path: /tmp/projects/hosting/awx_tokens.yml
     line: '#AWX Token'
-    owner: root
-    group: root
+    #owner: root
+    #group: root
     mode: '0600'
 
-- name: Fetch the awx_tokens.yml variable from AWX
-  fetch:
-    src: /data/projects/hosting/awx_tokens.yml
-    dest: /tmp/awx_tokens.yml
-    flat: yes
-
 - name: Include AWX master token from awx_tokens.yml
+  delegate_to: localhost
+  become_user: '{{ controller_username }}'
   include_vars:
-    file: /tmp/awx_tokens.yml
-  no_log: True
+    file: /tmp/projects/hosting/awx_tokens.yml
+  #no_log: True
 
 #- name: Delete the old master token by its id. Unused due to this error: https://www.reddit.com/r/awx/comments/lastzb/awx_failed_to_get_token_the_read_operation_times/"
 #  awx.awx.tower_token:
@@ -77,9 +88,11 @@
     validate_certs: no
   register: webhook_session_token_creation
 
-- name: Add awx_master_token line to awx_tokens.yml file on AWX
+- name: Add awx_master_token line to awx_tokens.yml file
+  delegate_to: localhost
+  become_user: '{{ controller_username }}'
   lineinfile:
-    path: '/data/projects/hosting/awx_tokens.yml'
+    path: '/tmp/projects/hosting/awx_tokens.yml'
     insertafter: '# AWX Token'
     regexp: "^#? *{{ item.key | regex_escape() }}:"
     line: "{{ item.key }}: {{ item.value }}"
@@ -89,9 +102,11 @@
 #    'awx_master_token': '{{ awx_master_token_creation.ansible_facts.tower_token.token }}'
     'awx_master_token': '{{ awx_token.stdout }}'
 
-- name: Add awx_master_token_id line to awx_tokens.yml file on AWX
+- name: Add awx_master_token_id line to awx_tokens.yml file
+  delegate_to: localhost
+  become_user: '{{ controller_username }}'
   lineinfile:
-    path: '/data/projects/hosting/awx_tokens.yml'
+    path: '/tmp/projects/hosting/awx_tokens.yml'
     insertafter: '# AWX Token'
     regexp: "^#? *{{ item.key | regex_escape() }}:"
     line: "{{ item.key }}: {{ item.value }}"
@@ -102,9 +117,11 @@
     'awx_master_token_id': 'null'
 # If used the id needs to be hard coded in before re-running this tasklist!
 
-- name: Add webhook_session_token line to awx_tokens.yml file on AWX
+- name: Add webhook_session_token line to awx_tokens.yml file
+  delegate_to: localhost
+  become_user: '{{ controller_username }}'
   lineinfile:
-    path: '/data/projects/hosting/awx_tokens.yml'
+    path: '/tmp/projects/hosting/awx_tokens.yml'
     insertafter: '# AWX Token'
     regexp: "^#? *{{ item.key | regex_escape() }}:"
     line: "{{ item.key }}: {{ item.value }}"
@@ -112,3 +129,43 @@
     state: present
   with_dict:
     'webhook_session_token': '{{ webhook_session_token_creation.ansible_facts.tower_token.token }}'
+
+- name: Git Add files for projects folder repo
+  delegate_to: localhost
+  become_user: '{{ controller_username }}'
+  shell: "git add *"
+  args:
+    chdir: /tmp/projects
+  register: gitadd
+
+- debug:
+    var: gitadd.cmd
+
+- name: Git Commit for projects folder repo
+  delegate_to: localhost
+  become_user: '{{ controller_username }}'
+  shell: git commit -m "Ansible Backup"
+  args:
+    chdir: /tmp/projects
+  ignore_errors: yes
+  register: gitcommit
+
+# Will fail if no updates are found
+
+#TASK [setup-awx : Git Commit for projects folder repo] ****************************************************************
+#fatal: [panel.chatoasis.com]: FAILED! => {"changed": true, "cmd": "git commit -m \"Ansible Backup\"", "delta": "0:00:00.002987", "end": "2022-01-27 12:32:25.481962", "msg": "non-zero return code", "rc": 1, "start": "2022-01-27 12:32:25.478975", "stderr": "", "stderr_lines": [], "stdout": "On branch main\nYour branch is up to date with 'origin/main'.\n\nnothing to commit, working tree clean", "stdout_lines": ["On branch main", "Your branch is up to date with 'origin/main'.", "", "nothing to commit, working tree clean"]}
+
+- debug:
+    var: gitcommit.stdout
+
+- name: Git Push for projects folder repo
+  delegate_to: localhost
+  become_user: '{{ controller_username }}'
+  shell: git push
+  args:
+    chdir: /tmp/projects
+  when: gitcommit.stdout.find("nothing to commit") == -1
+  register: gitpush
+
+- debug:
+    var: gitpush
