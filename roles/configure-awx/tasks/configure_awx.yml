@@ -1,13 +1,12 @@
-- name: Collect username of user running this playbook
-  set_fact:
-    controller_username: "{{ lookup('env', 'USER') }}"
-
-- name: Clone projects folder repo to local controller
+- name: Git Clone files for projects folder repo
   delegate_to: localhost
   become: false
-  git:
-    repo: '{{ projects_folder_source }}'
-    dest: /tmp/projects/
+  shell: |
+    git clone https://oauth:{{ gitlab_personal_access_token }}{{ gitlab_projects_api_link }} /tmp/projects
+  register: gitclone
+
+- debug:
+    var: gitclone.cmd
 
 #- name: Ensure /data/ has correct permissions for webhook user
 #  file:
@@ -517,7 +516,7 @@
 - name: Git Add files for projects folder repo
   delegate_to: localhost
   become: false
-  shell: "git add *"
+  shell: "git add ."
   args:
     chdir: /tmp/projects
   register: gitadd
@@ -525,10 +524,15 @@
 - debug:
     var: gitadd.cmd
 
+- name: Collect current datetime
+  set_fact:
+    current_datetime: "{{ lookup('pipe', 'date +%Y-%m-%d_%H:%M') }}"
+
 - name: Git Commit for projects folder repo
   delegate_to: localhost
   become: false
-  shell: git commit -m "Ansible Backup"
+  shell: |
+    git commit -m "{{ current_datetime }} - Projects folder update"
   args:
     chdir: /tmp/projects
   ignore_errors: yes
@@ -554,6 +558,12 @@
 - debug:
     var: gitpush
 
+- name: Remove excess /projects folder
+  delegate_to: localhost
+  become: false
+  file:
+    path: /tmp/projects
+    state: absent
 
 #- name: "Collect AWX K3s pod name"
 #  shell: |

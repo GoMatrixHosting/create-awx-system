@@ -33,14 +33,18 @@ update_schedule_frequency: 'HOURLY'
 update_schedule_interval: 1
 
 # Repository Settings
-projects_folder_source: git@gitlab.com:GoMatrixHosting/vars_panel.example.org.git
-projects_folder_branch: master
 create_delete_source: https://gitlab.com/GoMatrixHosting/ansible-create-delete-subscription-membership.git
 create_delete_branch: master
 provision_source: https://gitlab.com/GoMatrixHosting/ansible-provision-server.git
 provision_branch: master
 deploy_source: https://github.com/spantaleev/matrix-docker-ansible-deploy.git
 deploy_branch: master
+
+# GitLab Projects Folder
+gitlab_projects_api_link: << from section 2C >>
+gitlab_personal_access_token: << from section 2C >>
+#projects_folder_source: git@gitlab.com:GoMatrixHosting/vars_panel.example.org.git
+#projects_folder_branch: master
 
 # SSH Keys
 client_public_ssh_key: /key/location/id_ed25519.pub

@@ -26,15 +26,37 @@ Map an A/AAAA record for panel.example.org to the servers IP.
 `$ ansible-galaxy collection install --force awx.awx:19.4.0`
 
 
-2) Pre-setup, setup before the awx playbook is run, installs Docker and sets up TLS proxy for AWX, optionally website hooks and grafana are also setup.
+2A) Pre-setup, setup before the awx playbook is run, installs Docker and sets up TLS proxy for AWX, optionally website hooks and grafana are also setup.
 
 `$ git clone https://gitlab.com/GoMatrixHosting/create-awx-system.git`
 
-Edit host into: ./inventory/hosts
+
+B) Generate a SSH key for dialing into client servers, ensure it has a strong password:
+```
+$ ssh-keygen -t ed25519 -f '/home/username/.ssh/example_clients' -C "Example AWX to Client Key"
+Generating public/private ed25519 key pair.
+Enter passphrase (empty for no passphrase): 
+Enter same passphrase again:
+```
+
+
+C) Create an isolated user account on GitLab with no access to your other repositories/groups. Then with that user account create a private repository for the AWX systems /projects folder:
+
+https://gitlab.com/isolateduser/vars_panel.example.org.git
+
+Replace the 'https://' with '@' to create the GitLab API link:
+
+@gitlab.com/isolateduser/vars_panel.example.org.git
+
+Finally create a read/write access token for that user and record it into vars.yml: https://gitlab.com/-/profile/personal_access_tokens
+
+
+D) Edit host into: ./inventory/hosts
 
 Create folder for host at: ./inventory/host_vars/panel.example.org/
 
 Record these variables to ./inventory/host_vars/panel.example.org/vars.yml:
+
 - org_name 			(The name of your organisation.)
 - hosting_url			(The URL of your organisation.)
 - awx_url 			(The URL for AWX.)
@@ -52,14 +74,6 @@ Record these variables to ./inventory/host_vars/panel.example.org/vars.yml:
 - provision_branch		(Branch of this repository to use.)
 - deploy_source			(Repository URL for 'matrix-docker-ansible-deploy'.)
 - deploy_branch			(Branch of this repository to use.)
-
-Generate a SSH key for dialing into client servers, ensure it has a strong password:
-```
-$ ssh-keygen -t ed25519 -f '/home/username/.ssh/example_clients' -C "Example AWX to Client Key"
-Generating public/private ed25519 key pair.
-Enter passphrase (empty for no passphrase): 
-Enter same passphrase again:
-```
 
 Fill in the 'SSH Keys' section:
 - client_public_ssh_key		(The location of the public key file you just created.)
@@ -83,7 +97,7 @@ If using DigitalOcean define these values:
 - do_spaces_secret_key 		(Your DigitalOcean Spaces Secret Key.)
 - do_image_master 		(eg: debian-10-x64)
 
-Run the script:
+E) Run the script:
 
 `$ ansible-playbook -v -i ./inventory/hosts -t "setup,generate-token,configure-awx" setup.yml`
 
