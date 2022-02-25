@@ -1,4 +1,31 @@
 
+# GoMatrixHosting v0.7.0
+
+- CENTOS 8 EOL fix, curse you RedHat!! See[#33](https://gitlab.com/GoMatrixHosting/create-awx-system/-/issues/33)
+- Add Mjolnir Bot section. See [#20](https://gitlab.com/GoMatrixHosting/ansible-provision-server/-/issues/20)
+
+
+# Upgrade Notes v0.7.0
+
+- Add the following section to every matrix_vars.yml file on AWX:
+```
+# Mjolnir Settings Start
+matrix_bot_mjolnir_enabled: false
+# Mjolnir Settings End
+# Mjolnir Extension Start
+matrix_bot_mjolnir_configuration_extension_yaml: |
+  "homeserverUrl": "http://matrix-synapse:8008"
+  "rawHomeserverUrl": "http://matrix-synapse:8008"
+# Mjolnir Extension End
+```
+- Re-provision all servers.
+
+
+# GoMatrixHosting v0.6.9
+
+- Stop re-writing of matrix_homeserver_generic_secret_key variable. See[#13](https://gitlab.com/GoMatrixHosting/ansible-create-delete-subscription-membership/-/issues/13)
+
+
 # GoMatrixHosting v0.6.8
 
 - Upgraded create-awx-system to run on Debian 11. See [#26](https://gitlab.com/GoMatrixHosting/create-awx-system/-/issues/26).
