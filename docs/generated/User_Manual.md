@@ -1,5 +1,5 @@
-![](Pictures/10000201000001E0000001CE06DE8B2B8BCDEB81.png){width="4.064cm"
-height="3.911cm"}
+![](Pictures/100002010000025800000258E0F329035A91F824.png){width="3.866cm"
+height="3.866cm"}
 
 GoMatrixHosting User Manual
 
@@ -27,9 +27,11 @@ GoMatrixHosting User Manual
   12     Configure Website + Access Export
   13     Configure Corporal (Advanced)
   14     Configure ma1sd (Advanced)
+  14     Configure Mjolnir Bot
   14     Create User
   15     Purge Database (Advanced)
   15     Purge Media (Advanced)
+  16     Bridge Discord AppService
   ------ ---------------------------------------------
 
 Before You Start
@@ -161,7 +163,7 @@ please contact us.\"
 Here is an example of what the following DNS configuration would look
 like if entered into NameSilo:
 
-![](Pictures/10000201000003B5000001F0684FC9257AF8490B.png){width="17cm"
+![](Pictures/10000201000003B5000001F018E4A2C1B50FDB45.png){width="17cm"
 height="8.885cm"}
 
 Configuring a .well-known
@@ -385,13 +387,25 @@ Matrix service to an existing identity store (LDAP/AD).
   LDAP/AD Configuration       Settings for connecting LDAP/AD to the ma1sd service. Ignored if using Synapse Internal, see: <https://github.com/ma1uta/ma1sd/blob/master/docs/stores/README.md>
   --------------------------- -------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+Configure Mjolnir Bot
+
+Configure Mjolnir settings, Mjolnir is a moderation bot for Matrix.
+
+  ------------------------- ------------------------------------------------------------------------------------------------------
+  Enable Mjolnir            Set if Mjolnir is enabled or not. Mjolnir is a moderation bot for Matrix.
+  Mjolnir Management Room   Sets the internal ID of the management room for Mjolnir. Example: \'!wAeZaPCKvaCHcSqxAW:matrix.org\'
+  ------------------------- ------------------------------------------------------------------------------------------------------
+
+After enabling the bot follow this guide to start configuring it:
+<https://github.com/matrix-org/mjolnir#quickstart-guide>
+
 Create User
 
 Allows you to create user accounts through AWX, you'll need to create 1
 'server admin' account in order to moderate your service.
 
   ---------------------- ---------------------------------------------------------------------------------------------------------------------------------------------------------------
-  Username               Sets the username of the newly created account. Exclude the \'@\' and server name postfix. So to create \@stevo:example.org just enter \'stevo\'.
+  Username               Sets the username of the newly created account. Exclude the \'@\' and server name post-fix. So to create \@stevo:example.org just enter \'stevo\'.
   Password               Sets the password of the newly created account.
   Administrator Access   Sets whether this user account will be a server admin. Server admins can use their access tokens to run administration/moderation commands on the homeserver.
   ---------------------- ---------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -457,3 +471,53 @@ that deleted local media cannot be recovered.
   From Date    The date you would like to purge from in YYYY-MM-DD format. (Eg: 2020-06-23) If you are unsure what date to enter here, just enter the approximate date your service was created.
   To Date      The date you would like to purge to in YYYY-MM-DD format. (Eg: 2021-03-27)
   ------------ ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Bridge Discord AppService
+
+This template allows you to configure a Discord bridge. Follow the
+installation steps listed below to configure and use this bridge.
+
+  ---------------------------------- -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Enable Discord AppService Bridge   Enables a private bridge you can use to connect Matrix rooms to Discord.
+  Discord Client ID                  The OAuth2 \'CLIENT ID\' which can be found in the \'OAuth2\' tab of your new discord application: <https://discord.com/developers/applications>
+  Discord Bot Token                  The Bot \'TOKEN\' which can be found in the \'Bot\' tab of your new discord application: <https://discord.com/developers/applications>
+  Auto-Admin Matrix User             The username you would like to be automatically joined and promoted to administrator (PL100) in bridged rooms. Exclude the \'@\' and server name post-fix. So to create \@stevo:example.org just enter \'stevo\'.
+  Auto-Admin Rooms                   A list of rooms you want the user to be automatically joined and promoted to administrator (PL100) in. These should be the internal IDs (for example \'!axfBUsKhfAjSMBdjKX:example.org\') separated by newlines.
+  ---------------------------------- -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Installation Steps
+
+1\) Create a Discord Application here:
+<https://discordapp.com/developers/applications>
+
+Created a app with a sensible name, for example: \'Discord\_Bridge\'
+
+2\) Retrieve 'Client ID' from the OAuth2 tab of that new application.
+For example: '489054448585994292'
+
+3\) 'Add Bot' in the Bot tab to create a bot, then retrieve its Bot
+'TOKEN'.
+
+4\) Enter these values into the survey and launch it.
+
+5\) Retrieve Discord invite link from the end of the job output, for
+example:
+
+Go to
+https://discordapp.com/api/oauth2/authorize?client\_id=899474728451994292&scope=bot&permissions=607250354
+to invite the bot into a guild.
+
+6\) Follow that link to invite the Bot to Discord server you wish to
+bridge, grant it administrator permissions.
+
+7\) Room addresses follow this syntax: \#\_discord\_guildid\_channelid.
+You can easily find the guild and channel ids by logging into Discord in
+a browser and opening the desired channel. The URL will have this
+format: discordapp.com/channels/guild\_id/channel\_id.
+
+Once you have figured out the appropriate room address, you can join by
+doing:\
+\
+*/join \#\_discord\_guildid\_channelid*\
+\
+in your Matrix client.
