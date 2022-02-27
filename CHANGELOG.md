@@ -3,6 +3,8 @@
 
 - CENTOS 8 EOL fix, curse you RedHat!! See[#33](https://gitlab.com/GoMatrixHosting/create-awx-system/-/issues/33)
 - Add Mjolnir Bot section. See [#20](https://gitlab.com/GoMatrixHosting/ansible-provision-server/-/issues/20)
+- Unclog discord-appservice-bot so it now works behind the wireguard proxy. See [#8](https://gitlab.com/GoMatrixHosting/matrix-docker-ansible-deploy/-/issues/8)
+- Update deploy script readme and docs to reflect recent changes to GoMatrixHosting. See [#1654](https://github.com/spantaleev/matrix-docker-ansible-deploy/issues/1654)
 
 
 # Upgrade Notes v0.7.0
